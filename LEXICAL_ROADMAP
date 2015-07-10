@@ -1,0 +1,109 @@
+--------------------------------------------------------------------------------
+versão 0.1
+--------------------------------------------------------------------------------
+
+> tipo_de_dados
+    "booleano"
+    "inteiro"
+    "flutuante"
+    "texto"
+    "funcao_do_sistema"
+
+> valor
+    "verdadeiro"
+    "falso"
+    <numero>
+    <texto>
+
+> identificador
+    <texto_identificador>
+
+> operador
+    "+"
+    "-"
+    "*"
+    "/"
+
+> operador_parenteses
+    "(" <expressao> ")"
+
+> operador_unario
+    <operador> <expressao>
+
+> operador_binario
+    <expressao> <operador> <expressao>
+
+> operador_atribuicao
+    <identificador> "<-" <expressao>
+
+> operador_chamada_de_funcao
+    <identificador> "(" [<expressao> | ...] ")"
+
+> expressao
+    <operador_parenteses>
+    <operador_unario>
+    <operador_binario>
+    <operador_atribuicao>
+    <operador_chamada_de_funcao>
+    <valor>
+    <identificador>
+
+> modificador
+    <modificador_de_persistencia>
+    <modificador_de_acesso>
+
+> modificador_de_persistencia
+    "estatico"
+    "estatica"
+    "provisorio"
+    "provisoria"
+
+> modificador_de_acesso
+    "constante"
+    "variavel"
+
+> importação
+    "importar" <texto>
+
+> declaracao_de_variavel
+    <identificador> ":" [<modificador> | ...] <tipo_de_dados> [<modificador> | ...] ["<-" <valor>]
+
+> instrucao
+    <declaracao_de_variavel>
+    <expressao>
+
+> declaracao_de_programa
+    "programa" [instrucao | ...] "fim_programa"
+
+> expressao_globais
+    <importação>
+    <declaracao_de_variavel>
+    <declaracao_de_programa>
+
+--------------------------------------------------------------------------------
+versão 0.2 (+ estruturas de controlo)
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+versão 0.3 (+ funcoes)
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+versão 0.4 (+ listas)
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+versão 0.5 (+ ponteiro e tipos de dados de tamanho fixo)
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+versão 0.6 (+ funções anónimas)
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+versão 0.7 (+ objectos)
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+versão 0.8 (+ funções do sistema > organização)
+--------------------------------------------------------------------------------
