@@ -1,0 +1,15 @@
+importar "ficheiro.portugol"
+
+constante lista[3] inteiro ci
+
+inicio
+    inteiro i <- (10 + 20) * 2
+    flutuante ping <- 10.10
+    texto c <- "stri\"n cão g"
+
+    sistema.consola.escrever(i)
+fim
+
+funcao foo(inteiro i, flutuante f) retorna flutuante
+    retorna i * f
+fim

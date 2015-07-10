@@ -1,0 +1,22 @@
+# fonts
+theme.font.gui.file        = ./sistema/temas/default/fontes/gui.ttf
+theme.font.gui.size        = 20
+theme.font.gui.index       = 0
+theme.font.gui.color.red   = 255
+theme.font.gui.color.green = 255
+theme.font.gui.color.blew  = 255
+theme.font.gui.color.alpha = 0
+
+theme.font.code.file        = ./sistema/temas/default/fontes/code.ttf
+theme.font.code.size        = 20
+theme.font.code.index       = 0
+theme.font.code.color.red   = 255
+theme.font.code.color.green = 255
+theme.font.code.color.blew  = 255
+theme.font.code.color.alpha = 0
+
+# window
+theme.window.background.red   = 72
+theme.window.background.green = 0
+theme.window.background.blue  = 110
+theme.window.background.alpha = 0
