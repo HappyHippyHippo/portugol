@@ -1,4 +1,0 @@
-mainmenu.lbl_projects = Projecto
-mainmenu.lbl_build = Compilar
-mainmenu.lbl_language = Portugol
-mainmenu.lbl_about = Acerca
