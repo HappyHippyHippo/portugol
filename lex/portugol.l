@@ -61,10 +61,35 @@ ast_parse_remove_ml_comment(void);
         STORE_POS(yylval.token.pos, yylloc);
         return yylval.token.result = TOK_OP_XOR;
     }
-(?i:"nao") {
+(?i:"nao")|(?i:"não")|(?i:"nÃo") {
         /* not op token */
         STORE_POS(yylval.token.pos, yylloc);
         return yylval.token.result = TOK_OP_NOT;
+    }
+(?i:"fim") {
+        /* xor op token */
+        STORE_POS(yylval.token.pos, yylloc);
+        return yylval.token.result = TOK_END;
+    }
+(?i:"de") {
+        /* xor op token */
+        STORE_POS(yylval.token.pos, yylloc);
+        return yylval.token.result = TOK_FROM;
+    }
+(?i:"se") {
+        /* xor op token */
+        STORE_POS(yylval.token.pos, yylloc);
+        return yylval.token.result = TOK_IF;
+    }
+(?i:"entao")|(?i:"então")|(?i:"entÃo") {
+        /* xor op token */
+        STORE_POS(yylval.token.pos, yylloc);
+        return yylval.token.result = TOK_THEN;
+    }
+(?i:"senao")|(?i:"senão")|(?i:"senÃo") {
+        /* xor op token */
+        STORE_POS(yylval.token.pos, yylloc);
+        return yylval.token.result = TOK_ELSE;
     }
 
 "+" {

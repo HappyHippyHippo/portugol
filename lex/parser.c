@@ -78,10 +78,17 @@ extern int yylex();
 extern int yyget_lineno();
 void yyerror(const char *s) { printf("ERROR: %s at line %d\n", s, yyget_lineno()); }
 
+#define INIT_AST(ls, cs, le, ce)       \
+                ParseAST ast;          \
+                ast.pos.lstart = (ls); \
+                ast.pos.cstart = (cs); \
+                ast.pos.lend   = (le); \
+                ast.pos.cend   = (ce);
+
 
 
 /* Line 189 of yacc.c  */
-#line 85 "lex/parser.c"
+#line 92 "lex/parser.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -112,30 +119,43 @@ void yyerror(const char *s) { printf("ERROR: %s at line %d\n", s, yyget_lineno()
      TOK_VAL_FPNUMBER = 259,
      TOK_VAL_TEXT = 260,
      TOK_IDENTIFIER = 261,
-     TOK_BOOLEAN = 262,
-     TOK_INTEGER = 263,
-     TOK_FLOAT = 264,
-     TOK_TEXT = 265,
-     TOK_EOL = 266,
-     TOK_COMA = 267,
-     TOK_OPEN_PAREN = 268,
-     TOK_CLOSE_PAREN = 269,
-     TOK_OP_NOT = 270,
-     TOK_OP_MULTIPLY = 271,
-     TOK_OP_DIVIDE = 272,
-     TOK_OP_REMAINDER = 273,
-     TOK_OP_ADD = 274,
-     TOK_OP_SUBTRACT = 275,
-     TOK_OP_EQUAL = 276,
-     TOK_OP_INEQUAL = 277,
-     TOK_OP_GREATER = 278,
-     TOK_OP_GREATER_OR_EQUAL = 279,
-     TOK_OP_LESSER = 280,
-     TOK_OP_LESSER_OR_EQUAL = 281,
-     TOK_OP_AND = 282,
-     TOK_OP_OR = 283,
-     TOK_OP_XOR = 284,
-     TOK_OP_ASSIGN = 285
+     TOK_COMA = 262,
+     TOK_BOOLEAN = 263,
+     TOK_INTEGER = 264,
+     TOK_FLOAT = 265,
+     TOK_TEXT = 266,
+     TOK_EOL = 267,
+     TOK_IF = 268,
+     TOK_THEN = 269,
+     TOK_ELSE = 270,
+     TOK_FOR = 271,
+     TOK_FROM = 272,
+     TOK_TO = 273,
+     TOK_STEP = 274,
+     TOK_SWITCH = 275,
+     TOK_CASE = 276,
+     TOK_DEFAULT = 277,
+     TOK_WHILE = 278,
+     TOK_DO = 279,
+     TOK_END = 280,
+     TOK_OPEN_PAREN = 281,
+     TOK_CLOSE_PAREN = 282,
+     TOK_OP_NOT = 283,
+     TOK_OP_MULTIPLY = 284,
+     TOK_OP_DIVIDE = 285,
+     TOK_OP_REMAINDER = 286,
+     TOK_OP_ADD = 287,
+     TOK_OP_SUBTRACT = 288,
+     TOK_OP_EQUAL = 289,
+     TOK_OP_INEQUAL = 290,
+     TOK_OP_GREATER = 291,
+     TOK_OP_GREATER_OR_EQUAL = 292,
+     TOK_OP_LESSER = 293,
+     TOK_OP_LESSER_OR_EQUAL = 294,
+     TOK_OP_AND = 295,
+     TOK_OP_OR = 296,
+     TOK_OP_XOR = 297,
+     TOK_OP_ASSIGN = 298
    };
 #endif
 
@@ -146,7 +166,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 13 "lex/portugol.y"
+#line 20 "lex/portugol.y"
  ParseAST     ast;
          ParseInt32   int32;
          ParseFloat32 float32;
@@ -157,7 +177,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 161 "lex/parser.c"
+#line 181 "lex/parser.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -182,7 +202,7 @@ typedef struct YYLTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 186 "lex/parser.c"
+#line 206 "lex/parser.c"
 
 #ifdef short
 # undef short
@@ -399,10 +419,10 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  20
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   141
+#define YYLAST   143
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  31
+#define YYNTOKENS  44
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  8
 /* YYNRULES -- Number of rules.  */
@@ -412,7 +432,7 @@ union yyalloc
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   285
+#define YYMAXUTOK   298
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -448,7 +468,8 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    27,    28,    29,    30
+      25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
+      35,    36,    37,    38,    39,    40,    41,    42,    43
 };
 
 #if YYDEBUG
@@ -465,29 +486,29 @@ static const yytype_uint8 yyprhs[] =
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      32,     0,    -1,    32,    33,    -1,    33,    -1,    34,    11,
-      -1,    35,    11,    -1,    36,    11,    -1,    11,    -1,     6,
-      12,     7,    -1,     6,    12,     7,    30,    36,    -1,     6,
-      12,     8,    -1,     6,    12,     8,    30,    36,    -1,     6,
-      12,     9,    -1,     6,    12,     9,    30,    36,    -1,     6,
-      12,    10,    -1,     6,    12,    10,    30,    36,    -1,    38,
-      30,    36,    -1,    36,    19,    36,    -1,    36,    20,    36,
-      -1,    36,    16,    36,    -1,    36,    17,    36,    -1,    36,
-      18,    36,    -1,    36,    21,    36,    -1,    36,    22,    36,
-      -1,    36,    23,    36,    -1,    36,    24,    36,    -1,    36,
-      25,    36,    -1,    36,    26,    36,    -1,    36,    27,    36,
-      -1,    36,    28,    36,    -1,    36,    29,    36,    -1,    15,
-      36,    -1,    13,    36,    14,    -1,    38,    -1,    37,    -1,
+      45,     0,    -1,    45,    46,    -1,    46,    -1,    47,    12,
+      -1,    48,    12,    -1,    49,    12,    -1,    12,    -1,     6,
+       7,     8,    -1,     6,     7,     8,    43,    49,    -1,     6,
+       7,     9,    -1,     6,     7,     9,    43,    49,    -1,     6,
+       7,    10,    -1,     6,     7,    10,    43,    49,    -1,     6,
+       7,    11,    -1,     6,     7,    11,    43,    49,    -1,    51,
+      43,    49,    -1,    49,    32,    49,    -1,    49,    33,    49,
+      -1,    49,    29,    49,    -1,    49,    30,    49,    -1,    49,
+      31,    49,    -1,    49,    34,    49,    -1,    49,    35,    49,
+      -1,    49,    36,    49,    -1,    49,    37,    49,    -1,    49,
+      38,    49,    -1,    49,    39,    49,    -1,    49,    40,    49,
+      -1,    49,    41,    49,    -1,    49,    42,    49,    -1,    28,
+      49,    -1,    26,    49,    27,    -1,    51,    -1,    50,    -1,
        3,    -1,     4,    -1,     5,    -1,     6,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    55,    55,    60,    67,    70,    73,    76,    84,   101,
-     118,   135,   152,   169,   186,   203,   222,   240,   256,   272,
-     288,   304,   320,   336,   352,   368,   384,   400,   416,   432,
-     448,   464,   480,   497,   500,   505,   519,   533,   550
+       0,    68,    68,    73,    80,    83,    86,    89,    97,   104,
+     111,   118,   125,   132,   139,   146,   155,   162,   167,   172,
+     177,   182,   187,   192,   197,   202,   207,   212,   217,   222,
+     227,   232,   237,   243,   246,   251,   257,   263,   273
 };
 #endif
 
@@ -497,14 +518,17 @@ static const yytype_uint16 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "TOK_VAL_NUMBER", "TOK_VAL_FPNUMBER",
-  "TOK_VAL_TEXT", "TOK_IDENTIFIER", "TOK_BOOLEAN", "TOK_INTEGER",
-  "TOK_FLOAT", "TOK_TEXT", "TOK_EOL", "TOK_COMA", "TOK_OPEN_PAREN",
-  "TOK_CLOSE_PAREN", "TOK_OP_NOT", "TOK_OP_MULTIPLY", "TOK_OP_DIVIDE",
-  "TOK_OP_REMAINDER", "TOK_OP_ADD", "TOK_OP_SUBTRACT", "TOK_OP_EQUAL",
-  "TOK_OP_INEQUAL", "TOK_OP_GREATER", "TOK_OP_GREATER_OR_EQUAL",
-  "TOK_OP_LESSER", "TOK_OP_LESSER_OR_EQUAL", "TOK_OP_AND", "TOK_OP_OR",
-  "TOK_OP_XOR", "TOK_OP_ASSIGN", "$accept", "global_instrs",
-  "global_instr", "decl", "assign", "expr", "constant", "variable", 0
+  "TOK_VAL_TEXT", "TOK_IDENTIFIER", "TOK_COMA", "TOK_BOOLEAN",
+  "TOK_INTEGER", "TOK_FLOAT", "TOK_TEXT", "TOK_EOL", "TOK_IF", "TOK_THEN",
+  "TOK_ELSE", "TOK_FOR", "TOK_FROM", "TOK_TO", "TOK_STEP", "TOK_SWITCH",
+  "TOK_CASE", "TOK_DEFAULT", "TOK_WHILE", "TOK_DO", "TOK_END",
+  "TOK_OPEN_PAREN", "TOK_CLOSE_PAREN", "TOK_OP_NOT", "TOK_OP_MULTIPLY",
+  "TOK_OP_DIVIDE", "TOK_OP_REMAINDER", "TOK_OP_ADD", "TOK_OP_SUBTRACT",
+  "TOK_OP_EQUAL", "TOK_OP_INEQUAL", "TOK_OP_GREATER",
+  "TOK_OP_GREATER_OR_EQUAL", "TOK_OP_LESSER", "TOK_OP_LESSER_OR_EQUAL",
+  "TOK_OP_AND", "TOK_OP_OR", "TOK_OP_XOR", "TOK_OP_ASSIGN", "$accept",
+  "global_instrs", "global_instr", "decl", "assign", "expr", "constant",
+  "variable", 0
 };
 #endif
 
@@ -516,17 +540,18 @@ static const yytype_uint16 yytoknum[] =
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
      275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
-     285
+     285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
+     295,   296,   297,   298
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    31,    32,    32,    33,    33,    33,    33,    34,    34,
-      34,    34,    34,    34,    34,    34,    35,    36,    36,    36,
-      36,    36,    36,    36,    36,    36,    36,    36,    36,    36,
-      36,    36,    36,    36,    36,    37,    37,    37,    38
+       0,    44,    45,    45,    46,    46,    46,    46,    47,    47,
+      47,    47,    47,    47,    47,    47,    48,    49,    49,    49,
+      49,    49,    49,    49,    49,    49,    49,    49,    49,    49,
+      49,    49,    49,    49,    49,    50,    50,    50,    51
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -560,22 +585,22 @@ static const yytype_int8 yydefgoto[] =
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -13
-static const yytype_int8 yypact[] =
+#define YYPACT_NINF -28
+static const yytype_int16 yypact[] =
 {
-      86,   -13,   -13,   -13,    -9,   -13,    90,    90,    58,   -13,
-       7,    42,    23,   -13,    29,    28,   -13,   -12,   -13,   -13,
-     -13,   -13,   -13,   -13,   -13,    90,    90,    90,    90,    90,
-      90,    90,    90,    90,    90,    90,    90,    90,    90,    90,
-      40,    44,    68,    70,   -13,   -13,   -13,   -13,    49,    49,
-     121,   121,   114,   114,   114,   114,   103,    91,    91,    59,
-      90,    90,    90,    90,    59,    59,    59,    59
+      47,   -28,   -28,   -28,     9,   -28,    62,    62,    58,   -28,
+       6,    36,     5,   -28,    17,   129,   -28,    64,   -28,   -28,
+     -28,   -28,   -28,   -28,   -28,    62,    62,    62,    62,    62,
+      62,    62,    62,    62,    62,    62,    62,    62,    62,    62,
+      28,    29,    31,    33,   -28,   -28,   -28,   -28,   112,   112,
+      49,    49,   101,   101,   101,   101,    90,    78,    78,   -27,
+      62,    62,    62,    62,   -27,   -27,   -27,   -27
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -13,   -13,    64,   -13,   -13,    -6,   -13,    60
+     -28,   -28,    41,   -28,   -28,    -6,   -28,    69
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -585,53 +610,53 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      17,    19,    44,    15,    25,    26,    27,    28,    29,    30,
-      31,    32,    33,    34,    35,    36,    37,    38,    22,    45,
+      17,    19,    25,    26,    27,    28,    29,    30,    31,    32,
+      33,    34,    35,    36,    37,    38,    15,    24,    22,    45,
       46,    47,    48,    49,    50,    51,    52,    53,    54,    55,
-      56,    57,    58,    59,    24,    40,    41,    42,    43,    25,
-      26,    27,    28,    29,    30,    31,    32,    33,    34,    35,
-      36,    37,    38,    23,    64,    65,    66,    67,    20,    39,
-      14,     1,     2,     3,     4,    25,    26,    27,    14,     5,
-      60,     6,    21,     7,    61,    25,    26,    27,    28,    29,
-      30,    31,    32,    33,    34,    35,    36,    37,    38,     1,
-       2,     3,     4,     1,     2,     3,    16,     5,    62,     6,
-      63,     7,     0,     6,     0,     7,     0,    25,    26,    27,
+      56,    57,    58,    59,    25,    26,    27,    28,    29,    30,
+      31,    32,    33,    34,    35,    36,    37,    38,    23,    21,
+       1,     2,     3,     4,    64,    65,    66,    67,    20,     5,
+      39,     1,     2,     3,     4,     1,     2,     3,    16,    14,
+       5,    60,    61,     6,    62,     7,    63,    14,    25,    26,
+      27,    28,    29,     0,     6,     0,     7,     0,     6,     0,
+       7,    44,     0,    25,    26,    27,    28,    29,    30,    31,
+      32,    33,    34,    35,    36,    37,    38,    25,    26,    27,
       28,    29,    30,    31,    32,    33,    34,    35,    36,    25,
       26,    27,    28,    29,    30,    31,    32,    33,    34,    35,
-      25,    26,    27,    28,    29,    30,    31,    25,    26,    27,
-      28,    29
+      25,    26,    27,    28,    29,    30,    31,    40,    41,    42,
+      43,    25,    26,    27
 };
 
 static const yytype_int8 yycheck[] =
 {
-       6,     7,    14,    12,    16,    17,    18,    19,    20,    21,
-      22,    23,    24,    25,    26,    27,    28,    29,    11,    25,
+       6,     7,    29,    30,    31,    32,    33,    34,    35,    36,
+      37,    38,    39,    40,    41,    42,     7,    12,    12,    25,
       26,    27,    28,    29,    30,    31,    32,    33,    34,    35,
-      36,    37,    38,    39,    11,     7,     8,     9,    10,    16,
-      17,    18,    19,    20,    21,    22,    23,    24,    25,    26,
-      27,    28,    29,    11,    60,    61,    62,    63,     0,    30,
-       0,     3,     4,     5,     6,    16,    17,    18,     8,    11,
-      30,    13,     8,    15,    30,    16,    17,    18,    19,    20,
-      21,    22,    23,    24,    25,    26,    27,    28,    29,     3,
-       4,     5,     6,     3,     4,     5,     6,    11,    30,    13,
-      30,    15,    -1,    13,    -1,    15,    -1,    16,    17,    18,
-      19,    20,    21,    22,    23,    24,    25,    26,    27,    16,
-      17,    18,    19,    20,    21,    22,    23,    24,    25,    26,
-      16,    17,    18,    19,    20,    21,    22,    16,    17,    18,
-      19,    20
+      36,    37,    38,    39,    29,    30,    31,    32,    33,    34,
+      35,    36,    37,    38,    39,    40,    41,    42,    12,     8,
+       3,     4,     5,     6,    60,    61,    62,    63,     0,    12,
+      43,     3,     4,     5,     6,     3,     4,     5,     6,     0,
+      12,    43,    43,    26,    43,    28,    43,     8,    29,    30,
+      31,    32,    33,    -1,    26,    -1,    28,    -1,    26,    -1,
+      28,    27,    -1,    29,    30,    31,    32,    33,    34,    35,
+      36,    37,    38,    39,    40,    41,    42,    29,    30,    31,
+      32,    33,    34,    35,    36,    37,    38,    39,    40,    29,
+      30,    31,    32,    33,    34,    35,    36,    37,    38,    39,
+      29,    30,    31,    32,    33,    34,    35,     8,     9,    10,
+      11,    29,    30,    31
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     4,     5,     6,    11,    13,    15,    32,    33,
-      34,    35,    36,    37,    38,    12,     6,    36,    38,    36,
-       0,    33,    11,    11,    11,    16,    17,    18,    19,    20,
-      21,    22,    23,    24,    25,    26,    27,    28,    29,    30,
-       7,     8,     9,    10,    14,    36,    36,    36,    36,    36,
-      36,    36,    36,    36,    36,    36,    36,    36,    36,    36,
-      30,    30,    30,    30,    36,    36,    36,    36
+       0,     3,     4,     5,     6,    12,    26,    28,    45,    46,
+      47,    48,    49,    50,    51,     7,     6,    49,    51,    49,
+       0,    46,    12,    12,    12,    29,    30,    31,    32,    33,
+      34,    35,    36,    37,    38,    39,    40,    41,    42,    43,
+       8,     9,    10,    11,    27,    49,    49,    49,    49,    49,
+      49,    49,    49,    49,    49,    49,    49,    49,    49,    49,
+      43,    43,    43,    43,    49,    49,    49,    49
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1489,7 +1514,7 @@ yyreduce:
         case 2:
 
 /* Line 1464 of yacc.c  */
-#line 55 "lex/portugol.y"
+#line 68 "lex/portugol.y"
     {
                             if ((yyvsp[(2) - (2)].ast).result != NULL)
                                 ast_scope_push(ast_parse_scope_get(), (yyvsp[(2) - (2)].ast).result);
@@ -1500,7 +1525,7 @@ yyreduce:
   case 3:
 
 /* Line 1464 of yacc.c  */
-#line 60 "lex/portugol.y"
+#line 73 "lex/portugol.y"
     {
                             if ((yyvsp[(1) - (1)].ast).result != NULL)
                                 ast_scope_push(ast_parse_scope_get(), (yyvsp[(1) - (1)].ast).result);
@@ -1511,7 +1536,7 @@ yyreduce:
   case 4:
 
 /* Line 1464 of yacc.c  */
-#line 67 "lex/portugol.y"
+#line 80 "lex/portugol.y"
     {
                             (yyval.ast) = (yyvsp[(1) - (2)].ast);
                         ;}
@@ -1520,7 +1545,7 @@ yyreduce:
   case 5:
 
 /* Line 1464 of yacc.c  */
-#line 70 "lex/portugol.y"
+#line 83 "lex/portugol.y"
     {
                             (yyval.ast) = (yyvsp[(1) - (2)].ast);
                         ;}
@@ -1529,7 +1554,7 @@ yyreduce:
   case 6:
 
 /* Line 1464 of yacc.c  */
-#line 73 "lex/portugol.y"
+#line 86 "lex/portugol.y"
     {
                             (yyval.ast) = (yyvsp[(1) - (2)].ast);
                         ;}
@@ -1538,7 +1563,7 @@ yyreduce:
   case 7:
 
 /* Line 1464 of yacc.c  */
-#line 76 "lex/portugol.y"
+#line 89 "lex/portugol.y"
     {
                             ParseAST ast;
                             ast.pos    = (yyvsp[(1) - (1)].token).pos;
@@ -1550,22 +1575,12 @@ yyreduce:
   case 8:
 
 /* Line 1464 of yacc.c  */
-#line 84 "lex/portugol.y"
+#line 97 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].text).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].text).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].token).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].token).pos.cend;
-                            ast.result     = ast_decl_boolean((yyvsp[(1) - (3)].text).result, ast_boolean(0, ast.pos), ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].text).pos.lstart, (yyvsp[(1) - (3)].text).pos.cstart, (yyvsp[(3) - (3)].token).pos.lend, (yyvsp[(3) - (3)].token).pos.cend);
+                            ast.result = ast_decl_boolean((yyvsp[(1) - (3)].text).result, ast_boolean(0, ast.pos), ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("boolean decl found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
+
                             free((yyvsp[(1) - (3)].text).result);
                         ;}
     break;
@@ -1573,22 +1588,12 @@ yyreduce:
   case 9:
 
 /* Line 1464 of yacc.c  */
-#line 101 "lex/portugol.y"
+#line 104 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (5)].text).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (5)].text).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(5) - (5)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(5) - (5)].ast).pos.cend;
-                            ast.result     = ast_decl_boolean((yyvsp[(1) - (5)].text).result, (yyvsp[(5) - (5)].ast).result, ast.pos);
+                            INIT_AST((yyvsp[(1) - (5)].text).pos.lstart, (yyvsp[(1) - (5)].text).pos.cstart, (yyvsp[(5) - (5)].ast).pos.lend, (yyvsp[(5) - (5)].ast).pos.cend);
+                            ast.result = ast_decl_boolean((yyvsp[(1) - (5)].text).result, (yyvsp[(5) - (5)].ast).result, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("boolean decl found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
+
                             free((yyvsp[(1) - (5)].text).result);
                         ;}
     break;
@@ -1596,22 +1601,12 @@ yyreduce:
   case 10:
 
 /* Line 1464 of yacc.c  */
-#line 118 "lex/portugol.y"
+#line 111 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].text).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].text).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].token).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].token).pos.cend;
-                            ast.result     = ast_decl_int32((yyvsp[(1) - (3)].text).result, ast_int32(0, ast.pos), ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].text).pos.lstart, (yyvsp[(1) - (3)].text).pos.cstart, (yyvsp[(3) - (3)].token).pos.lend, (yyvsp[(3) - (3)].token).pos.cend);
+                            ast.result = ast_decl_int32((yyvsp[(1) - (3)].text).result, ast_int32(0, ast.pos), ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("int32 decl found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
+
                             free((yyvsp[(1) - (3)].text).result);
                         ;}
     break;
@@ -1619,22 +1614,12 @@ yyreduce:
   case 11:
 
 /* Line 1464 of yacc.c  */
-#line 135 "lex/portugol.y"
+#line 118 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (5)].text).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (5)].text).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(5) - (5)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(5) - (5)].ast).pos.cend;
-                            ast.result     = ast_decl_int32((yyvsp[(1) - (5)].text).result, (yyvsp[(5) - (5)].ast).result, ast.pos);
+                            INIT_AST((yyvsp[(1) - (5)].text).pos.lstart, (yyvsp[(1) - (5)].text).pos.cstart, (yyvsp[(5) - (5)].ast).pos.lend, (yyvsp[(5) - (5)].ast).pos.cend);
+                            ast.result = ast_decl_int32((yyvsp[(1) - (5)].text).result, (yyvsp[(5) - (5)].ast).result, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("int32 decl found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
+
                             free((yyvsp[(1) - (5)].text).result);
                         ;}
     break;
@@ -1642,22 +1627,12 @@ yyreduce:
   case 12:
 
 /* Line 1464 of yacc.c  */
-#line 152 "lex/portugol.y"
+#line 125 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].text).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].text).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].token).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].token).pos.cend;
-                            ast.result     = ast_decl_float32((yyvsp[(1) - (3)].text).result, ast_float32(0, ast.pos), ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].text).pos.lstart, (yyvsp[(1) - (3)].text).pos.cstart, (yyvsp[(3) - (3)].token).pos.lend, (yyvsp[(3) - (3)].token).pos.cend);
+                            ast.result = ast_decl_float32((yyvsp[(1) - (3)].text).result, ast_float32(0, ast.pos), ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("float32 decl found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
+
                             free((yyvsp[(1) - (3)].text).result);
                         ;}
     break;
@@ -1665,22 +1640,12 @@ yyreduce:
   case 13:
 
 /* Line 1464 of yacc.c  */
-#line 169 "lex/portugol.y"
+#line 132 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (5)].text).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (5)].text).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(5) - (5)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(5) - (5)].ast).pos.cend;
-                            ast.result     = ast_decl_float32((yyvsp[(1) - (5)].text).result, (yyvsp[(5) - (5)].ast).result, ast.pos);
+                            INIT_AST((yyvsp[(1) - (5)].text).pos.lstart, (yyvsp[(1) - (5)].text).pos.cstart, (yyvsp[(5) - (5)].ast).pos.lend, (yyvsp[(5) - (5)].ast).pos.cend);
+                            ast.result = ast_decl_float32((yyvsp[(1) - (5)].text).result, (yyvsp[(5) - (5)].ast).result, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("float32 decl found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
+
                             free((yyvsp[(1) - (5)].text).result);
                         ;}
     break;
@@ -1688,22 +1653,12 @@ yyreduce:
   case 14:
 
 /* Line 1464 of yacc.c  */
-#line 186 "lex/portugol.y"
+#line 139 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].text).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].text).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].token).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].token).pos.cend;
-                            ast.result     = ast_decl_text((yyvsp[(1) - (3)].text).result, ast_text("", ast.pos), ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].text).pos.lstart, (yyvsp[(1) - (3)].text).pos.cstart, (yyvsp[(3) - (3)].token).pos.lend, (yyvsp[(3) - (3)].token).pos.cend);
+                            ast.result = ast_decl_text((yyvsp[(1) - (3)].text).result, ast_text("", ast.pos), ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("text decl found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
+
                             free((yyvsp[(1) - (3)].text).result);
                         ;}
     break;
@@ -1711,22 +1666,12 @@ yyreduce:
   case 15:
 
 /* Line 1464 of yacc.c  */
-#line 203 "lex/portugol.y"
+#line 146 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (5)].text).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (5)].text).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(5) - (5)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(5) - (5)].ast).pos.cend;
-                            ast.result     = ast_decl_text((yyvsp[(1) - (5)].text).result, (yyvsp[(5) - (5)].ast).result, ast.pos);
+                            INIT_AST((yyvsp[(1) - (5)].text).pos.lstart, (yyvsp[(1) - (5)].text).pos.cstart, (yyvsp[(5) - (5)].ast).pos.lend, (yyvsp[(5) - (5)].ast).pos.cend);
+                            ast.result = ast_decl_text((yyvsp[(1) - (5)].text).result, (yyvsp[(5) - (5)].ast).result, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("text decl found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
+
                             free((yyvsp[(1) - (5)].text).result);
                         ;}
     break;
@@ -1734,382 +1679,195 @@ yyreduce:
   case 16:
 
 /* Line 1464 of yacc.c  */
-#line 222 "lex/portugol.y"
+#line 155 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].ast).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].ast).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].ast).pos.cend;
-                            ast.result     = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_ASSIGN, ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].ast).pos.lstart, (yyvsp[(1) - (3)].ast).pos.cstart, (yyvsp[(3) - (3)].ast).pos.lend, (yyvsp[(3) - (3)].ast).pos.cend);
+                            ast.result = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_ASSIGN, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("assign op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 17:
 
 /* Line 1464 of yacc.c  */
-#line 240 "lex/portugol.y"
+#line 162 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].ast).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].ast).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].ast).pos.cend;
-                            ast.result     = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_ADD, ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].ast).pos.lstart, (yyvsp[(1) - (3)].ast).pos.cstart, (yyvsp[(3) - (3)].ast).pos.lend, (yyvsp[(3) - (3)].ast).pos.cend);
+                            ast.result = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_ADD, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("add op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 18:
 
 /* Line 1464 of yacc.c  */
-#line 256 "lex/portugol.y"
+#line 167 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].ast).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].ast).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].ast).pos.cend;
-                            ast.result     = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_SUBTRACT, ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].ast).pos.lstart, (yyvsp[(1) - (3)].ast).pos.cstart, (yyvsp[(3) - (3)].ast).pos.lend, (yyvsp[(3) - (3)].ast).pos.cend);
+                            ast.result = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_SUBTRACT, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("subtract op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 19:
 
 /* Line 1464 of yacc.c  */
-#line 272 "lex/portugol.y"
+#line 172 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].ast).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].ast).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].ast).pos.cend;
-                            ast.result     = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_MULTIPLY, ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].ast).pos.lstart, (yyvsp[(1) - (3)].ast).pos.cstart, (yyvsp[(3) - (3)].ast).pos.lend, (yyvsp[(3) - (3)].ast).pos.cend);
+                            ast.result = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_MULTIPLY, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("multiply op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 20:
 
 /* Line 1464 of yacc.c  */
-#line 288 "lex/portugol.y"
+#line 177 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].ast).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].ast).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].ast).pos.cend;
-                            ast.result     = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_DIVIDE, ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].ast).pos.lstart, (yyvsp[(1) - (3)].ast).pos.cstart, (yyvsp[(3) - (3)].ast).pos.lend, (yyvsp[(3) - (3)].ast).pos.cend);
+                            ast.result = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_DIVIDE, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("divide op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 21:
 
 /* Line 1464 of yacc.c  */
-#line 304 "lex/portugol.y"
+#line 182 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].ast).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].ast).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].ast).pos.cend;
-                            ast.result     = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_REMAINDER, ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].ast).pos.lstart, (yyvsp[(1) - (3)].ast).pos.cstart, (yyvsp[(3) - (3)].ast).pos.lend, (yyvsp[(3) - (3)].ast).pos.cend);
+                            ast.result = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_REMAINDER, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("remainder op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 22:
 
 /* Line 1464 of yacc.c  */
-#line 320 "lex/portugol.y"
+#line 187 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].ast).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].ast).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].ast).pos.cend;
-                            ast.result     = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_EQUAL, ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].ast).pos.lstart, (yyvsp[(1) - (3)].ast).pos.cstart, (yyvsp[(3) - (3)].ast).pos.lend, (yyvsp[(3) - (3)].ast).pos.cend);
+                            ast.result = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_EQUAL, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("equal op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 23:
 
 /* Line 1464 of yacc.c  */
-#line 336 "lex/portugol.y"
+#line 192 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].ast).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].ast).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].ast).pos.cend;
-                            ast.result     = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_INEQUAL, ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].ast).pos.lstart, (yyvsp[(1) - (3)].ast).pos.cstart, (yyvsp[(3) - (3)].ast).pos.lend, (yyvsp[(3) - (3)].ast).pos.cend);
+                            ast.result = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_INEQUAL, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("inequal op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 24:
 
 /* Line 1464 of yacc.c  */
-#line 352 "lex/portugol.y"
+#line 197 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].ast).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].ast).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].ast).pos.cend;
-                            ast.result     = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_GREATER, ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].ast).pos.lstart, (yyvsp[(1) - (3)].ast).pos.cstart, (yyvsp[(3) - (3)].ast).pos.lend, (yyvsp[(3) - (3)].ast).pos.cend);
+                            ast.result = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_GREATER, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("greater op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 25:
 
 /* Line 1464 of yacc.c  */
-#line 368 "lex/portugol.y"
+#line 202 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].ast).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].ast).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].ast).pos.cend;
-                            ast.result     = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_GREATER_OR_EQUAL, ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].ast).pos.lstart, (yyvsp[(1) - (3)].ast).pos.cstart, (yyvsp[(3) - (3)].ast).pos.lend, (yyvsp[(3) - (3)].ast).pos.cend);
+                            ast.result = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_GREATER_OR_EQUAL, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("greater_or_equal op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 26:
 
 /* Line 1464 of yacc.c  */
-#line 384 "lex/portugol.y"
+#line 207 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].ast).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].ast).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].ast).pos.cend;
-                            ast.result     = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_LESSER, ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].ast).pos.lstart, (yyvsp[(1) - (3)].ast).pos.cstart, (yyvsp[(3) - (3)].ast).pos.lend, (yyvsp[(3) - (3)].ast).pos.cend);
+                            ast.result = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_LESSER, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("lesser op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 27:
 
 /* Line 1464 of yacc.c  */
-#line 400 "lex/portugol.y"
+#line 212 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].ast).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].ast).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].ast).pos.cend;
-                            ast.result     = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_LESSER_OR_EQUAL, ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].ast).pos.lstart, (yyvsp[(1) - (3)].ast).pos.cstart, (yyvsp[(3) - (3)].ast).pos.lend, (yyvsp[(3) - (3)].ast).pos.cend);
+                            ast.result = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_LESSER_OR_EQUAL, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("lesser_or_equal op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 28:
 
 /* Line 1464 of yacc.c  */
-#line 416 "lex/portugol.y"
+#line 217 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].ast).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].ast).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].ast).pos.cend;
-                            ast.result     = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_AND, ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].ast).pos.lstart, (yyvsp[(1) - (3)].ast).pos.cstart, (yyvsp[(3) - (3)].ast).pos.lend, (yyvsp[(3) - (3)].ast).pos.cend);
+                            ast.result = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_AND, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("and op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 29:
 
 /* Line 1464 of yacc.c  */
-#line 432 "lex/portugol.y"
+#line 222 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].ast).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].ast).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].ast).pos.cend;
-                            ast.result     = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_OR, ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].ast).pos.lstart, (yyvsp[(1) - (3)].ast).pos.cstart, (yyvsp[(3) - (3)].ast).pos.lend, (yyvsp[(3) - (3)].ast).pos.cend);
+                            ast.result = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_OR, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("or op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 30:
 
 /* Line 1464 of yacc.c  */
-#line 448 "lex/portugol.y"
+#line 227 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (3)].ast).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (3)].ast).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(3) - (3)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(3) - (3)].ast).pos.cend;
-                            ast.result     = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_XOR, ast.pos);
+                            INIT_AST((yyvsp[(1) - (3)].ast).pos.lstart, (yyvsp[(1) - (3)].ast).pos.cstart, (yyvsp[(3) - (3)].ast).pos.lend, (yyvsp[(3) - (3)].ast).pos.cend);
+                            ast.result = ast_op_binary((yyvsp[(1) - (3)].ast).result, (yyvsp[(3) - (3)].ast).result, AST_OP_XOR, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("xor op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 31:
 
 /* Line 1464 of yacc.c  */
-#line 464 "lex/portugol.y"
+#line 232 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart = (yyvsp[(1) - (2)].token).pos.lstart;
-                            ast.pos.cstart = (yyvsp[(1) - (2)].token).pos.cstart;
-                            ast.pos.lend   = (yyvsp[(2) - (2)].ast).pos.lend;
-                            ast.pos.cend   = (yyvsp[(2) - (2)].ast).pos.cend;
-                            ast.result     = ast_op_unary((yyvsp[(2) - (2)].ast).result, AST_OP_NOT, ast.pos);
+                            INIT_AST((yyvsp[(1) - (2)].token).pos.lstart, (yyvsp[(1) - (2)].token).pos.cstart, (yyvsp[(2) - (2)].ast).pos.lend, (yyvsp[(2) - (2)].ast).pos.cend);
+                            ast.result = ast_op_unary((yyvsp[(2) - (2)].ast).result, AST_OP_NOT, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("not op found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 32:
 
 /* Line 1464 of yacc.c  */
-#line 480 "lex/portugol.y"
+#line 237 "lex/portugol.y"
     {
-                            ParseAST ast;
-                            ast.pos.lstart  = (yyvsp[(1) - (3)].token).pos.lstart;
-                            ast.pos.cstart  = (yyvsp[(1) - (3)].token).pos.cstart;
-                            ast.pos.lend    = (yyvsp[(3) - (3)].token).pos.lend;
-                            ast.pos.cend    = (yyvsp[(3) - (3)].token).pos.cend;
-                            ast.result      = (yyvsp[(2) - (3)].ast).result;
+                            INIT_AST((yyvsp[(1) - (3)].token).pos.lstart, (yyvsp[(1) - (3)].token).pos.cstart, (yyvsp[(3) - (3)].token).pos.lend, (yyvsp[(3) - (3)].token).pos.cend);
+                            ast.result = (yyvsp[(2) - (3)].ast).result;
                             ast.result->pos = ast.pos;
                             (yyval.ast) = ast;
-/*
-                            printf("parenthesis found : %d:%d -> %d:%d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend);
-*/
                         ;}
     break;
 
   case 33:
 
 /* Line 1464 of yacc.c  */
-#line 497 "lex/portugol.y"
+#line 243 "lex/portugol.y"
     {
                             (yyval.ast) = (yyvsp[(1) - (1)].ast);
                         ;}
@@ -2118,7 +1876,7 @@ yyreduce:
   case 34:
 
 /* Line 1464 of yacc.c  */
-#line 500 "lex/portugol.y"
+#line 246 "lex/portugol.y"
     {
                             (yyval.ast) = (yyvsp[(1) - (1)].ast);
                         ;}
@@ -2127,60 +1885,37 @@ yyreduce:
   case 35:
 
 /* Line 1464 of yacc.c  */
-#line 505 "lex/portugol.y"
+#line 251 "lex/portugol.y"
     {
                             ParseAST ast;
                             ast.pos    = (yyvsp[(1) - (1)].int32).pos;
                             ast.result = ast_int32((yyvsp[(1) - (1)].int32).result, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("integer found : %d:%d -> %d:%d >> %d\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend,
-                                   $1.result);
-*/
                         ;}
     break;
 
   case 36:
 
 /* Line 1464 of yacc.c  */
-#line 519 "lex/portugol.y"
+#line 257 "lex/portugol.y"
     {
                             ParseAST ast;
                             ast.pos    = (yyvsp[(1) - (1)].float32).pos;
                             ast.result = ast_float32((yyvsp[(1) - (1)].float32).result, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("float found : %d:%d -> %d:%d >> %f\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend,
-                                   $1.result);
-*/
                         ;}
     break;
 
   case 37:
 
 /* Line 1464 of yacc.c  */
-#line 533 "lex/portugol.y"
+#line 263 "lex/portugol.y"
     {
                             ParseAST ast;
                             ast.pos    = (yyvsp[(1) - (1)].text).pos;
                             ast.result = ast_text((yyvsp[(1) - (1)].text).result, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("text found : %d:%d -> %d:%d >> %s\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend,
-                                   $1.result);
-*/
+
                             free((yyvsp[(1) - (1)].text).result);
                         ;}
     break;
@@ -2188,20 +1923,13 @@ yyreduce:
   case 38:
 
 /* Line 1464 of yacc.c  */
-#line 550 "lex/portugol.y"
+#line 273 "lex/portugol.y"
     {
                             ParseAST ast;
                             ast.pos    = (yyvsp[(1) - (1)].text).pos;
                             ast.result = ast_variable((yyvsp[(1) - (1)].text).result, ast.pos);
                             (yyval.ast) = ast;
-/*
-                            printf("Variable found : %d:%d -> %d:%d >> %s\n",
-                                   ast.pos.lstart,
-                                   ast.pos.cstart,
-                                   ast.pos.lend,
-                                   ast.pos.cend,
-                                   $1.result);
-*/
+
                             free((yyvsp[(1) - (1)].text).result);
                         ;}
     break;
@@ -2209,7 +1937,7 @@ yyreduce:
 
 
 /* Line 1464 of yacc.c  */
-#line 2213 "lex/parser.c"
+#line 1941 "lex/parser.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2428,6 +2156,6 @@ yyreturn:
 
 
 /* Line 1684 of yacc.c  */
-#line 567 "lex/portugol.y"
+#line 283 "lex/portugol.y"
 
 
