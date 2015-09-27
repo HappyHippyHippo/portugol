@@ -2,9 +2,30 @@
 //  START TESTING CONTROL STRUCTURES
 // ---------------------------------------------
 
-1
-nao 1
-1
-NãO 1
-1
-NÃO 1
+var : inteiro
+
+se var = 1 entao
+    var1 : inteiro
+    var1 <- 2 + 2
+
+    var <- var1 - 2
+senao
+    var1 : inteiro
+    var1 <- 4 + 4
+
+    var <- var1 - 4
+fim de se
+
+enquanto var então
+    var <- var - 1
+fim de enquanto
+
+i1 : inteiro
+para it de i1 até 10 então
+    i1 <- i1 + 1
+fim de para
+
+i2 : inteiro
+para it de i2 + 10 até 0 passo -3 então
+    i2 <- i2 + 1
+fim de para

@@ -35,6 +35,8 @@ typedef enum
     AST_SCOPE,
     AST_FILE,
     AST_IF,
+    AST_WHILE,
+    AST_FOR
 } ASTType;
 
 typedef struct ASTSourcePos

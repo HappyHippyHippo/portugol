@@ -7,6 +7,11 @@ typedef struct ParseAST {
     ASTNode*     result;
 } ParseAST;
 
+typedef struct ParseBool {
+    ASTSourcePos pos;
+    int          result;
+} ParseBool;
+
 typedef struct ParseInt32 {
     ASTSourcePos pos;
     int32_t      result;

@@ -25,3 +25,14 @@ ast_float32(float value,
 ASTNode*
 ast_text(char* value,
          ASTSourcePos pos);
+
+Variant
+ast_constant_execute(ASTNode* node,
+                     Runtime* runtime);
+
+void
+ast_constant_print(ASTNode* node,
+                   int level);
+
+void
+ast_constant_destroy(ASTNode** node);

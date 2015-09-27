@@ -25,7 +25,7 @@ CXX       = gcc
 INCLUDE   = -I$(INT_DIR) -I$(INC_DIR)
 LFLAGS    = 
 CFLAGS    = -g -MD -MP -Wall -Werror -pedantic -std=c99
-CLEXFLAGS = -g -Wall -Werror -pedantic -std=c99
+CLEXFLAGS = -g -Wall -Werror -pedantic -std=c99 -D_POSIX_SOURCE
 
 #--------------------------------------------------------
 # sources

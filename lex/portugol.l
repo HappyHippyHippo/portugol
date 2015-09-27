@@ -26,6 +26,18 @@ ast_parse_remove_ml_comment(void);
 %option yylineno
 
 %%
+(?i:"verdadeiro") {
+        /* integer value */
+        STORE_POS(yylval.bool.pos, yylloc);
+        yylval.bool.result = 1;
+        return TOK_VAL_BOOLEAN;
+    }
+(?i:"falso") {
+        /* integer value */
+        STORE_POS(yylval.bool.pos, yylloc);
+        yylval.bool.result = 0;
+        return TOK_VAL_BOOLEAN;
+    }
 (?i:"booleano") {
         /* boolean token */
         STORE_POS(yylval.token.pos, yylloc);
@@ -67,29 +79,59 @@ ast_parse_remove_ml_comment(void);
         return yylval.token.result = TOK_OP_NOT;
     }
 (?i:"fim") {
-        /* xor op token */
+        /* end token */
         STORE_POS(yylval.token.pos, yylloc);
         return yylval.token.result = TOK_END;
     }
 (?i:"de") {
-        /* xor op token */
+        /* of token */
         STORE_POS(yylval.token.pos, yylloc);
-        return yylval.token.result = TOK_FROM;
+        return yylval.token.result = TOK_OF;
     }
 (?i:"se") {
-        /* xor op token */
+        /* if token */
         STORE_POS(yylval.token.pos, yylloc);
         return yylval.token.result = TOK_IF;
     }
 (?i:"entao")|(?i:"então")|(?i:"entÃo") {
-        /* xor op token */
+        /* then token */
         STORE_POS(yylval.token.pos, yylloc);
         return yylval.token.result = TOK_THEN;
     }
 (?i:"senao")|(?i:"senão")|(?i:"senÃo") {
-        /* xor op token */
+        /* else token */
         STORE_POS(yylval.token.pos, yylloc);
         return yylval.token.result = TOK_ELSE;
+    }
+(?i:"enquanto") {
+        /* while token */
+        STORE_POS(yylval.token.pos, yylloc);
+        return yylval.token.result = TOK_WHILE;
+    }
+(?i:"para") {
+        /* for token */
+        STORE_POS(yylval.token.pos, yylloc);
+        return yylval.token.result = TOK_FOR;
+    }
+(?i:"ate")|(?i:"até") {
+        /* for token */
+        STORE_POS(yylval.token.pos, yylloc);
+        return yylval.token.result = TOK_TO;
+    }
+(?i:"passo") {
+        /* for token */
+        STORE_POS(yylval.token.pos, yylloc);
+        return yylval.token.result = TOK_STEP;
+    }
+(?i:"escolhe") {
+        /* switch token */
+        STORE_POS(yylval.token.pos, yylloc);
+        return yylval.token.result = TOK_SWITCH;
+    }
+(?i:"caso") {
+        /* case token */
+        STORE_POS(yylval.token.pos, yylloc);
+        return yylval.token.result = TOK_CASE;
     }
 
 "+" {

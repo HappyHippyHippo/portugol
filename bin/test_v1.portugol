@@ -1,3 +1,9 @@
+/*
+ NOTE : THESE TESTS ARE RENDERED INVALID AFTER SCOPE RESOLUTION IMPLEMENTATION
+        THIS IS BECAUSE NO SINGLE EXPRESSION CAN BE DECLARED AT GLOBAL LEVEL
+        OF THE APPLICATION
+*/
+
 //-------------------------------------------------------
 // TESTING : simple arithmetic expression + line comment
 //-------------------------------------------------------

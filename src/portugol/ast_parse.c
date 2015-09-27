@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 #include <internal/portugol/ast.h>
@@ -47,12 +48,15 @@ ast_parse_scope_push(ASTNode* scope)
 ASTNode*
 ast_parse_scope_pop(void)
 {
+    ASTNode* scope = ast_scope_stack->scope;
+
     if (ast_scope_stack->scope != ast)
     {
         ParseScopeStack* del = ast_scope_stack;
+        scope = del->scope;
         ast_scope_stack = ast_scope_stack->prev;
         free(del);
     }
 
-    return ast_scope_stack->scope;
+    return scope;
 }

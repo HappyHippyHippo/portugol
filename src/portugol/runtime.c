@@ -109,6 +109,13 @@ runtime_clear(Runtime* runtime)
 Variant*
 runtime_push_scope(Runtime* runtime)
 {
+    return runtime_push_scope_named(runtime, SCOPE_RETURN);
+}
+
+Variant*
+runtime_push_scope_named(Runtime* runtime,
+                         char* name)
+{
     if (runtime == NULL)
         return NULL;
 
@@ -123,7 +130,7 @@ runtime_push_scope(Runtime* runtime)
         return NULL;
     }
 
-    stack->name = SCOPE_RETURN;
+    stack->name = name;
     stack->value = variant_init_int32(0);
     stack->prev = runtime->stack;
     runtime->stack = stack;

@@ -19,11 +19,18 @@ runtime_push(Runtime* runtime,
              char* name,
              Variant value);
 
+Variant
+runtime_pop(Runtime* runtime);
+
 Runtime*
 runtime_clear(Runtime* runtime);
 
 Variant*
 runtime_push_scope(Runtime* runtime);
+
+Variant*
+runtime_push_scope_named(Runtime* runtime,
+                         char* name);
 
 Variant*
 runtime_get_scope(Runtime* runtime);

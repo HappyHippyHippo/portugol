@@ -30,3 +30,14 @@ ASTNode*
 ast_decl_text(char* name,
               ASTNode* value,
               ASTSourcePos pos);
+
+Variant
+ast_decl_execute(ASTNode* node,
+                 Runtime* runtime);
+
+void
+ast_decl_print(ASTNode* node,
+               int level);
+
+void
+ast_decl_destroy(ASTNode** node);
