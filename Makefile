@@ -6,144 +6,102 @@ UNAME = $(shell uname)
 #--------------------------------------------------------
 # target
 #--------------------------------------------------------
-TARGET = portugol_plus
+TARGET = portugol
 
 #--------------------------------------------------------
 # directories
 #--------------------------------------------------------
-SRC_DIR = ./src/
-INC_DIR = ./include/
-INT_DIR = .
-
-BIN32_DIR = ./bin32/
-BIN64_DIR = ./bin64/
-
-OBJ_DIR = ./obj/$(UNAME)/
-OBJ32_DIR = $(OBJ_DIR)32bit/
-OBJ64_DIR = $(OBJ_DIR)64bit/
-
-ifneq ($(UNAME), Linux)
-SDL_DIR   = E:/SDL2/
-SDL32_DIR = $(SDL_DIR)i686-w64-mingw32/
-SDL64_DIR = $(SDL_DIR)x86_64-w64-mingw32/
-endif
-
-HYP_DIR   = ../hypnos-cpp/
+SRC_DIR   = ./src/
+INC_DIR   = ./include/
+INT_DIR   = .
+LEX_DIR   = ./lex/
+BIN_DIR   = ./bin/
+OBJ_DIR   = ./obj/$(UNAME)/
 
 #--------------------------------------------------------
 # compilation configuration
 #--------------------------------------------------------
-CXX = g++
-
-ifeq ($(UNAME), Linux)
-INCLUDE   = -I$(INT_DIR) -I$(INC_DIR) -I$(HYP_DIR)include
-LFLAGS32  = -lrt -lm -lpthread -lSDL2 -lSDL2_image -lSDL2_ttf -L$(HYP_DIR)bin -lhypnos.l32
-LFLAGS64  = -lrt -lm -lpthread -lSDL2 -lSDL2_image -lSDL2_ttf -L$(HYP_DIR)bin -lhypnos.l64
-else
-INCLUDE32 = -I$(INT_DIR) -I$(INC_DIR) -I$(SDL32_DIR)include/ -I$(HYP_DIR)include
-INCLUDE64 = -I$(INT_DIR) -I$(INC_DIR) -I$(SDL64_DIR)include/ -I$(HYP_DIR)include
-LFLAGS32  = -L$(SDL32_DIR)lib/ -lm -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -L$(HYP_DIR)bin -lhypnos.w32
-LFLAGS64  = -L$(SDL64_DIR)lib/ -lm -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -L$(HYP_DIR)bin -lhypnos.w64
-endif
-
-ifeq ($(UNAME), Linux)
-CFLAGS    = -MD -MP -Wall -Werror -pedantic -std=c++11 -O2 -fPIC
-else
-CFLAGS    = -MD -MP -Wall -Werror -pedantic -std=c++11 -O2
-endif
-CFLAGS32  = -m32 $(CFLAGS)
-CFLAGS64  = -m64 $(CFLAGS)
+CXX       = gcc
+INCLUDE   = -I$(INT_DIR) -I$(INC_DIR)
+LFLAGS    = 
+CFLAGS    = -g -MD -MP -Wall -Werror -pedantic -std=c99
+CLEXFLAGS = -g -Wall -Werror -pedantic -std=c99
 
 #--------------------------------------------------------
 # sources
 #--------------------------------------------------------
 ifeq ($(UNAME), Linux)
-SOURCES = $(shell find $(SRC_DIR) -name '*.cpp')
+SOURCES = $(shell find $(SRC_DIR) -name '*.c')
 else
 rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
-SOURCES = $(call rwildcard,$(SRC_DIR),*.cpp)
+SOURCES = $(call rwildcard,$(SRC_DIR),*.c)
 endif
 
 #--------------------------------------------------------
 # objects ans dependencies
 #--------------------------------------------------------
-OBJECTS32 = $(patsubst $(SRC_DIR)%.cpp, $(OBJ32_DIR)%.o, $(SOURCES))
-OBJECTS64 = $(patsubst $(SRC_DIR)%.cpp, $(OBJ64_DIR)%.o, $(SOURCES))
-
-DEPS32	= $(OBJECTS32:.o=.d)
-DEPS64	= $(OBJECTS64:.o=.d)
+OBJECTS = $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SOURCES))
+DEPS    = $(OBJECTS:.o=.d)
 
 #--------------------------------------------------------
 # make all rule
 #--------------------------------------------------------
-all: skeleton64
+all: portugol
 
 #--------------------------------------------------------
-# exec rules
+# portugol rules
 #--------------------------------------------------------
 ifeq ($(UNAME), Linux)
-skeleton32: $(BIN32_DIR)$(TARGET).l32
-skeleton64: $(BIN64_DIR)$(TARGET).l64
+portugol: $(BIN_DIR)$(TARGET)
 else
-skeleton32: $(BIN32_DIR)$(TARGET).w32.exe
-skeleton64: $(BIN64_DIR)$(TARGET).w64.exe
+portugol: $(BIN_DIR)$(TARGET).exe
 endif
+
 
 #--------------------------------------------------------
 # cleaning rule
 #--------------------------------------------------------
 clean:
-	rm -rf $(OBJ32_DIR)
-	rm -rf $(OBJ64_DIR)
+	rm -rf $(OBJ_DIR)
+	rm -rf $(LEX_DIR)parser.c
+	rm -rf $(LEX_DIR)parser.h
+	rm -rf $(LEX_DIR)tokens.c
 ifeq ($(UNAME), Linux)
-	rm -rf $(BIN32_DIR)$(TARGET).l32
-	rm -rf $(BIN64_DIR)$(TARGET).l64
+	rm -rf $(BIN_DIR)$(TARGET)
 else
-	rm -rf $(BIN32_DIR)$(TARGET).w32.exe
-	rm -rf $(BIN64_DIR)$(TARGET).w64.exe
+	rm -rf $(BIN_DIR)$(TARGET).exe
 endif
+
 
 #--------------------------------------------------------
-# objects and target rules
+# hypnos objects and target rules
 #--------------------------------------------------------
 
-ifeq ($(UNAME), Linux)
-$(BIN32_DIR)$(TARGET).l32: $(OBJECTS32)
+$(BIN_DIR)$(TARGET): $(OBJ_DIR)lex/parser.o $(OBJ_DIR)lex/tokens.o $(OBJECTS)
 	@mkdir -p $(@D)
-	$(CXX) $^ -o $@ $(CFLAGS32) $(LFLAGS32)
-$(BIN64_DIR)$(TARGET).l64: $(OBJECTS64)
+	$(CXX) $^ -o $@ $(CFLAGS) $(LFLAGS)
+$(BIN_DIR)$(TARGET).exe: $(OBJ_DIR)lex/parser.o $(OBJ_DIR)lex/tokens.o $(OBJECTS)
 	@mkdir -p $(@D)
-	$(CXX) $^ -o $@ $(CFLAGS64) $(LFLAGS64)
-else
-$(BIN32_DIR)$(TARGET).w32.exe: $(OBJECTS32)
-	@mkdir -p $(@D)
-	$(CXX) $^ -o $@ $(CFLAGS32) $(LFLAGS32)
-	cp $(HYP_DIR)bin/libhypnos.w32.dll $(BIN32_DIR)
-$(BIN64_DIR)$(TARGET).w64.exe: $(OBJECTS64)
-	@mkdir -p $(@D)
-	$(CXX) $^ -o $@ $(CFLAGS64) $(LFLAGS64)
-	cp $(HYP_DIR)bin/libhypnos.w64.dll $(BIN64_DIR)
-endif
+	$(CXX) $^ -o $@ $(CFLAGS) $(LFLAGS)
 
--include $(DEPS32)
--include $(DEPS64)
+-include $(DEPS)
 
-ifeq ($(UNAME), Linux)
-$(OBJ32_DIR)%.o: $(SRC_DIR)%.cpp
+$(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	@mkdir -p $(@D)
-	$(CXX) -c $(CFLAGS32) $(INCLUDE) $< -o $@
-else
-$(OBJ32_DIR)%.o: $(SRC_DIR)%.cpp
-	@mkdir -p $(@D)
-	$(CXX) -c $(CFLAGS32) $(INCLUDE32) $< -o $@
-endif
+	$(CXX) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
-ifeq ($(UNAME), Linux)
-$(OBJ64_DIR)%.o: $(SRC_DIR)%.cpp
+$(OBJ_DIR)lex/parser.o: $(LEX_DIR)parser.c
 	@mkdir -p $(@D)
-	$(CXX) -c $(CFLAGS64) $(INCLUDE) $< -o $@
-else
-$(OBJ64_DIR)%.o: $(SRC_DIR)%.cpp
+	$(CXX) -c $(CLEXFLAGS) $(INCLUDE) $< -o $@
+
+$(LEX_DIR)parser.c: $(LEX_DIR)portugol.y
+	bison -d -o $@ $^
+
+$(LEX_DIR)parser.h: $(LEX_DIR)parser.c
+
+$(OBJ_DIR)lex/tokens.o: $(LEX_DIR)tokens.c
 	@mkdir -p $(@D)
-	$(CXX) -c $(CFLAGS64) $(INCLUDE64) $< -o $@
-endif
+	$(CXX) -c $(CLEXFLAGS) $(INCLUDE) $< -o $@
+
+$(LEX_DIR)tokens.c: $(LEX_DIR)portugol.l $(LEX_DIR)parser.h
+	flex -o $@ $^

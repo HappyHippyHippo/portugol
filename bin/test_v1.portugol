@@ -1,0 +1,108 @@
+//-------------------------------------------------------
+// TESTING : simple arithmetic expression + line comment
+//-------------------------------------------------------
+1 + 1                        // line comment, should be ignored and result in 1 + 1 = 2 >>>>> PASSED
+
+//-------------------------------------------------------
+// TESTING : block/multi-line comment
+//-------------------------------------------------------
+2 + /* comment block */ 2    // should result in 2 + 2 = 4 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+
+3 + /*
+  multi-line comment block
+*/ 3                         // should result in 3 + 3 = 6 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+
+/*
+  multi-line comment block
+*/
+4 + 4                        // should result in 4 + 4 = 8 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+
+//-------------------------------------------------------
+// TESTING : operator precedence
+//-------------------------------------------------------
+4 + 4 * 4                    // result should be 4 + 16 = 20 (NOT 8 * 4 = 32) >>>>>>>>>>>>>>> PASSED
+
+(4 + 4) * 4                  // result should be 8 * 4 = 32 (NOT 4 + 16 = 20) >>>>>>>>>>>>>>> PASSED
+//-------------------------------------------------------
+// TESTING : text values and concatenation
+//-------------------------------------------------------
+"test" + 123                 // should result in "test" + "123" = "test123" >>>>>>>>>>>>>>>>> PASSED
+
+"test" - 123                 // only additions, result should be the left param : "test" >>>> PASSED
+
+123 - "test"                 // only additions, result should be the left param : 123 >>>>>>> PASSED
+
+//-------------------------------------------------------
+// TESTING : variable declaration
+//-------------------------------------------------------
+var0 : inteiro               // store a record "var0" with the default value : 0 >>>>>>>>>>>> PASSED
+
+var1 : texto <- "str" + 12   // store a record "var1" with the value : "str12" >>>>>>>>>>>>>> PASSED
+
+//-------------------------------------------------------
+// TESTING : variable usage in expression
+//-------------------------------------------------------
+"ping " + var1               // result in the concatenation : "ping str12" >>>>>>>>>>>>>>>>>> PASSED
+
+//-------------------------------------------------------
+// TESTING : variable assignment
+//-------------------------------------------------------
+var2 : inteiro               // store a record "var2" and with the default value of : 0 >>>>> PASSED
+var2 <- 100 + 200            // result in the update of the "var2" variable to : 300 >>>>>>>> PASSED
+
+var3 : inteiro               // store a record "var3" and with the default value of : 0 >>>>> PASSED
+var3 <- var2 + 1             // result in the update of the "var3" variable to : 301 >>>>>>>> PASSED
+
+//-------------------------------------------------------
+// TESTING : comparisson operators
+//-------------------------------------------------------
+23 = 23                      // result in the boolean : 1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+23 <> 23                     // result in the boolean : 0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+300 = var3                   // result in the boolean : 0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+301 = var3                   // result in the boolean : 1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+301 <> var3                  // result in the boolean : 0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+
+"test1" = "test1"            // result in the boolean : 1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+"test1" <> "test1"           // result in the boolean : 0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+"test1" = "test2"            // result in the boolean : 0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+"test1" <> "test2"           // result in the boolean : 1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+
+23 <= 23                     // result in the boolean : 1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+23 > 23                      // result in the boolean : 0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+
+//-------------------------------------------------------
+// TESTING : logical operators
+//-------------------------------------------------------
+0 e 0                        // result in the boolean : 0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+0 e 1                        // result in the boolean : 0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+1 e 0                        // result in the boolean : 0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+1 e 1                        // result in the boolean : 1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+
+0 ou 0                       // result in the boolean : 0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+0 ou 1                       // result in the boolean : 1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+1 ou 0                       // result in the boolean : 1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+1 ou 1                       // result in the boolean : 1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+
+0 xou 0                      // result in the boolean : 1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+0 xou 1                      // result in the boolean : 0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+1 xou 0                      // result in the boolean : 0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+1 xou 1                      // result in the boolean : 1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+
+nao 0                        // result in the boolean : 1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+nao 1                        // result in the boolean : 0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+
+//-------------------------------------------------------
+// TESTING : case insensitive reserved words
+//-------------------------------------------------------
+
+var4 : InTeiRO              // store a record "var4" and with the default value of : 0 >>>>>> PASSED
+
+1 XoU Nao 0                 // result in the boolean : 1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+
+//-------------------------------------------------------
+// TESTING : operator precedence
+//-------------------------------------------------------
+
+var5 : inteiro              // store a record "var5" and with the default value of : 0 >>>>>> PASSED
+
+var5 <- (1 + 2) * Nao 0 Ou 0 E 2 >= 2 // result in 3 * 1 || 0 && 1 = 4 || 0 : 1 >>>>>>>>>>>>> PASSED
