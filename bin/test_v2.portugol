@@ -1,3 +1,9 @@
+/*
+ NOTE : THESE TESTS ARE RENDERED INVALID AFTER FUNCTION IMPLEMENTATION
+        THIS IS BECAUSE THE ONLY INSTRUCTIONS THAT CAN BE CALL AT GLOBAL LEVEL
+        ARE VARIABLE DECLARATIONS AND FUNCTION DECLARATIONS (ALSO THE PROGRAM FUNCTION)
+*/
+
 // ---------------------------------------------
 // testing "if" control structure
 // ---------------------------------------------

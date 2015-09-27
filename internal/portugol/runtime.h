@@ -21,6 +21,3 @@ struct Runtime
     Stack* stack;
     Scope* scope;
 };
-
-Variant
-runtime_pop(Runtime* runtime);
