@@ -82,6 +82,9 @@ globals : globals global {
 global : decl {
                 $$ = $1;
             }
+       | assign {
+                $$ = $1;
+            }
        | if {
                 $$ = $1;
             }
@@ -375,6 +378,8 @@ variable : TOK_IDENTIFIER {
                 ast.pos    = $1.pos;
                 ast.result = ast_variable($1.result, ast.pos);
                 $$ = ast;
+
+                printf("variable %s at line %d\n", $1.result, ast.pos.lstart);
 
                 free($1.result);
             }

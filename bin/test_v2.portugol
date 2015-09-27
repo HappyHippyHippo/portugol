@@ -1,31 +1,64 @@
 // ---------------------------------------------
-//  START TESTING CONTROL STRUCTURES
+// testing "if" control structure
 // ---------------------------------------------
+var_chk : inteiro
+var_if_1 : inteiro
 
-var : inteiro
+se var_chk = 1 entao
+    var_scope : inteiro
+    var_scope <- 2 + 2
 
-se var = 1 entao
-    var1 : inteiro
-    var1 <- 2 + 2
-
-    var <- var1 - 2
+    var_if_1 <- var_scope - 2
 senao
-    var1 : inteiro
-    var1 <- 4 + 4
+    var_scope : inteiro
+    var_scope <- 4 + 4
 
-    var <- var1 - 4
+    var_if_1 <- var_scope - 4
 fim de se
 
-enquanto var então
-    var <- var - 1
+// result : the "if" statement fail and the "var_if_1" variable will be asigned the 4 value >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+
+// ---------------------------------------------
+// testing "if" control structure without a false block
+// ---------------------------------------------
+var_if_2 : inteiro
+se var_chk = 1 entao
+    var_scope : inteiro
+    var_scope <- 2 + 2
+
+    var_if_2 <- var_scope - 2
+fim de se
+
+// result : the "if" statement fail and the "var_if_2" variable will be left with the defualt value of 0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PASSED
+
+// ---------------------------------------------
+// testing "while" control structure
+// ---------------------------------------------
+var_while : inteiro
+var_chk <- 5
+enquanto var_chk então
+    var_while <- var_while - 1
+    var_chk <- var_chk - 1
 fim de enquanto
 
-i1 : inteiro
-para it de i1 até 10 então
-    i1 <- i1 + 1
+// result : the "while" statement will run for 5 times decrementing the "var_while" to the resulting value of -5 >>>>>>>>>>>>>>>>>>>>>>>> PASSED
+
+// ---------------------------------------------
+// testing "for" control structure with the default step value of 1
+// ---------------------------------------------
+var_for_1 : inteiro
+para var_it de 0 até 10 então
+    var_for_1 <- var_for_1 + 1
 fim de para
 
-i2 : inteiro
-para it de i2 + 10 até 0 passo -3 então
-    i2 <- i2 + 1
+// result : the "for" statement will run for 10 times(0, 1, 2, ..., 10) incrementing the "var_for_1" to the resulting value of 10 >>>>>>> PASSED
+
+// ---------------------------------------------
+// testing "for" control structure with a step value of -3
+// ---------------------------------------------
+var_for_2 : inteiro
+para var_it de 10 até 0 passo -3 então
+    var_for_2 <- var_for_2 + 1
 fim de para
+
+// result : the "for" statement will run for 4 times(10, 7, 4, 1) incrementing the "var_for_2" to the resulting value of 4 >>>>>>>>>>>>>> PASSED
