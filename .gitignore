@@ -1,4 +1,4 @@
-bin/portugol.exe
+bin/portugol*
 obj/*
 *sublime-project
 *sublime-workspace
