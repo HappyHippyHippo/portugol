@@ -2,28 +2,28 @@
 
 #include <portugol/ast.h>
 
-typedef struct ASTWhile
+typedef struct AST_While
 {
-    ASTType type;
-    ASTSourcePos pos;
+    AST_Type type;
+    AST_SourcePos pos;
 
-    ASTNode* expr;
+    AST_Node* expr;
 
-    ASTNode* scope;
-} ASTWhile;
+    AST_Node* scope;
+} AST_While;
 
-ASTNode*
-ast_while(ASTNode* expr,
-          ASTNode* scope,
-          ASTSourcePos pos);
+AST_Node*
+ast_while(AST_Node* expr,
+          AST_Node* scope,
+          AST_SourcePos pos);
 
 Variant
-ast_while_execute(ASTNode* node,
+ast_while_execute(AST_Node* node,
                   Runtime* runtime);
 
 void
-ast_while_print(ASTNode* node,
+ast_while_print(AST_Node* node,
                 int level);
 
 void
-ast_while_destroy(ASTNode** node);
+ast_while_destroy(AST_Node** node);

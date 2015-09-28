@@ -62,6 +62,18 @@ variant_init_text(char* value)
 }
 
 Variant
+variant_init_function(void* value)
+{
+    Variant var;
+    memset(&var, 0, sizeof(Variant));
+
+    var.type = VFUNCTION;
+    var.value.function = value;
+
+    return var;
+}
+
+Variant
 variant_copy(Variant var)
 {
     Variant copy;
@@ -80,6 +92,9 @@ variant_copy(Variant var)
             break;
         case VTEXT:
             variant_set_text(&copy, var.value.text);
+            break;
+        case VFUNCTION:
+            variant_set_function(&copy, var.value.function);
             break;
         default:
             printf("unknown variant type\n");
@@ -190,6 +205,25 @@ variant_set_text(Variant* var,
 }
 
 Variant*
+variant_set_function(Variant* var,
+                     void* value)
+{
+    if (var == NULL)
+        return var;
+
+    if (var->type == VTEXT)
+    {
+        free(var->value.text);
+        var->value.text = NULL;
+    }
+
+    var->type = VFUNCTION;
+    var->value.function = value;
+
+    return var;
+}
+
+Variant*
 variant_set(Variant* var1,
             Variant var2)
 {
@@ -203,6 +237,8 @@ variant_set(Variant* var1,
             return variant_set_float32(var1, var2.value.float32);
         case VTEXT:
             return variant_set_text(var1, var2.value.text);
+        case VFUNCTION:
+            return variant_set_function(var1, var2.value.function);
         default:
             break;
     }

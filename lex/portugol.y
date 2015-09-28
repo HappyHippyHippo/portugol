@@ -6,7 +6,7 @@
 
 extern int yylex();
 extern int yyget_lineno();
-void yyerror(const char *s) { printf("ERROR: %s at line %d\n", s, yyget_lineno()); }
+void yyerror(const char *s) { printf("ERROR: %s at line %d\n", s, yyget_lineno()); ast_error = 1; }
 
 #define INIT_AST(ls, cs, le, ce)       \
                 ParseAST ast;          \
@@ -23,15 +23,19 @@ void yyerror(const char *s) { printf("ERROR: %s at line %d\n", s, yyget_lineno()
          ParseFloat32 float32;
          ParseText    text;
          ParseToken   token;
-         ASTNode*     global;
+         ParseFParam  fparam;
+         ParseFParams fparams;
+         ParseFArgs   farguments;
+         AST_Node*    global;
 }
 
 %token <bool>    TOK_VAL_BOOLEAN
 %token <int32>   TOK_VAL_NUMBER
 %token <float32> TOK_VAL_FPNUMBER
 %token <text>    TOK_VAL_TEXT TOK_IDENTIFIER
-%token <token>   TOK_COMA TOK_BOOLEAN TOK_INTEGER TOK_FLOAT TOK_TEXT
+%token <token>   TOK_COLON TOK_BOOLEAN TOK_INTEGER TOK_FLOAT TOK_TEXT
 %token <token>   TOK_EOL
+%token <token>   TOK_FUNCTION TOK_RETURN TOK_PROGRAM TOK_COMMA
 
 %token <token>   TOK_END TOK_OF
 %token <token>   TOK_IF TOK_THEN TOK_ELSE
@@ -59,7 +63,12 @@ void yyerror(const char *s) { printf("ERROR: %s at line %d\n", s, yyget_lineno()
 %left TOK_OP_NOT
 %left TOK_OPEN_PAREN TOK_CLOSE_PAREN
 
-%type <ast> globals global locals local decl assign if while for expr variable constant
+%type <token> vartype
+%type <fparam> fparam
+%type <fparams> fparams
+%type <ast> fargument
+%type <farguments> farguments
+%type <ast> globals global function program locals local decl assign if while for return expr fcall variable constant
 
 %start globals
 
@@ -79,19 +88,13 @@ globals : globals global {
             }
         ;
 
-global : decl {
+global : decl TOK_EOL {
                 $$ = $1;
             }
-       | assign {
+       | program TOK_EOL {
                 $$ = $1;
             }
-       | if {
-                $$ = $1;
-            }
-       | while {
-                $$ = $1;
-            }
-       | for {
+       | function TOK_EOL {
                 $$ = $1;
             }
        | TOK_EOL {
@@ -99,6 +102,119 @@ global : decl {
                 ast.pos    = $1.pos;
                 ast.result = NULL;
                 $$ = ast;
+            }
+       ;
+
+program : TOK_PROGRAM TOK_EOL locals TOK_END TOK_OF TOK_PROGRAM {
+                INIT_AST($1.pos.lstart, $1.pos.cstart, $6.pos.lend, $6.pos.cend);
+                ast.result = ast_program(ast_parse_scope_pop(), ast.pos);
+                $$ = ast;
+             }
+         ;
+
+function : TOK_IDENTIFIER TOK_COLON TOK_FUNCTION TOK_OPEN_PAREN fparams TOK_CLOSE_PAREN TOK_RETURN vartype TOK_EOL locals TOK_END TOK_OF TOK_FUNCTION {
+                INIT_AST($1.pos.lstart, $1.pos.cstart, $12.pos.lend, $12.pos.cend);
+
+                AST_Node* scope = ast_parse_scope_pop();
+                switch ($8.result)
+                {
+                    case TOK_BOOLEAN:
+                        ast.result = ast_function($1.result, $5.result, $5.count, VBOOLEAN, scope, ast.pos);
+                        break;
+                    case TOK_INTEGER:
+                        ast.result = ast_function($1.result, $5.result, $5.count, VINT32, scope, ast.pos);
+                        break;
+                    case TOK_FLOAT:
+                    ast.result = ast_function($1.result, $5.result, $5.count, VFLOAT32, scope, ast.pos);
+                        break;
+                    case TOK_TEXT:
+                        ast.result = ast_function($1.result, $5.result, $5.count, VTEXT, scope, ast.pos);
+                        break;
+                    case TOK_FUNCTION:
+                        ast.result = ast_function($1.result, $5.result, $5.count, VFUNCTION, scope, ast.pos);
+                        break;
+                }
+                $$ = ast;
+
+                free($1.result);
+             }
+         | TOK_IDENTIFIER TOK_COLON TOK_FUNCTION TOK_OPEN_PAREN TOK_CLOSE_PAREN TOK_RETURN vartype TOK_EOL locals TOK_END TOK_OF TOK_FUNCTION {
+                INIT_AST($1.pos.lstart, $1.pos.cstart, $11.pos.lend, $11.pos.cend);
+
+                AST_Node* scope = ast_parse_scope_pop();
+                switch ($7.result)
+                {
+                    case TOK_BOOLEAN:
+                        ast.result = ast_function($1.result, NULL, 0, VBOOLEAN, scope, ast.pos);
+                        break;
+                    case TOK_INTEGER:
+                        ast.result = ast_function($1.result, NULL, 0, VINT32, scope, ast.pos);
+                        break;
+                    case TOK_FLOAT:
+                        ast.result = ast_function($1.result, NULL, 0, VFLOAT32, scope, ast.pos);
+                        break;
+                    case TOK_TEXT:
+                        ast.result = ast_function($1.result, NULL, 0, VTEXT, scope, ast.pos);
+                        break;
+                    case TOK_FUNCTION:
+                        ast.result = ast_function($1.result, NULL, 0, VFUNCTION, scope, ast.pos);
+                        break;
+                }
+                $$ = ast;
+
+                free($1.result);
+             }
+         ;
+
+fparams : fparams TOK_COMMA fparam {
+                ParseFParams params;
+                params.pos.lstart = $1.pos.lstart;
+                params.pos.cstart = $1.pos.cstart;
+                params.pos.lend   = $3.pos.lend;
+                params.pos.cend   = $3.pos.cend;
+                params.result     = ast_function_param_push($3.result, $1.result, $1.count);
+                params.count      = $1.count + 1;
+                $$ = params;
+            }
+        | fparam {
+                ParseFParams params;
+                params.pos.lstart = $1.pos.lstart;
+                params.pos.cstart = $1.pos.cstart;
+                params.pos.lend   = $1.pos.lend;
+                params.pos.cend   = $1.pos.cend;
+                params.result     = ast_function_param_push($1.result, NULL, 0);
+                params.count      = 1;
+                $$ = params;
+            }
+        ;
+
+fparam : vartype TOK_IDENTIFIER {
+                ParseFParam param;
+                param.pos.lstart = $1.pos.lstart;
+                param.pos.cstart = $1.pos.cstart;
+                param.pos.lend   = $2.pos.lend;
+                param.pos.cend   = $2.pos.cend;
+                switch ($1.result)
+                {
+                    case TOK_BOOLEAN:
+                        param.result = ast_function_param(VBOOLEAN, $2.result);
+                        break;
+                    case TOK_INTEGER:
+                        param.result = ast_function_param(VINT32, $2.result);
+                        break;
+                    case TOK_FLOAT:
+                        param.result = ast_function_param(VFLOAT32, $2.result);
+                        break;
+                    case TOK_TEXT:
+                        param.result = ast_function_param(VTEXT, $2.result);
+                        break;
+                    case TOK_FUNCTION:
+                        param.result = ast_function_param(VFUNCTION, $2.result);
+                        break;
+                }
+                $$ = param;
+
+                free($2.result);
             }
        ;
 
@@ -116,19 +232,25 @@ locals : locals local {
             }
        ;
 
-local : decl {
+local : decl TOK_EOL {
                 $$ = $1;
             }
-      | assign {
+      | assign TOK_EOL {
                 $$ = $1;
             }
-      | if {
+      | if TOK_EOL {
                 $$ = $1;
             }
-      | while {
+      | while TOK_EOL {
                 $$ = $1;
             }
-      | for {
+      | for TOK_EOL {
+                $$ = $1;
+            }
+      | return TOK_EOL {
+                $$ = $1;
+            }
+      | fcall TOK_EOL {
                 $$ = $1;
             }
       | TOK_EOL {
@@ -139,109 +261,110 @@ local : decl {
             }
       ;
 
-if : TOK_IF expr TOK_THEN TOK_EOL locals TOK_END TOK_OF TOK_IF TOK_EOL {
+if : TOK_IF expr TOK_THEN TOK_EOL locals TOK_END TOK_OF TOK_IF {
                 INIT_AST($1.pos.lstart, $1.pos.cstart, $8.pos.lend, $8.pos.cend);
 
-                ASTNode* chk_true = ast_parse_scope_pop();
+                AST_Node* chk_true = ast_parse_scope_pop();
                 ast.result = ast_if($2.result, chk_true, NULL, ast.pos);
                 $$ = ast;
             }
-   | TOK_IF expr TOK_THEN TOK_EOL locals TOK_ELSE TOK_EOL locals TOK_END TOK_OF TOK_IF TOK_EOL {
+   | TOK_IF expr TOK_THEN TOK_EOL locals TOK_ELSE TOK_EOL locals TOK_END TOK_OF TOK_IF {
                 INIT_AST($1.pos.lstart, $1.pos.cstart, $11.pos.lend, $11.pos.cend);
 
-                ASTNode* chk_false = ast_parse_scope_pop();
-                ASTNode* chk_true = ast_parse_scope_pop();
+                AST_Node* chk_false = ast_parse_scope_pop();
+                AST_Node* chk_true = ast_parse_scope_pop();
                 ast.result = ast_if($2.result, chk_true, chk_false, ast.pos);
                 $$ = ast;
             }
    ;
 
-while : TOK_WHILE expr TOK_THEN TOK_EOL locals TOK_END TOK_OF TOK_WHILE TOK_EOL {
-                INIT_AST($1.pos.lstart, $1.pos.cstart, $7.pos.lend, $7.pos.cend);
+while : TOK_WHILE expr TOK_THEN TOK_EOL locals TOK_END TOK_OF TOK_WHILE {
+                INIT_AST($1.pos.lstart, $1.pos.cstart, $8.pos.lend, $8.pos.cend);
 
-                ASTNode* scope = ast_parse_scope_pop();
+                AST_Node* scope = ast_parse_scope_pop();
                 ast.result = ast_while($2.result, scope, ast.pos);
                 $$ = ast;
             }
       ;
 
-for : TOK_FOR TOK_IDENTIFIER TOK_OF expr TOK_TO expr TOK_THEN TOK_EOL locals TOK_END TOK_OF TOK_FOR TOK_EOL {
+for : TOK_FOR TOK_IDENTIFIER TOK_OF expr TOK_TO expr TOK_THEN TOK_EOL locals TOK_END TOK_OF TOK_FOR {
                 INIT_AST($1.pos.lstart, $1.pos.cstart, $12.pos.lend, $12.pos.cend);
 
-                ASTNode* scope = ast_parse_scope_pop();
+                AST_Node* scope = ast_parse_scope_pop();
                 ast.result = ast_for($2.result, $4.result, $6.result, ast_int32(1, ast.pos), scope, ast.pos);
                 $$ = ast;
+
+                free($2.result);
             }
-    | TOK_FOR TOK_IDENTIFIER TOK_OF expr TOK_TO expr TOK_STEP expr TOK_THEN TOK_EOL locals TOK_END TOK_OF TOK_FOR TOK_EOL {
+    | TOK_FOR TOK_IDENTIFIER TOK_OF expr TOK_TO expr TOK_STEP expr TOK_THEN TOK_EOL locals TOK_END TOK_OF TOK_FOR {
                 INIT_AST($1.pos.lstart, $1.pos.cstart, $14.pos.lend, $14.pos.cend);
 
-                ASTNode* scope = ast_parse_scope_pop();
+                AST_Node* scope = ast_parse_scope_pop();
                 ast.result = ast_for($2.result, $4.result, $6.result, $8.result, scope, ast.pos);
                 $$ = ast;
+
+                free($2.result);
             }
     ;
 
-decl : TOK_IDENTIFIER TOK_COMA TOK_BOOLEAN TOK_EOL {
+decl : TOK_IDENTIFIER TOK_COLON vartype {
                 INIT_AST($1.pos.lstart, $1.pos.cstart, $3.pos.lend, $3.pos.cend);
-                ast.result = ast_decl_boolean($1.result, ast_boolean(0, ast.pos), ast.pos);
+                switch ($3.result)
+                {
+                    case TOK_BOOLEAN:
+                        ast.result = ast_decl_boolean($1.result, ast_boolean(0, ast.pos), ast.pos);
+                        break;
+                    case TOK_INTEGER:
+                        ast.result = ast_decl_int32($1.result, ast_boolean(0, ast.pos), ast.pos);
+                        break;
+                    case TOK_FLOAT:
+                        ast.result = ast_decl_float32($1.result, ast_boolean(0, ast.pos), ast.pos);
+                        break;
+                    case TOK_TEXT:
+                        ast.result = ast_decl_text($1.result, ast_boolean(0, ast.pos), ast.pos);
+                        break;
+                    default:
+                        break;
+                }
                 $$ = ast;
 
                 free($1.result);
             }
-     | TOK_IDENTIFIER TOK_COMA TOK_BOOLEAN TOK_OP_ASSIGN expr TOK_EOL {
+     | TOK_IDENTIFIER TOK_COLON vartype TOK_OP_ASSIGN expr {
                 INIT_AST($1.pos.lstart, $1.pos.cstart, $5.pos.lend, $5.pos.cend);
-                ast.result = ast_decl_boolean($1.result, $5.result, ast.pos);
-                $$ = ast;
-
-                free($1.result);
-            }
-     | TOK_IDENTIFIER TOK_COMA TOK_INTEGER TOK_EOL {
-                INIT_AST($1.pos.lstart, $1.pos.cstart, $3.pos.lend, $3.pos.cend);
-                ast.result = ast_decl_int32($1.result, ast_int32(0, ast.pos), ast.pos);
-                $$ = ast;
-
-                free($1.result);
-            }
-     | TOK_IDENTIFIER TOK_COMA TOK_INTEGER TOK_OP_ASSIGN expr TOK_EOL {
-                INIT_AST($1.pos.lstart, $1.pos.cstart, $5.pos.lend, $5.pos.cend);
-                ast.result = ast_decl_int32($1.result, $5.result, ast.pos);
-                $$ = ast;
-
-                free($1.result);
-            }
-     | TOK_IDENTIFIER TOK_COMA TOK_FLOAT TOK_EOL {
-                INIT_AST($1.pos.lstart, $1.pos.cstart, $3.pos.lend, $3.pos.cend);
-                ast.result = ast_decl_float32($1.result, ast_float32(0, ast.pos), ast.pos);
-                $$ = ast;
-
-                free($1.result);
-            }
-     | TOK_IDENTIFIER TOK_COMA TOK_FLOAT TOK_OP_ASSIGN expr TOK_EOL {
-                INIT_AST($1.pos.lstart, $1.pos.cstart, $5.pos.lend, $5.pos.cend);
-                ast.result = ast_decl_float32($1.result, $5.result, ast.pos);
-                $$ = ast;
-
-                free($1.result);
-            }
-     | TOK_IDENTIFIER TOK_COMA TOK_TEXT TOK_EOL {
-                INIT_AST($1.pos.lstart, $1.pos.cstart, $3.pos.lend, $3.pos.cend);
-                ast.result = ast_decl_text($1.result, ast_text("", ast.pos), ast.pos);
-                $$ = ast;
-
-                free($1.result);
-            }
-     | TOK_IDENTIFIER TOK_COMA TOK_TEXT TOK_OP_ASSIGN expr TOK_EOL {
-                INIT_AST($1.pos.lstart, $1.pos.cstart, $5.pos.lend, $5.pos.cend);
-                ast.result = ast_decl_text($1.result, $5.result, ast.pos);
+                switch ($3.result)
+                {
+                    case TOK_BOOLEAN:
+                        ast.result = ast_decl_boolean($1.result, $5.result, ast.pos);
+                        break;
+                    case TOK_INTEGER:
+                        ast.result = ast_decl_int32($1.result, $5.result, ast.pos);
+                        break;
+                    case TOK_FLOAT:
+                        ast.result = ast_decl_float32($1.result, $5.result, ast.pos);
+                        break;
+                    case TOK_TEXT:
+                        ast.result = ast_decl_text($1.result, $5.result, ast.pos);
+                        break;
+                    default:
+                        break;
+                }
                 $$ = ast;
 
                 free($1.result);
             }
      ;
 
-assign : variable TOK_OP_ASSIGN expr TOK_EOL {
+assign : variable TOK_OP_ASSIGN expr {
                 INIT_AST($1.pos.lstart, $1.pos.cstart, $3.pos.lend, $3.pos.cend);
                 ast.result = ast_op_binary($1.result, $3.result, AST_OP_ASSIGN, ast.pos);
+                $$ = ast;
+            }
+       ;
+
+return : TOK_RETURN expr {
+                INIT_AST($1.pos.lstart, $1.pos.cstart, $2.pos.lend, $2.pos.cend);
+                ast.result = ast_return($2.result, ast.pos);
                 $$ = ast;
             }
        ;
@@ -340,10 +463,59 @@ expr : TOK_OP_ADD expr {
      | variable {
                 $$ = $1;
             }
+     | fcall {
+                $$ = $1;
+            }
      | constant {
                 $$ = $1;
             }
      ;
+
+fcall : TOK_IDENTIFIER TOK_OPEN_PAREN farguments TOK_CLOSE_PAREN {
+                INIT_AST($1.pos.lstart, $1.pos.cstart, $4.pos.lend, $4.pos.cend);
+                ast.result = ast_function_call($1.result, $3.result, $3.count, ast.pos);
+                $$ = ast;
+
+                free($1.result);
+            }
+      | TOK_IDENTIFIER TOK_OPEN_PAREN TOK_CLOSE_PAREN {
+                INIT_AST($1.pos.lstart, $1.pos.cstart, $3.pos.lend, $3.pos.cend);
+                ast.result = ast_function_call($1.result, NULL, 0, ast.pos);
+                $$ = ast;
+
+                free($1.result);
+            }
+      ;
+
+farguments : farguments TOK_COMMA fargument {
+                ParseFArgs args;
+                args.pos.lstart = $1.pos.lstart;
+                args.pos.cstart = $1.pos.cstart;
+                args.pos.lend   = $3.pos.lend;
+                args.pos.cend   = $3.pos.cend;
+                args.result     = ast_function_call_arg_push($3.result, $1.result, $1.count);
+                args.count      = $1.count + 1;
+                $$ = args;
+            }
+           | fargument {
+                ParseFArgs args;
+                args.pos.lstart = $1.pos.lstart;
+                args.pos.cstart = $1.pos.cstart;
+                args.pos.lend   = $1.pos.lend;
+                args.pos.cend   = $1.pos.cend;
+                args.result     = ast_function_call_arg_push($1.result, NULL, 0);
+                args.count      = 1;
+                $$ = args;
+            }
+           ;
+
+fargument : expr {
+                ParseAST ast;
+                ast.pos    = $1.pos;
+                ast.result = $1.result;
+                $$ = ast;
+            }
+          ;
 
 constant : TOK_VAL_BOOLEAN {
                 ParseAST ast;
@@ -379,10 +551,22 @@ variable : TOK_IDENTIFIER {
                 ast.result = ast_variable($1.result, ast.pos);
                 $$ = ast;
 
-                printf("variable %s at line %d\n", $1.result, ast.pos.lstart);
-
                 free($1.result);
             }
          ;
+
+vartype : TOK_BOOLEAN {
+                $$ = $1;
+            }
+        | TOK_INTEGER {
+                $$ = $1;
+            }
+        | TOK_FLOAT {
+                $$ = $1;
+            }
+        | TOK_TEXT {
+                $$ = $1;
+            }
+        ;
 
 %%

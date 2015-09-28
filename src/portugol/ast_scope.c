@@ -3,38 +3,38 @@
 
 #include <internal/portugol/ast.h>
 
-ASTNode*
-ast_scope(ASTSourcePos pos)
+AST_Node*
+ast_scope(AST_SourcePos pos)
 {
-    ASTScope* node = NULL;
+    AST_Scope* node = NULL;
 
-    if ((node = malloc(sizeof(ASTScope))) != NULL)
+    if ((node = malloc(sizeof(AST_Scope))) != NULL)
     {
         node->type        = AST_SCOPE;
         node->pos         = pos;
         node->instr.size  = 10;
         node->instr.count = 0;
-        if ((node->instr.list = malloc(sizeof(ASTScope) * node->instr.size)) == NULL)
+        if ((node->instr.list = malloc(sizeof(AST_Scope) * node->instr.size)) == NULL)
         {
             free(node);
             node = NULL;
         }
     }
 
-    return (ASTNode*) node;
+    return (AST_Node*) node;
 }
 
-ASTNode*
-ast_scope_push(ASTNode* scope,
-               ASTNode* inst)
+AST_Node*
+ast_scope_push(AST_Node* scope,
+               AST_Node* inst)
 {
     if (scope == NULL || inst == NULL)
         return scope;
 
-    ASTScope* aux = (ASTScope*)scope;
+    AST_Scope* aux = (AST_Scope*)scope;
     if (aux->instr.size == aux->instr.count)
     {
-        ASTNode** tmp = realloc(aux->instr.list, sizeof(ASTNode*) * (aux->instr.size + 10));
+        AST_Node** tmp = realloc(aux->instr.list, sizeof(AST_Node*) * (aux->instr.size + 10));
         if (!tmp)
             return NULL;
 
@@ -52,13 +52,13 @@ ast_scope_push(ASTNode* scope,
 }
 
 Variant
-ast_scope_execute(ASTNode* node,
+ast_scope_execute(AST_Node* node,
                   Runtime* runtime)
 {
     if (node == NULL || runtime == NULL)
         return variant_init_int32(0);
 
-    ASTScope* aux = (ASTScope*) node;
+    AST_Scope* aux = (AST_Scope*) node;
     for (int idx = 0; idx < aux->instr.count; ++idx)
     {
         Variant result = ast_execute(aux->instr.list[idx], runtime);
@@ -69,24 +69,24 @@ ast_scope_execute(ASTNode* node,
 }
 
 void
-ast_scope_print(ASTNode* node,
+ast_scope_print(AST_Node* node,
                 int level)
 {
     if (node == NULL)
         return;
 
     printf("+scope\n");
-    for (size_t idx = 0; idx < ((ASTScope*) node)->instr.count; ++idx)
-        ast_print(((ASTScope*)node)->instr.list[idx], level + 1);
+    for (size_t idx = 0; idx < ((AST_Scope*) node)->instr.count; ++idx)
+        ast_print(((AST_Scope*)node)->instr.list[idx], level + 1);
 }
 
 void
-ast_scope_destroy(ASTNode** node)
+ast_scope_destroy(AST_Node** node)
 {
     if (node == NULL || *node == NULL)
         return;
 
-    ASTScope* aux = *(ASTScope**) node;
+    AST_Scope* aux = *(AST_Scope**) node;
     for (size_t idx = 0; idx < aux->instr.count; ++idx)
         ast_destroy(&aux->instr.list[idx]);
 

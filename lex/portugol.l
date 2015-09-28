@@ -133,6 +133,21 @@ ast_parse_remove_ml_comment(void);
         STORE_POS(yylval.token.pos, yylloc);
         return yylval.token.result = TOK_CASE;
     }
+(?i:"funcao")|(?i:"funcão")|(?i:"funcÃo")|(?i:"funçao")|(?i:"função")|(?i:"funçÃo")|(?i:"funÇao")|(?i:"funÇão")|(?i:"funÇÃo") {
+        /* function token */
+        STORE_POS(yylval.token.pos, yylloc);
+        return yylval.token.result = TOK_FUNCTION;
+    }
+(?i:"retorna") {
+        /* case token */
+        STORE_POS(yylval.token.pos, yylloc);
+        return yylval.token.result = TOK_RETURN;
+    }
+(?i:"programa") {
+        /* case token */
+        STORE_POS(yylval.token.pos, yylloc);
+        return yylval.token.result = TOK_PROGRAM;
+    }
 
 "+" {
         /* addition op token */
@@ -206,9 +221,14 @@ ast_parse_remove_ml_comment(void);
         return yylval.token.result = TOK_CLOSE_PAREN;
     }
 ":" {
-        /* coma token */
+        /* colon token */
         STORE_POS(yylval.token.pos, yylloc);
-        return yylval.token.result = TOK_COMA;
+        return yylval.token.result = TOK_COLON;
+    }
+"," {
+        /* comma token */
+        STORE_POS(yylval.token.pos, yylloc);
+        return yylval.token.result = TOK_COMMA;
     }
 
 "/*" {

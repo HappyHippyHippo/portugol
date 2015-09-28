@@ -2,3 +2,16 @@
 // FUNCTION DECLARATION TEST
 //------------------------------------------
 
+multiplica : função(racional multiplicando, racional multiplicador) retorna inteiro
+    resultado : racional
+
+    para iterador de 0 até multiplicador então
+        resultado <- resultado + resultado
+    fim de para
+
+    retorna resultado
+fim de função
+
+programa
+    retorna multiplica(2.2, 3)
+fim de programa

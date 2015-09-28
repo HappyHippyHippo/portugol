@@ -50,42 +50,46 @@ extern int yydebug;
     TOK_VAL_FPNUMBER = 260,
     TOK_VAL_TEXT = 261,
     TOK_IDENTIFIER = 262,
-    TOK_COMA = 263,
+    TOK_COLON = 263,
     TOK_BOOLEAN = 264,
     TOK_INTEGER = 265,
     TOK_FLOAT = 266,
     TOK_TEXT = 267,
     TOK_EOL = 268,
-    TOK_END = 269,
-    TOK_OF = 270,
-    TOK_IF = 271,
-    TOK_THEN = 272,
-    TOK_ELSE = 273,
-    TOK_FOR = 274,
-    TOK_TO = 275,
-    TOK_STEP = 276,
-    TOK_SWITCH = 277,
-    TOK_CASE = 278,
-    TOK_DEFAULT = 279,
-    TOK_WHILE = 280,
-    TOK_OPEN_PAREN = 281,
-    TOK_CLOSE_PAREN = 282,
-    TOK_OP_NOT = 283,
-    TOK_OP_MULTIPLY = 284,
-    TOK_OP_DIVIDE = 285,
-    TOK_OP_REMAINDER = 286,
-    TOK_OP_ADD = 287,
-    TOK_OP_SUBTRACT = 288,
-    TOK_OP_EQUAL = 289,
-    TOK_OP_INEQUAL = 290,
-    TOK_OP_GREATER = 291,
-    TOK_OP_GREATER_OR_EQUAL = 292,
-    TOK_OP_LESSER = 293,
-    TOK_OP_LESSER_OR_EQUAL = 294,
-    TOK_OP_AND = 295,
-    TOK_OP_OR = 296,
-    TOK_OP_XOR = 297,
-    TOK_OP_ASSIGN = 298
+    TOK_FUNCTION = 269,
+    TOK_RETURN = 270,
+    TOK_PROGRAM = 271,
+    TOK_COMMA = 272,
+    TOK_END = 273,
+    TOK_OF = 274,
+    TOK_IF = 275,
+    TOK_THEN = 276,
+    TOK_ELSE = 277,
+    TOK_FOR = 278,
+    TOK_TO = 279,
+    TOK_STEP = 280,
+    TOK_SWITCH = 281,
+    TOK_CASE = 282,
+    TOK_DEFAULT = 283,
+    TOK_WHILE = 284,
+    TOK_OPEN_PAREN = 285,
+    TOK_CLOSE_PAREN = 286,
+    TOK_OP_NOT = 287,
+    TOK_OP_MULTIPLY = 288,
+    TOK_OP_DIVIDE = 289,
+    TOK_OP_REMAINDER = 290,
+    TOK_OP_ADD = 291,
+    TOK_OP_SUBTRACT = 292,
+    TOK_OP_EQUAL = 293,
+    TOK_OP_INEQUAL = 294,
+    TOK_OP_GREATER = 295,
+    TOK_OP_GREATER_OR_EQUAL = 296,
+    TOK_OP_LESSER = 297,
+    TOK_OP_LESSER_OR_EQUAL = 298,
+    TOK_OP_AND = 299,
+    TOK_OP_OR = 300,
+    TOK_OP_XOR = 301,
+    TOK_OP_ASSIGN = 302
   };
 #endif
 
@@ -101,9 +105,12 @@ union YYSTYPE
          ParseFloat32 float32;
          ParseText    text;
          ParseToken   token;
-         ASTNode*     global;
+         ParseFParam  fparam;
+         ParseFParams fparams;
+         ParseFArgs   farguments;
+         AST_Node*    global;
 
-#line 107 "lex/parser.h" /* yacc.c:1909  */
+#line 114 "lex/parser.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

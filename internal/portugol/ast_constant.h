@@ -2,37 +2,37 @@
 
 #include <portugol/ast.h>
 
-typedef struct ASTConstant
+typedef struct AST_Constant
 {
-    ASTType type;
-    ASTSourcePos pos;
+    AST_Type type;
+    AST_SourcePos pos;
 
     Variant value;
-} ASTConstant;
+} AST_Constant;
 
-ASTNode*
+AST_Node*
 ast_boolean(int value,
-            ASTSourcePos pos);
+            AST_SourcePos pos);
 
-ASTNode*
+AST_Node*
 ast_int32(int32_t value,
-          ASTSourcePos pos);
+          AST_SourcePos pos);
 
-ASTNode*
+AST_Node*
 ast_float32(float value,
-            ASTSourcePos pos);
+            AST_SourcePos pos);
 
-ASTNode*
+AST_Node*
 ast_text(char* value,
-         ASTSourcePos pos);
+         AST_SourcePos pos);
 
 Variant
-ast_constant_execute(ASTNode* node,
+ast_constant_execute(AST_Node* node,
                      Runtime* runtime);
 
 void
-ast_constant_print(ASTNode* node,
+ast_constant_print(AST_Node* node,
                    int level);
 
 void
-ast_constant_destroy(ASTNode** node);
+ast_constant_destroy(AST_Node** node);

@@ -3,13 +3,13 @@
 
 #include <internal/portugol/ast_while.h>
 
-ASTNode*
-ast_while(ASTNode* expr,
-          ASTNode* scope,
-          ASTSourcePos pos)
+AST_Node*
+ast_while(AST_Node* expr,
+          AST_Node* scope,
+          AST_SourcePos pos)
 {
-    ASTWhile* node = NULL;
-    if ((node = malloc(sizeof(ASTWhile))) != NULL)
+    AST_While* node = NULL;
+    if ((node = malloc(sizeof(AST_While))) != NULL)
     {
         node->type  = AST_WHILE;
         node->pos   = pos;
@@ -18,17 +18,17 @@ ast_while(ASTNode* expr,
         node->scope = scope;
     }
 
-    return (ASTNode*) node;
+    return (AST_Node*) node;
 }
 
 Variant
-ast_while_execute(ASTNode* node,
+ast_while_execute(AST_Node* node,
                   Runtime* runtime)
 {
     if (node == NULL || runtime == NULL)
         return variant_init_int32(0);
 
-    ASTWhile* aux = (ASTWhile*) node;
+    AST_While* aux = (AST_While*) node;
 
     Variant expr = ast_execute(aux->expr, runtime);
     variant_cast(&expr, VBOOLEAN);
@@ -46,24 +46,24 @@ ast_while_execute(ASTNode* node,
 }
 
 void
-ast_while_print(ASTNode* node,
+ast_while_print(AST_Node* node,
                 int level)
 {
     if (node == NULL)
         return;
 
     printf("+while\n");
-    ast_print(((ASTWhile*) node)->expr, level + 1);
-    ast_print(((ASTWhile*) node)->scope, level + 1);
+    ast_print(((AST_While*) node)->expr, level + 1);
+    ast_print(((AST_While*) node)->scope, level + 1);
 }
 
 void
-ast_while_destroy(ASTNode** node)
+ast_while_destroy(AST_Node** node)
 {
     if (node == NULL || *node == NULL)
         return;
 
-    ASTWhile* aux = *(ASTWhile**) node;
+    AST_While* aux = *(AST_While**) node;
     ast_destroy(&aux->expr);
     ast_destroy(&aux->scope);
 

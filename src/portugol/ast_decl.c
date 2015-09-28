@@ -4,16 +4,16 @@
 
 #include <internal/portugol/ast.h>
 
-ASTNode*
+AST_Node*
 ast_decl_boolean(char* name,
-                 ASTNode* value,
-                 ASTSourcePos pos)
+                 AST_Node* value,
+                 AST_SourcePos pos)
 {
     if (name == NULL)
         return NULL;
 
-    ASTDecl* node;
-    if ((node = malloc(sizeof(ASTDecl))) != NULL)
+    AST_Decl* node;
+    if ((node = malloc(sizeof(AST_Decl))) != NULL)
     {
         if ((node->name = malloc(strlen(name) + 1)) == NULL)
         {
@@ -27,19 +27,19 @@ ast_decl_boolean(char* name,
         strcpy(node->name, name);
     }
 
-    return (ASTNode*) node;
+    return (AST_Node*) node;
 }
 
-ASTNode*
+AST_Node*
 ast_decl_int32(char* name,
-               ASTNode* value,
-               ASTSourcePos pos)
+               AST_Node* value,
+               AST_SourcePos pos)
 {
     if (name == NULL)
         return NULL;
 
-    ASTDecl* node;
-    if ((node = malloc(sizeof(ASTDecl))) != NULL)
+    AST_Decl* node;
+    if ((node = malloc(sizeof(AST_Decl))) != NULL)
     {
         if ((node->name = malloc(strlen(name) + 1)) == NULL)
         {
@@ -53,19 +53,19 @@ ast_decl_int32(char* name,
         strcpy(node->name, name);
     }
 
-    return (ASTNode*) node;
+    return (AST_Node*) node;
 }
 
-ASTNode*
+AST_Node*
 ast_decl_float32(char* name,
-                 ASTNode* value,
-                 ASTSourcePos pos)
+                 AST_Node* value,
+                 AST_SourcePos pos)
 {
     if (name == NULL)
         return NULL;
 
-    ASTDecl* node;
-    if ((node = malloc(sizeof(ASTDecl))) != NULL)
+    AST_Decl* node;
+    if ((node = malloc(sizeof(AST_Decl))) != NULL)
     {
         if ((node->name = malloc(strlen(name) + 1)) == NULL)
         {
@@ -79,19 +79,19 @@ ast_decl_float32(char* name,
         strcpy(node->name, name);
     }
 
-    return (ASTNode*) node;
+    return (AST_Node*) node;
 }
 
-ASTNode*
+AST_Node*
 ast_decl_text(char* name,
-              ASTNode* value,
-              ASTSourcePos pos)
+              AST_Node* value,
+              AST_SourcePos pos)
 {
     if (name == NULL || value == NULL)
         return NULL;
 
-    ASTDecl* node;
-    if ((node = malloc(sizeof(ASTDecl))) != NULL)
+    AST_Decl* node;
+    if ((node = malloc(sizeof(AST_Decl))) != NULL)
     {
         if ((node->name = malloc(strlen(name) + 1)) == NULL)
         {
@@ -105,17 +105,17 @@ ast_decl_text(char* name,
         strcpy(node->name, name);
     }
 
-    return (ASTNode*) node;
+    return (AST_Node*) node;
 }
 
 Variant
-ast_decl_execute(ASTNode* node,
+ast_decl_execute(AST_Node* node,
                  Runtime* runtime)
 {
     if (node == NULL || runtime == NULL)
         return variant_init_int32(0);
 
-    ASTDecl* aux = (ASTDecl*) node;
+    AST_Decl* aux = (AST_Decl*) node;
 
     Variant value   = ast_execute(aux->value, runtime);
     Variant* stored = runtime_push(runtime, aux->name, value);
@@ -125,7 +125,7 @@ ast_decl_execute(ASTNode* node,
 }
 
 void
-ast_decl_print(ASTNode* node,
+ast_decl_print(AST_Node* node,
                int level)
 {
     if (node == NULL)
@@ -134,20 +134,20 @@ ast_decl_print(ASTNode* node,
     switch (node->type)
     {
         case AST_DECL_BOOLEAN:
-            printf("+decl(%s : boolean)\n", ((ASTDecl*) node)->name);
-            ast_print(((ASTDecl*) node)->value, level + 1);
+            printf("+decl(%s : boolean)\n", ((AST_Decl*) node)->name);
+            ast_print(((AST_Decl*) node)->value, level + 1);
             break;
         case AST_DECL_INT32:
-            printf("+decl(%s : int32)\n", ((ASTDecl*) node)->name);
-            ast_print(((ASTDecl*) node)->value, level + 1);
+            printf("+decl(%s : int32)\n", ((AST_Decl*) node)->name);
+            ast_print(((AST_Decl*) node)->value, level + 1);
             break;
         case AST_DECL_FLOAT32:
-            printf("+decl(%s : float32)\n", ((ASTDecl*) node)->name);
-            ast_print(((ASTDecl*) node)->value, level + 1);
+            printf("+decl(%s : float32)\n", ((AST_Decl*) node)->name);
+            ast_print(((AST_Decl*) node)->value, level + 1);
             break;
         case AST_DECL_TEXT:
-            printf("+decl(%s : text)\n", ((ASTDecl*) node)->name);
-            ast_print(((ASTDecl*) node)->value, level + 1);
+            printf("+decl(%s : text)\n", ((AST_Decl*) node)->name);
+            ast_print(((AST_Decl*) node)->value, level + 1);
             break;
         default:
             break;
@@ -155,12 +155,12 @@ ast_decl_print(ASTNode* node,
 }
 
 void
-ast_decl_destroy(ASTNode** node)
+ast_decl_destroy(AST_Node** node)
 {
     if (node == NULL || *node == NULL)
         return;
 
-    ASTDecl* aux = *(ASTDecl**) node;
+    AST_Decl* aux = *(AST_Decl**) node;
     free(aux->name);
     ast_destroy(&aux->value);
 

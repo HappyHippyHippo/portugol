@@ -2,34 +2,34 @@
 
 #include <portugol/ast.h>
 
-typedef struct ASTFor
+typedef struct AST_For
 {
-    ASTType type;
-    ASTSourcePos pos;
+    AST_Type type;
+    AST_SourcePos pos;
 
     char* variable;
-    ASTNode* start;
-    ASTNode* end;
-    ASTNode* step;
+    AST_Node* start;
+    AST_Node* end;
+    AST_Node* step;
 
-    ASTNode* scope;
-} ASTFor;
+    AST_Node* scope;
+} AST_For;
 
-ASTNode*
+AST_Node*
 ast_for(char* variable,
-        ASTNode* start,
-        ASTNode* end,
-        ASTNode* step,
-        ASTNode* scope,
-        ASTSourcePos pos);
+        AST_Node* start,
+        AST_Node* end,
+        AST_Node* step,
+        AST_Node* scope,
+        AST_SourcePos pos);
 
 Variant
-ast_for_execute(ASTNode* node,
+ast_for_execute(AST_Node* node,
                 Runtime* runtime);
 
 void
-ast_for_print(ASTNode* node,
+ast_for_print(AST_Node* node,
               int level);
 
 void
-ast_for_destroy(ASTNode** node);
+ast_for_destroy(AST_Node** node);

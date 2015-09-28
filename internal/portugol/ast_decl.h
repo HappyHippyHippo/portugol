@@ -2,42 +2,42 @@
 
 #include <portugol/ast.h>
 
-typedef struct ASTDecl
+typedef struct AST_Decl
 {
-    ASTType type;
-    ASTSourcePos pos;
+    AST_Type type;
+    AST_SourcePos pos;
 
     char* name;
-    ASTNode* value;
-} ASTDecl;
+    AST_Node* value;
+} AST_Decl;
 
-ASTNode*
+AST_Node*
 ast_decl_boolean(char* name,
-                 ASTNode* value,
-                 ASTSourcePos pos);
+                 AST_Node* value,
+                 AST_SourcePos pos);
 
-ASTNode*
+AST_Node*
 ast_decl_int32(char* name,
-               ASTNode* value,
-               ASTSourcePos pos);
+               AST_Node* value,
+               AST_SourcePos pos);
 
-ASTNode*
+AST_Node*
 ast_decl_float32(char* name,
-                 ASTNode* value,
-                 ASTSourcePos pos);
+                 AST_Node* value,
+                 AST_SourcePos pos);
 
-ASTNode*
+AST_Node*
 ast_decl_text(char* name,
-              ASTNode* value,
-              ASTSourcePos pos);
+              AST_Node* value,
+              AST_SourcePos pos);
 
 Variant
-ast_decl_execute(ASTNode* node,
+ast_decl_execute(AST_Node* node,
                  Runtime* runtime);
 
 void
-ast_decl_print(ASTNode* node,
+ast_decl_print(AST_Node* node,
                int level);
 
 void
-ast_decl_destroy(ASTNode** node);
+ast_decl_destroy(AST_Node** node);

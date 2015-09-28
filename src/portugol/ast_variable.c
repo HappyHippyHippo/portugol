@@ -4,15 +4,15 @@
 
 #include <internal/portugol/ast.h>
 
-ASTNode*
+AST_Node*
 ast_variable(char* name,
-             ASTSourcePos pos)
+             AST_SourcePos pos)
 {
     if (name == NULL)
         return NULL;
 
-    ASTVariable* node;
-    if ((node = malloc(sizeof(ASTVariable))) != NULL)
+    AST_Variable* node;
+    if ((node = malloc(sizeof(AST_Variable))) != NULL)
     {
         if ((node->name = malloc(strlen(name) + 1)) == NULL)
         {
@@ -25,37 +25,37 @@ ast_variable(char* name,
         strcpy(node->name, name);
     }
 
-    return (ASTNode*) node;
+    return (AST_Node*) node;
 }
 
 Variant
-ast_variable_execute(ASTNode* node,
+ast_variable_execute(AST_Node* node,
                      Runtime* runtime)
 {
     if (node == NULL || runtime == NULL)
         return variant_init_int32(0);
 
-    ASTVariable* aux = (ASTVariable*) node;
+    AST_Variable* aux = (AST_Variable*) node;
     return variant_copy(*runtime_get(runtime, aux->name));
 }
 
 void
-ast_variable_print(ASTNode* node,
+ast_variable_print(AST_Node* node,
                    int level)
 {
     if (node == NULL)
         return;
 
-    printf("var(%s)\n", ((ASTVariable*) node)->name);
+    printf("var(%s)\n", ((AST_Variable*) node)->name);
 }
 
 void
-ast_variable_destroy(ASTNode** node)
+ast_variable_destroy(AST_Node** node)
 {
     if (node == NULL || *node == NULL)
         return;
 
-    ASTVariable* aux = *(ASTVariable**) node;
+    AST_Variable* aux = *(AST_Variable**) node;
     free(aux->name);
     free(aux);
     *node = NULL;

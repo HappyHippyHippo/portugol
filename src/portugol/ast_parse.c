@@ -4,10 +4,11 @@
 #include <internal/portugol/ast.h>
 #include <internal/portugol/ast_parse.h>
 
-ASTNode* ast = NULL;
+AST_Node* ast = NULL;
 ParseScopeStack* ast_scope_stack = NULL;
+int ast_error = 0;
 
-ASTNode*
+AST_Node*
 ast_parse_scope_get(void)
 {
     if (ast == NULL)
@@ -28,8 +29,8 @@ ast_parse_scope_get(void)
     return ast_scope_stack->scope;
 }
 
-ASTNode*
-ast_parse_scope_push(ASTNode* scope)
+AST_Node*
+ast_parse_scope_push(AST_Node* scope)
 {
     if (ast_scope_stack == NULL)
         ast_parse_scope_get();
@@ -45,10 +46,10 @@ ast_parse_scope_push(ASTNode* scope)
     return ast_scope_stack->scope;
 }
 
-ASTNode*
+AST_Node*
 ast_parse_scope_pop(void)
 {
-    ASTNode* scope = ast_scope_stack->scope;
+    AST_Node* scope = ast_scope_stack->scope;
 
     if (ast_scope_stack->scope != ast)
     {

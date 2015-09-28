@@ -5,8 +5,6 @@
 #include <portugol/variant.h>
 #include <portugol/runtime.h>
 
-extern ASTNode* ast;
-
 extern int yyparse();
 extern int yyset_in(FILE*);
 
@@ -22,6 +20,9 @@ int main(int argc, char **argv)
     yyset_in(fp);
     yyparse();
     fclose(fp);
+
+    if (ast_error)
+        return -1;
 
     ast_print(ast, 0);
 

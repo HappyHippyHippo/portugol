@@ -4,16 +4,16 @@
 
 #include <internal/portugol/ast_for.h>
 
-ASTNode*
+AST_Node*
 ast_for(char* variable,
-        ASTNode* start,
-        ASTNode* end,
-        ASTNode* step,
-        ASTNode* scope,
-        ASTSourcePos pos)
+        AST_Node* start,
+        AST_Node* end,
+        AST_Node* step,
+        AST_Node* scope,
+        AST_SourcePos pos)
 {
-    ASTFor* node = NULL;
-    if ((node = malloc(sizeof(ASTFor))) != NULL)
+    AST_For* node = NULL;
+    if ((node = malloc(sizeof(AST_For))) != NULL)
     {
         if ((node->variable = malloc(strlen(variable) + 1)) == NULL)
         {
@@ -31,17 +31,17 @@ ast_for(char* variable,
         strcpy(node->variable, variable);
     }
 
-    return (ASTNode*) node;
+    return (AST_Node*) node;
 }
 
 Variant
-ast_for_execute(ASTNode* node,
+ast_for_execute(AST_Node* node,
                 Runtime* runtime)
 {
     if (node == NULL || runtime == NULL)
         return variant_init_int32(0);
 
-    ASTFor* aux = (ASTFor*) node;
+    AST_For* aux = (AST_For*) node;
     Variant start = ast_execute(aux->start, runtime);
     Variant end   = ast_execute(aux->end, runtime);
     Variant step  = ast_execute(aux->step, runtime);
@@ -90,26 +90,26 @@ ast_for_execute(ASTNode* node,
 }
 
 void
-ast_for_print(ASTNode* node,
+ast_for_print(AST_Node* node,
                 int level)
 {
     if (node == NULL)
         return;
 
-    printf("+for(%s)\n", ((ASTFor*) node)->variable);
-    ast_print(((ASTFor*) node)->start, level + 1);
-    ast_print(((ASTFor*) node)->end,   level + 1);
-    ast_print(((ASTFor*) node)->step,  level + 1);
-    ast_print(((ASTFor*) node)->scope, level + 1);
+    printf("+for(%s)\n", ((AST_For*) node)->variable);
+    ast_print(((AST_For*) node)->start, level + 1);
+    ast_print(((AST_For*) node)->end,   level + 1);
+    ast_print(((AST_For*) node)->step,  level + 1);
+    ast_print(((AST_For*) node)->scope, level + 1);
 }
 
 void
-ast_for_destroy(ASTNode** node)
+ast_for_destroy(AST_Node** node)
 {
     if (node == NULL || *node == NULL)
         return;
 
-    ASTFor* aux = *(ASTFor**) node;
+    AST_For* aux = *(AST_For**) node;
     ast_destroy(&aux->start);
     ast_destroy(&aux->end);
     ast_destroy(&aux->step);

@@ -1,0 +1,18 @@
++VERSIONS
+
+in development
+---------------------------
+- Function AST execution
+- Return AST execution
+- Function call AST execution
+
+v0.2.4
+---------------------------
+- Function AST node
+- Function lex parsing
+
+- Return AST node
+- Return lex parsing
+
+- Function call AST node
+- Function call lex parsing

@@ -2,16 +2,16 @@
 
 #include <portugol/ast.h>
 
-ASTNode*
+AST_Node*
 ast_file(void);
 
 Variant
-ast_file_execute(ASTNode* node,
+ast_file_execute(AST_Node* node,
                  Runtime* runtime);
 
 void
-ast_file_print(ASTNode* node,
+ast_file_print(AST_Node* node,
                int level);
 
 void
-ast_file_destroy(ASTNode** node);
+ast_file_destroy(AST_Node** node);

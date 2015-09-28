@@ -2,33 +2,33 @@
 
 #include <portugol/ast.h>
 
-typedef struct ASTScope
+typedef struct AST_Scope
 {
-    ASTType type;
-    ASTSourcePos pos;
+    AST_Type type;
+    AST_SourcePos pos;
 
     struct
     {
-        ASTNode** list;
+        AST_Node** list;
         size_t size;
         size_t count;
     } instr;
-} ASTScope;
+} AST_Scope;
 
-ASTNode*
-ast_scope(ASTSourcePos pos);
+AST_Node*
+ast_scope(AST_SourcePos pos);
 
-ASTNode*
-ast_scope_push(ASTNode* scope,
-               ASTNode* inst);
+AST_Node*
+ast_scope_push(AST_Node* scope,
+               AST_Node* inst);
 
 Variant
-ast_scope_execute(ASTNode* node,
+ast_scope_execute(AST_Node* node,
                   Runtime* runtime);
 
 void
-ast_scope_print(ASTNode* node,
+ast_scope_print(AST_Node* node,
                 int level);
 
 void
-ast_scope_destroy(ASTNode** node);
+ast_scope_destroy(AST_Node** node);

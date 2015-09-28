@@ -36,32 +36,45 @@ typedef enum
     AST_FILE,
     AST_IF,
     AST_WHILE,
-    AST_FOR
-} ASTType;
+    AST_FOR,
+    AST_FUNCTION,
+    AST_FUNCTION_CALL,
+    AST_RETURN
+} AST_Type;
 
-typedef struct ASTSourcePos
+typedef struct AST_SourcePos
 {
     int lstart;
     int cstart;
     int lend;
     int cend;
-} ASTSourcePos;
+} AST_SourcePos;
 
 typedef struct
 {
-    ASTType type;
-    ASTSourcePos pos;
-} ASTNode;
+    AST_Type type;
+    AST_SourcePos pos;
+} AST_Node;
 
-extern ASTNode* ast;
+extern AST_Node* ast;
+extern int ast_error;
 
 Variant
-ast_execute(ASTNode* node,
+ast_execute(AST_Node* node,
             Runtime* runtime);
 
 void
-ast_print(ASTNode* node,
+ast_print(AST_Node* node,
           int level);
 
 void
-ast_destroy(ASTNode** node);
+ast_destroy(AST_Node** node);
+
+// TODO : Semantic analyzer
+/*
+VariantType
+ast_return_type(AST_Node* node);
+
+int
+ast_validate(AST_Node* node);
+*/

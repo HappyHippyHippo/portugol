@@ -2,30 +2,30 @@
 
 #include <portugol/ast.h>
 
-typedef struct ASTIf
+typedef struct AST_If
 {
-    ASTType type;
-    ASTSourcePos pos;
+    AST_Type type;
+    AST_SourcePos pos;
 
-    ASTNode* expr;
+    AST_Node* expr;
 
-    ASTNode* chk_true;
-    ASTNode* chk_false;
-} ASTIf;
+    AST_Node* chk_true;
+    AST_Node* chk_false;
+} AST_If;
 
-ASTNode*
-ast_if(ASTNode* expr,
-       ASTNode* chk_true,
-       ASTNode* chk_false,
-       ASTSourcePos pos);
+AST_Node*
+ast_if(AST_Node* expr,
+       AST_Node* chk_true,
+       AST_Node* chk_false,
+       AST_SourcePos pos);
 
 Variant
-ast_if_execute(ASTNode* node,
+ast_if_execute(AST_Node* node,
                Runtime* runtime);
 
 void
-ast_if_print(ASTNode* node,
+ast_if_print(AST_Node* node,
              int level);
 
 void
-ast_if_destroy(ASTNode** node);
+ast_if_destroy(AST_Node** node);

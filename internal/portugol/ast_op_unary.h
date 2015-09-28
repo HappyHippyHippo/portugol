@@ -2,26 +2,26 @@
 
 #include <portugol/ast.h>
 
-typedef struct ASTUnaryOp
+typedef struct AST_UnaryOp
 {
-    ASTType type;
-    ASTSourcePos pos;
+    AST_Type type;
+    AST_SourcePos pos;
 
-    ASTNode* param;
-} ASTUnaryOp;
+    AST_Node* param;
+} AST_UnaryOp;
 
-ASTNode*
-ast_op_unary(ASTNode* param,
-             ASTType type,
-             ASTSourcePos pos);
+AST_Node*
+ast_op_unary(AST_Node* param,
+             AST_Type type,
+             AST_SourcePos pos);
 
 Variant
-ast_op_unary_execute(ASTNode* node,
+ast_op_unary_execute(AST_Node* node,
                      Runtime* runtime);
 
 void
-ast_op_unary_print(ASTNode* node,
+ast_op_unary_print(AST_Node* node,
                    int level);
 
 void
-ast_op_unary_destroy(ASTNode** node);
+ast_op_unary_destroy(AST_Node** node);

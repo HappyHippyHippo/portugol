@@ -8,7 +8,8 @@ typedef enum
     VBOOLEAN,
     VINT32,
     VFLOAT32,
-    VTEXT
+    VTEXT,
+    VFUNCTION
 } VariantType;
 
 typedef struct Variant
@@ -21,6 +22,7 @@ typedef struct Variant
         int32_t int32;
         float float32;
         char* text;
+        void* function;
     } value;
 } Variant;
 
@@ -35,6 +37,9 @@ variant_init_float32(float value);
 
 Variant
 variant_init_text(char* value);
+
+Variant
+variant_init_function(void* value);
 
 Variant
 variant_copy(Variant var);
@@ -57,6 +62,10 @@ variant_set_float32(Variant* var,
 Variant*
 variant_set_text(Variant* var,
                  char* value);
+
+Variant*
+variant_set_function(Variant* var,
+                     void* value);
 
 Variant*
 variant_set(Variant* var1,

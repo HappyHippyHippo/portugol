@@ -4,7 +4,7 @@
 #include <internal/portugol/ast.h>
 
 Variant
-ast_execute(ASTNode* node,
+ast_execute(AST_Node* node,
             Runtime* runtime)
 {
     if (node == NULL || runtime == NULL)
@@ -50,6 +50,12 @@ ast_execute(ASTNode* node,
             return ast_while_execute(node, runtime);
         case AST_FOR:
             return ast_for_execute(node, runtime);
+        case AST_FUNCTION:
+            return ast_function_execute(node, runtime);
+        case AST_FUNCTION_CALL:
+            return ast_function_call_execute(node, runtime);
+        case AST_RETURN:
+            return ast_return_execute(node, runtime);
         case AST_SCOPE:
             return ast_scope_execute(node, runtime);
         case AST_FILE:
@@ -63,7 +69,7 @@ ast_execute(ASTNode* node,
 }
 
 void
-ast_print(ASTNode* node,
+ast_print(AST_Node* node,
           int level)
 {
     if (node == NULL)
@@ -114,6 +120,12 @@ ast_print(ASTNode* node,
             ast_for_print(node, level + 1);                         break;
         case AST_SCOPE:
             ast_scope_print(node, level + 1);                       break;
+        case AST_FUNCTION:
+            ast_function_print(node, level + 1);                    break;
+        case AST_FUNCTION_CALL:
+            ast_function_call_print(node, level + 1);               break;
+        case AST_RETURN:
+            ast_return_print(node, level + 1);                      break;
         case AST_FILE:
             ast_file_print(node, level + 1);                        break;
        default:
@@ -123,7 +135,7 @@ ast_print(ASTNode* node,
 }
 
 void
-ast_destroy(ASTNode** node)
+ast_destroy(AST_Node** node)
 {
     if (node == NULL || *node == NULL)
         return;
@@ -170,6 +182,12 @@ ast_destroy(ASTNode** node)
             ast_for_destroy(node);                                  break;
         case AST_SCOPE:
             ast_scope_destroy(node);                                break;
+        case AST_FUNCTION:
+            ast_function_destroy(node);                             break;
+        case AST_FUNCTION_CALL:
+            ast_function_call_destroy(node);                        break;
+        case AST_RETURN:
+            ast_return_destroy(node);                               break;
         case AST_FILE:
             ast_file_destroy(node);                                 break;
        default:

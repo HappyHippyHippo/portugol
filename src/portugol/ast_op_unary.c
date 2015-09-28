@@ -3,33 +3,33 @@
 
 #include <internal/portugol/ast.h>
 
-ASTNode*
-ast_op_unary(ASTNode* param,
-             ASTType type,
-             ASTSourcePos pos)
+AST_Node*
+ast_op_unary(AST_Node* param,
+             AST_Type type,
+             AST_SourcePos pos)
 {
     if (param == NULL)
         return NULL;
 
-    ASTUnaryOp* node = NULL;
-    if ((node = malloc(sizeof(ASTUnaryOp))) != NULL)
+    AST_UnaryOp* node = NULL;
+    if ((node = malloc(sizeof(AST_UnaryOp))) != NULL)
     {
         node->type  = type;
         node->pos   = pos;
         node->param = param;
     }
 
-    return (ASTNode*) node;
+    return (AST_Node*) node;
 }
 
 Variant
-ast_op_unary_execute(ASTNode* node,
+ast_op_unary_execute(AST_Node* node,
                      Runtime* runtime)
 {
     if (node == NULL || runtime == NULL)
         return variant_init_int32(0);
 
-    ASTUnaryOp* aux = (ASTUnaryOp*) node;
+    AST_UnaryOp* aux = (AST_UnaryOp*) node;
     Variant param   = ast_execute(aux->param, runtime);
 
     Variant result;
@@ -54,7 +54,7 @@ ast_op_unary_execute(ASTNode* node,
 }
 
 void
-ast_op_unary_print(ASTNode* node,
+ast_op_unary_print(AST_Node* node,
                    int level)
 {
     if (node == NULL)
@@ -64,15 +64,15 @@ ast_op_unary_print(ASTNode* node,
     {
         case AST_OP_POSITIVE:
             printf("+positive\n");
-            ast_print(((ASTUnaryOp*) node)->param, level + 1);
+            ast_print(((AST_UnaryOp*) node)->param, level + 1);
             break;
         case AST_OP_NEGATIVE:
             printf("+negative\n");
-            ast_print(((ASTUnaryOp*) node)->param, level + 1);
+            ast_print(((AST_UnaryOp*) node)->param, level + 1);
             break;
         case AST_OP_NOT:
             printf("+not\n");
-            ast_print(((ASTUnaryOp*) node)->param, level + 1);
+            ast_print(((AST_UnaryOp*) node)->param, level + 1);
             break;
         default:
             break;
@@ -80,12 +80,12 @@ ast_op_unary_print(ASTNode* node,
 }
 
 void
-ast_op_unary_destroy(ASTNode** node)
+ast_op_unary_destroy(AST_Node** node)
 {
     if (node == NULL || *node == NULL)
         return;
 
-    ASTUnaryOp* aux = *(ASTUnaryOp**) node;
+    AST_UnaryOp* aux = *(AST_UnaryOp**) node;
     ast_destroy(&aux->param);
 
     free(aux);

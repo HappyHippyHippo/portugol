@@ -2,25 +2,25 @@
 
 #include <portugol/ast.h>
 
-typedef struct ASTVariable
+typedef struct AST_Variable
 {
-    ASTType type;
-    ASTSourcePos pos;
+    AST_Type type;
+    AST_SourcePos pos;
 
     char* name;
-} ASTVariable;
+} AST_Variable;
 
-ASTNode*
+AST_Node*
 ast_variable(char* name,
-             ASTSourcePos pos);
+             AST_SourcePos pos);
 
 Variant
-ast_variable_execute(ASTNode* node,
+ast_variable_execute(AST_Node* node,
                      Runtime* runtime);
 
 void
-ast_variable_print(ASTNode* node,
+ast_variable_print(AST_Node* node,
                    int level);
 
 void
-ast_variable_destroy(ASTNode** node);
+ast_variable_destroy(AST_Node** node);
