@@ -37,7 +37,8 @@ ast_decl_execute(AST_Node* node,
 
 void
 ast_decl_print(AST_Node* node,
-               int level);
+               int level,
+               char* prefix);
 
 void
 ast_decl_destroy(AST_Node** node);

@@ -50,7 +50,8 @@ ast_function_execute(AST_Node* node,
 
 void
 ast_function_print(AST_Node* node,
-                   int level);
+                   int level,
+                   char* prefix);
 
 void
 ast_function_destroy(AST_Node** node);

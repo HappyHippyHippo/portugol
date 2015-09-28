@@ -11,7 +11,8 @@ ast_file_execute(AST_Node* node,
 
 void
 ast_file_print(AST_Node* node,
-               int level);
+               int level,
+               char* prefix);
 
 void
 ast_file_destroy(AST_Node** node);

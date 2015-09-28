@@ -103,7 +103,8 @@ ast_op_binary_execute(AST_Node* node,
 
 void
 ast_op_binary_print(AST_Node* node,
-                    int level)
+                    int level,
+                    char* prefix)
 {
     if (node == NULL)
         return;
@@ -111,78 +112,78 @@ ast_op_binary_print(AST_Node* node,
     switch (node->type)
     {
         case AST_OP_ADD:
-            printf("+add\n");
-            ast_print(((AST_BinaryOp*) node)->lparam, level + 1);
-            ast_print(((AST_BinaryOp*) node)->rparam, level + 1);
+            printf("add\n");
+            ast_print(((AST_BinaryOp*) node)->lparam, level + 1, "left op  > ");
+            ast_print(((AST_BinaryOp*) node)->rparam, level + 1, "right op > ");
             break;
         case AST_OP_SUBTRACT:
-            printf("+subtract\n");
-            ast_print(((AST_BinaryOp*) node)->lparam, level + 1);
-            ast_print(((AST_BinaryOp*) node)->rparam, level + 1);
+            printf("subtract\n");
+            ast_print(((AST_BinaryOp*) node)->lparam, level + 1, "left op  > ");
+            ast_print(((AST_BinaryOp*) node)->rparam, level + 1, "right op > ");
             break;
         case AST_OP_MULTIPLY:
-            printf("+multiply\n");
-            ast_print(((AST_BinaryOp*) node)->lparam, level + 1);
-            ast_print(((AST_BinaryOp*) node)->rparam, level + 1);
+            printf("multiply\n");
+            ast_print(((AST_BinaryOp*) node)->lparam, level + 1, "left op  > ");
+            ast_print(((AST_BinaryOp*) node)->rparam, level + 1, "right op > ");
             break;
         case AST_OP_DIVIDE:
-            printf("+divide\n");
-            ast_print(((AST_BinaryOp*) node)->lparam, level + 1);
-            ast_print(((AST_BinaryOp*) node)->rparam, level + 1);
+            printf("divide\n");
+            ast_print(((AST_BinaryOp*) node)->lparam, level + 1, "left op  > ");
+            ast_print(((AST_BinaryOp*) node)->rparam, level + 1, "right op > ");
             break;
         case AST_OP_REMAINDER:
-            printf("+remainder\n");
-            ast_print(((AST_BinaryOp*) node)->lparam, level + 1);
-            ast_print(((AST_BinaryOp*) node)->rparam, level + 1);
+            printf("remainder\n");
+            ast_print(((AST_BinaryOp*) node)->lparam, level + 1, "left op  > ");
+            ast_print(((AST_BinaryOp*) node)->rparam, level + 1, "right op > ");
             break;
         case AST_OP_EQUAL:
-            printf("+equal\n");
-            ast_print(((AST_BinaryOp*) node)->lparam, level + 1);
-            ast_print(((AST_BinaryOp*) node)->rparam, level + 1);
+            printf("equal\n");
+            ast_print(((AST_BinaryOp*) node)->lparam, level + 1, "left op  > ");
+            ast_print(((AST_BinaryOp*) node)->rparam, level + 1, "right op > ");
             break;
         case AST_OP_INEQUAL:
-            printf("+inequal\n");
-            ast_print(((AST_BinaryOp*) node)->lparam, level + 1);
-            ast_print(((AST_BinaryOp*) node)->rparam, level + 1);
+            printf("inequal\n");
+            ast_print(((AST_BinaryOp*) node)->lparam, level + 1, "left op  > ");
+            ast_print(((AST_BinaryOp*) node)->rparam, level + 1, "right op > ");
             break;
         case AST_OP_GREATER:
-            printf("+greater\n");
-            ast_print(((AST_BinaryOp*) node)->lparam, level + 1);
-            ast_print(((AST_BinaryOp*) node)->rparam, level + 1);
+            printf("greater\n");
+            ast_print(((AST_BinaryOp*) node)->lparam, level + 1, "left op  > ");
+            ast_print(((AST_BinaryOp*) node)->rparam, level + 1, "right op > ");
             break;
         case AST_OP_GREATER_OR_EQUAL:
-            printf("+greater_or_equal\n");
-            ast_print(((AST_BinaryOp*) node)->lparam, level + 1);
-            ast_print(((AST_BinaryOp*) node)->rparam, level + 1);
+            printf("greater_or_equal\n");
+            ast_print(((AST_BinaryOp*) node)->lparam, level + 1, "left op  > ");
+            ast_print(((AST_BinaryOp*) node)->rparam, level + 1, "right op > ");
             break;
         case AST_OP_LESSER:
-            printf("+lesser\n");
-            ast_print(((AST_BinaryOp*) node)->lparam, level + 1);
-            ast_print(((AST_BinaryOp*) node)->rparam, level + 1);
+            printf("lesser\n");
+            ast_print(((AST_BinaryOp*) node)->lparam, level + 1, "left op  > ");
+            ast_print(((AST_BinaryOp*) node)->rparam, level + 1, "right op > ");
             break;
         case AST_OP_LESSER_OR_EQUAL:
-            printf("+lesser_or_equal\n");
-            ast_print(((AST_BinaryOp*) node)->lparam, level + 1);
-            ast_print(((AST_BinaryOp*) node)->rparam, level + 1);
+            printf("lesser_or_equal\n");
+            ast_print(((AST_BinaryOp*) node)->lparam, level + 1, "left op  > ");
+            ast_print(((AST_BinaryOp*) node)->rparam, level + 1, "right op > ");
             break;
         case AST_OP_AND:
-            printf("+and\n");
-            ast_print(((AST_BinaryOp*) node)->lparam, level + 1);
-            ast_print(((AST_BinaryOp*) node)->rparam, level + 1);
+            printf("and\n");
+            ast_print(((AST_BinaryOp*) node)->lparam, level + 1, "left op  > ");
+            ast_print(((AST_BinaryOp*) node)->rparam, level + 1, "right op > ");
             break;
         case AST_OP_OR:
-            printf("+or\n");
-            ast_print(((AST_BinaryOp*) node)->lparam, level + 1);
-            ast_print(((AST_BinaryOp*) node)->rparam, level + 1);
+            printf("or\n");
+            ast_print(((AST_BinaryOp*) node)->lparam, level + 1, "left op  > ");
+            ast_print(((AST_BinaryOp*) node)->rparam, level + 1, "right op > ");
             break;
         case AST_OP_XOR:
-            printf("+xor\n");
-            ast_print(((AST_BinaryOp*) node)->lparam, level + 1);
-            ast_print(((AST_BinaryOp*) node)->rparam, level + 1);
+            printf("xor\n");
+            ast_print(((AST_BinaryOp*) node)->lparam, level + 1, "left op  > ");
+            ast_print(((AST_BinaryOp*) node)->rparam, level + 1, "right op > ");
             break;
         case AST_OP_ASSIGN:
-            printf("+assign(%s)\n", ((AST_Variable*) (((AST_BinaryOp*) node)->lparam))->name);
-            ast_print(((AST_BinaryOp*) node)->rparam, level + 1);
+            printf("assign(%s)\n", ((AST_Variable*) (((AST_BinaryOp*) node)->lparam))->name);
+            ast_print(((AST_BinaryOp*) node)->rparam, level + 1, "");
             break;
         default:
             break;

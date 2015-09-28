@@ -34,7 +34,7 @@ ast_if_execute(AST_Node* node,
     Variant expr = ast_execute(aux->expr, runtime);
     variant_cast(&expr, VBOOLEAN);
 
-    runtime_push_scope_named(runtime, "se");
+    runtime_scope_push_named(runtime, 0, "se");
 
     if (expr.value.boolean)
         ast_execute(aux->chk_true, runtime);
@@ -42,21 +42,22 @@ ast_if_execute(AST_Node* node,
         if (aux->chk_false)
             ast_execute(aux->chk_false, runtime);
 
-    return runtime_pop_scope(runtime);
+    return runtime_scope_pop(runtime);
 }
 
 void
 ast_if_print(AST_Node* node,
-             int level)
+             int level,
+             char* prefix)
 {
     if (node == NULL)
         return;
 
-    printf("+if\n");
-    ast_print(((AST_If*) node)->expr, level + 1);
-    ast_print(((AST_If*) node)->chk_true, level + 1);
+    printf("if\n");
+    ast_print(((AST_If*) node)->expr, level + 1,     "comp  > ");
+    ast_print(((AST_If*) node)->chk_true, level + 1, "true  > ");
     if (((AST_If*) node)->chk_false)
-        ast_print(((AST_If*) node)->chk_false, level + 1);
+        ast_print(((AST_If*) node)->chk_false, level + 1, "false > ");
 }
 
 void

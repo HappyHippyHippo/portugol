@@ -24,7 +24,7 @@ int main(int argc, char **argv)
     if (ast_error)
         return -1;
 
-    ast_print(ast, 0);
+    ast_print(ast, 0, "");
 
     Runtime* runtime = runtime_create();
     ast_execute(ast, runtime);

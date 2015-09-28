@@ -95,12 +95,13 @@ ast_function_execute(AST_Node* node,
 
 void
 ast_function_print(AST_Node* node,
-                   int level)
+                   int level,
+                   char* prefix)
 {
     if (node == NULL)
         return;
 
-    printf("+function(%s) -> ", ((AST_Function*) node)->name);
+    printf("function(%s) -> ", ((AST_Function*) node)->name);
     switch (((AST_Function*) node)->return_type)
     {
         case VBOOLEAN:  printf("boolean\n");  break;
@@ -112,8 +113,9 @@ ast_function_print(AST_Node* node,
     }
 
     for (int idx = 0; idx < ((AST_Function*) node)->param_count; ++idx) {
-        for (int i = 0; i < level; ++i)
-            printf("  ");
+        for (int i = 0; i < level - 1; ++i)
+            printf("    ");
+         printf("param %d > ", idx);
 
         switch (((AST_Function*) node)->params[idx].type)
         {
@@ -127,7 +129,7 @@ ast_function_print(AST_Node* node,
         printf(": %s\n", ((AST_Function*) node)->params[idx].name);
     }
 
-    ast_print(((AST_Function*) node)->scope, level + 1);
+    ast_print(((AST_Function*) node)->scope, level + 1, "");
 }
 
 void

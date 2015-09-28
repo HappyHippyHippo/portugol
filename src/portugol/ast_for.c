@@ -50,14 +50,14 @@ ast_for_execute(AST_Node* node,
 
     if (inc.value.boolean)
     {
-        Variant* it = runtime_push(runtime, aux->variable, start);
+        Variant* it = runtime_stack_push(runtime, aux->variable, start);
         Variant comp = variant_op_greater_or_equal(*it, end);
 
         while (comp.value.boolean == 0)
         {
-            runtime_push_scope_named(runtime, "para");
+            runtime_scope_push_named(runtime, 0, "para");
             ast_execute(aux->scope, runtime);
-            runtime_pop_scope(runtime);
+            runtime_scope_pop(runtime);
 
             variant_set(it, variant_op_add(*it, step));
             comp = variant_op_greater_or_equal(*it, end);
@@ -65,21 +65,21 @@ ast_for_execute(AST_Node* node,
     }
     else
     {
-        Variant* it = runtime_push(runtime, aux->variable, start);
+        Variant* it = runtime_stack_push(runtime, aux->variable, start);
         Variant comp = variant_op_lesser_or_equal(*it, end);
 
         while (comp.value.boolean == 0)
         {
-            runtime_push_scope_named(runtime, "para");
+            runtime_scope_push_named(runtime, 0, "para");
             ast_execute(aux->scope, runtime);
-            runtime_pop_scope(runtime);
+            runtime_scope_pop(runtime);
 
             variant_set(it, variant_op_add(*it, step));
             comp = variant_op_lesser_or_equal(*it, end);
         }
     }
 
-    Variant it = runtime_pop(runtime);
+    Variant it = runtime_stack_pop(runtime);
     variant_uninit(&it);
 
     variant_uninit(&start);
@@ -91,16 +91,17 @@ ast_for_execute(AST_Node* node,
 
 void
 ast_for_print(AST_Node* node,
-                int level)
+                int level,
+                char* prefix)
 {
     if (node == NULL)
         return;
 
-    printf("+for(%s)\n", ((AST_For*) node)->variable);
-    ast_print(((AST_For*) node)->start, level + 1);
-    ast_print(((AST_For*) node)->end,   level + 1);
-    ast_print(((AST_For*) node)->step,  level + 1);
-    ast_print(((AST_For*) node)->scope, level + 1);
+    printf("for(%s)\n", ((AST_For*) node)->variable);
+    ast_print(((AST_For*) node)->start, level + 1, "start value > ");
+    ast_print(((AST_For*) node)->end,   level + 1, "end value   > ");
+    ast_print(((AST_For*) node)->step,  level + 1, "step value  > ");
+    ast_print(((AST_For*) node)->scope, level + 1, "");
 }
 
 void

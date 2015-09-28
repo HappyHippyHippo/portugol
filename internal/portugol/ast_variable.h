@@ -20,7 +20,8 @@ ast_variable_execute(AST_Node* node,
 
 void
 ast_variable_print(AST_Node* node,
-                   int level);
+                   int level,
+                   char* prefix);
 
 void
 ast_variable_destroy(AST_Node** node);

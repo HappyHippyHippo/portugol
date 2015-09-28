@@ -12,6 +12,7 @@ runtime_create(void)
     Runtime* runtime;
     if ((runtime = malloc(sizeof(Runtime))) != NULL)
     {
+        runtime->heap = NULL;
         runtime->stack = NULL;
         runtime->scope = NULL;
     }
@@ -49,9 +50,45 @@ runtime_get(Runtime* runtime,
 }
 
 Variant*
-runtime_push(Runtime* runtime,
-             char* name,
-             Variant value)
+runtime_heap_push(Runtime* runtime,
+                  char* name,
+                  Variant value)
+{
+    if (runtime == NULL || name == NULL)
+        return NULL;
+
+    Heap* heap;
+    if ((heap = malloc(sizeof(Heap))) == NULL)
+        return NULL;
+
+    heap->name = name;
+    heap->value = variant_copy(value);
+    heap->prev = runtime->heap;
+
+    runtime->heap = heap;
+
+    return &heap->value;
+}
+
+Variant
+runtime_heap_pop(Runtime* runtime)
+{
+    if (runtime == NULL || runtime->heap == NULL)
+        return variant_init_int32(0);
+
+    Variant result = runtime->heap->value;
+
+    Heap* del = runtime->heap;
+    runtime->heap = runtime->heap->prev;
+    free(del);
+
+    return result;
+}
+
+Variant*
+runtime_stack_push(Runtime* runtime,
+                   char* name,
+                   Variant value)
 {
     if (runtime == NULL || name == NULL)
         return NULL;
@@ -70,7 +107,7 @@ runtime_push(Runtime* runtime,
 }
 
 Variant
-runtime_pop(Runtime* runtime)
+runtime_stack_pop(Runtime* runtime)
 {
     if (runtime == NULL || runtime->stack == NULL)
         return variant_init_int32(0);
@@ -84,36 +121,25 @@ runtime_pop(Runtime* runtime)
     return result;
 }
 
-Runtime*
-runtime_clear(Runtime* runtime)
+Variant*
+runtime_scope_get(Runtime* runtime)
 {
     if (runtime == NULL)
-        return runtime;
+        return NULL;
 
-    while (runtime->stack != NULL)
-    {
-        Variant var = runtime_pop(runtime);
-        variant_uninit(&var);
-    }
-
-    while (runtime->scope != NULL)
-    {
-        Scope* del = runtime->scope;
-        runtime->scope = runtime->scope->prev;
-        free(del);
-    }
-
-    return runtime;
+    return &runtime->scope->stack->value;
 }
 
 Variant*
-runtime_push_scope(Runtime* runtime)
+runtime_scope_push(Runtime* runtime,
+                   int is_function)
 {
-    return runtime_push_scope_named(runtime, SCOPE_RETURN);
+    return runtime_scope_push_named(runtime, is_function, SCOPE_RETURN);
 }
 
 Variant*
-runtime_push_scope_named(Runtime* runtime,
+runtime_scope_push_named(Runtime* runtime,
+                         int is_function,
                          char* name)
 {
     if (runtime == NULL)
@@ -135,31 +161,23 @@ runtime_push_scope_named(Runtime* runtime,
     stack->prev = runtime->stack;
     runtime->stack = stack;
 
-    scope->stack = stack;
-    scope->prev = runtime->scope;
+    scope->stack       = stack;
+    scope->prev        = runtime->scope;
+    scope->is_function = is_function;
     runtime->scope = scope;
 
     return NULL;
 }
 
-Variant*
-runtime_get_scope(Runtime* runtime)
-{
-    if (runtime == NULL)
-        return NULL;
-
-    return &runtime->scope->stack->value;
-}
-
 Variant
-runtime_pop_scope(Runtime* runtime)
+runtime_scope_pop(Runtime* runtime)
 {
     if (runtime == NULL && runtime->scope->stack)
         return variant_init_int32(0);
 
     while (runtime->stack != runtime->scope->stack)
     {
-        Variant var = runtime_pop(runtime);
+        Variant var = runtime_stack_pop(runtime);
         variant_uninit(&var);
     }
 
@@ -167,7 +185,35 @@ runtime_pop_scope(Runtime* runtime)
     runtime->scope = runtime->scope->prev;
     free(del);
 
-    return runtime_pop(runtime);
+    return runtime_stack_pop(runtime);
+}
+
+Runtime*
+runtime_clear(Runtime* runtime)
+{
+    if (runtime == NULL)
+        return runtime;
+
+    while (runtime->heap != NULL)
+    {
+        Variant var = runtime_heap_pop(runtime);
+        variant_uninit(&var);
+    }
+
+    while (runtime->stack != NULL)
+    {
+        Variant var = runtime_stack_pop(runtime);
+        variant_uninit(&var);
+    }
+
+    while (runtime->scope != NULL)
+    {
+        Scope* del = runtime->scope;
+        runtime->scope = runtime->scope->prev;
+        free(del);
+    }
+
+    return runtime;
 }
 
 void
@@ -197,8 +243,10 @@ runtime_print(Runtime* runtime)
                 break;
         }
 
-        if (scope != NULL && stack == scope->stack)
-            printf(" (scope)");
+        if (scope != NULL && stack == scope->stack) {
+            printf(" | scope (is_function : %d)", scope->is_function);
+            scope = scope->prev;
+        }
 
         printf("\n");
         stack = stack->prev;

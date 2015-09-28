@@ -70,14 +70,15 @@ ast_scope_execute(AST_Node* node,
 
 void
 ast_scope_print(AST_Node* node,
-                int level)
+                int level,
+                char* prefix)
 {
     if (node == NULL)
         return;
 
-    printf("+scope\n");
+    printf("scope\n");
     for (size_t idx = 0; idx < ((AST_Scope*) node)->instr.count; ++idx)
-        ast_print(((AST_Scope*)node)->instr.list[idx], level + 1);
+        ast_print(((AST_Scope*)node)->instr.list[idx], level + 1, "");
 }
 
 void

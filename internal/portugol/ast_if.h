@@ -25,7 +25,8 @@ ast_if_execute(AST_Node* node,
 
 void
 ast_if_print(AST_Node* node,
-             int level);
+             int level,
+             char* prefix);
 
 void
 ast_if_destroy(AST_Node** node);

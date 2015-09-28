@@ -33,13 +33,14 @@ ast_return_execute(AST_Node* node,
 
 void
 ast_return_print(AST_Node* node,
-                 int level)
+                 int level,
+                 char* prefix)
 {
     if (node == NULL)
         return;
 
     printf("return\n");
-    ast_print(((AST_Return*) node)->expr, level + 1);
+    ast_print(((AST_Return*) node)->expr, level + 1, "");
 }
 
 void

@@ -21,7 +21,8 @@ ast_op_unary_execute(AST_Node* node,
 
 void
 ast_op_unary_print(AST_Node* node,
-                   int level);
+                   int level,
+                   char* prefix);
 
 void
 ast_op_unary_destroy(AST_Node** node);

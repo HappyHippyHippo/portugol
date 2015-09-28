@@ -55,7 +55,8 @@ ast_op_unary_execute(AST_Node* node,
 
 void
 ast_op_unary_print(AST_Node* node,
-                   int level)
+                   int level,
+                   char* prefix)
 {
     if (node == NULL)
         return;
@@ -63,16 +64,16 @@ ast_op_unary_print(AST_Node* node,
     switch (node->type)
     {
         case AST_OP_POSITIVE:
-            printf("+positive\n");
-            ast_print(((AST_UnaryOp*) node)->param, level + 1);
+            printf("positive\n");
+            ast_print(((AST_UnaryOp*) node)->param, level + 1, "");
             break;
         case AST_OP_NEGATIVE:
-            printf("+negative\n");
-            ast_print(((AST_UnaryOp*) node)->param, level + 1);
+            printf("negative\n");
+            ast_print(((AST_UnaryOp*) node)->param, level + 1, "");
             break;
         case AST_OP_NOT:
-            printf("+not\n");
-            ast_print(((AST_UnaryOp*) node)->param, level + 1);
+            printf("not\n");
+            ast_print(((AST_UnaryOp*) node)->param, level + 1, "");
             break;
         default:
             break;

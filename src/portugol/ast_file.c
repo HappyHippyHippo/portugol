@@ -27,12 +27,13 @@ ast_file_execute(AST_Node* node,
 
 void
 ast_file_print(AST_Node* node,
-               int level)
+               int level,
+               char* prefix)
 {
     printf("-------------------- AST Tree ---------------------\n");
-    printf("+file\n");
+    printf("file\n");
     for (size_t idx = 0; idx < ((AST_Scope*) node)->instr.count; ++idx)
-        ast_print(((AST_Scope*) node)->instr.list[idx], level + 1);
+        ast_print(((AST_Scope*) node)->instr.list[idx], level + 1, "");
     printf("---------------------------------------------------\n");
 }
 

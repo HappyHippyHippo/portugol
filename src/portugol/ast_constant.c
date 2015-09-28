@@ -78,7 +78,8 @@ ast_constant_execute(AST_Node* node,
 
 void
 ast_constant_print(AST_Node* node,
-                   int level)
+                   int level,
+                   char* prefix)
 {
     if (node == NULL)
         return;

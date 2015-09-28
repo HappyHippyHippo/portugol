@@ -15,28 +15,38 @@ runtime_get(Runtime* runtime,
             char* name);
 
 Variant*
-runtime_push(Runtime* runtime,
-             char* name,
-             Variant value);
+runtime_heap_push(Runtime* runtime,
+                  char* name,
+                  Variant value);
 
 Variant
-runtime_pop(Runtime* runtime);
+runtime_heap_pop(Runtime* runtime);
+
+Variant*
+runtime_stack_push(Runtime* runtime,
+                   char* name,
+                   Variant value);
+
+Variant
+runtime_stack_pop(Runtime* runtime);
+
+Variant*
+runtime_scope_get(Runtime* runtime);
+
+Variant*
+runtime_scope_push(Runtime* runtime,
+                   int is_function);
+
+Variant*
+runtime_scope_push_named(Runtime* runtime,
+                         int is_function,
+                         char* name);
+
+Variant
+runtime_scope_pop(Runtime* runtime);
 
 Runtime*
 runtime_clear(Runtime* runtime);
-
-Variant*
-runtime_push_scope(Runtime* runtime);
-
-Variant*
-runtime_push_scope_named(Runtime* runtime,
-                         char* name);
-
-Variant*
-runtime_get_scope(Runtime* runtime);
-
-Variant
-runtime_pop_scope(Runtime* runtime);
 
 void
 runtime_print(Runtime* runtime);

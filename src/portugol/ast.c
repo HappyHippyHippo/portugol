@@ -70,13 +70,15 @@ ast_execute(AST_Node* node,
 
 void
 ast_print(AST_Node* node,
-          int level)
+          int level,
+          char* prefix)
 {
     if (node == NULL)
         return;
 
     for (int i = 0; i < level; ++i)
         printf("  ");
+    printf("%s", prefix);
 
     switch (node->type)
     {
@@ -84,14 +86,14 @@ ast_print(AST_Node* node,
         case AST_CONST_INT32:
         case AST_CONST_FLOAT32:
         case AST_CONST_TEXT:
-            ast_constant_print(node, level + 1);                    break;
+            ast_constant_print(node, level + 1, "");                break;
         case AST_DECL_BOOLEAN:
         case AST_DECL_INT32:
         case AST_DECL_FLOAT32:
         case AST_DECL_TEXT:
-            ast_decl_print(node, level + 1);                        break;
+            ast_decl_print(node, level + 1, "");                    break;
         case AST_VARIABLE:
-            ast_variable_print(node, level + 1);                    break;
+            ast_variable_print(node, level + 1, "");                break;
         case AST_OP_ADD:
         case AST_OP_SUBTRACT:
         case AST_OP_MULTIPLY:
@@ -107,27 +109,27 @@ ast_print(AST_Node* node,
         case AST_OP_OR:
         case AST_OP_XOR:
         case AST_OP_ASSIGN:
-            ast_op_binary_print(node, level + 1);                   break;
+            ast_op_binary_print(node, level + 1, "");               break;
         case AST_OP_POSITIVE:
         case AST_OP_NEGATIVE:
         case AST_OP_NOT:
-            ast_op_unary_print(node, level + 1);                    break;
+            ast_op_unary_print(node, level + 1, "");                break;
         case AST_IF:
-            ast_if_print(node, level + 1);                          break;
+            ast_if_print(node, level + 1, "");                      break;
         case AST_WHILE:
-            ast_while_print(node, level + 1);                       break;
+            ast_while_print(node, level + 1, "");                   break;
         case AST_FOR:
-            ast_for_print(node, level + 1);                         break;
+            ast_for_print(node, level + 1, "");                     break;
         case AST_SCOPE:
-            ast_scope_print(node, level + 1);                       break;
+            ast_scope_print(node, level + 1, "");                   break;
         case AST_FUNCTION:
-            ast_function_print(node, level + 1);                    break;
+            ast_function_print(node, level + 1, "");                break;
         case AST_FUNCTION_CALL:
-            ast_function_call_print(node, level + 1);               break;
+            ast_function_call_print(node, level + 1, "");           break;
         case AST_RETURN:
-            ast_return_print(node, level + 1);                      break;
+            ast_return_print(node, level + 1, "");                  break;
         case AST_FILE:
-            ast_file_print(node, level + 1);                        break;
+            ast_file_print(node, level + 1, "");                    break;
        default:
             printf(">> Unknown node : %d\n", node->type);
             break;

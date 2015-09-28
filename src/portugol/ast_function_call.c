@@ -72,14 +72,15 @@ ast_function_call_execute(AST_Node* node,
 
 void
 ast_function_call_print(AST_Node* node,
-                        int level)
+                        int level,
+                        char* prefix)
 {
     if (node == NULL)
         return;
 
-    printf("+function_call(%s)\n", ((AST_FunctionCall*) node)->name);
+    printf("function_call(%s)\n", ((AST_FunctionCall*) node)->name);
     for (int idx = 0; idx < ((AST_FunctionCall*) node)->arg_count; ++idx)
-        ast_print(((AST_FunctionCall*) node)->args[idx], level + 1);
+        ast_print(((AST_FunctionCall*) node)->args[idx], level + 1, "arg > ");
 }
 
 void

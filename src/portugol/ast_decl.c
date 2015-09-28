@@ -118,7 +118,7 @@ ast_decl_execute(AST_Node* node,
     AST_Decl* aux = (AST_Decl*) node;
 
     Variant value   = ast_execute(aux->value, runtime);
-    Variant* stored = runtime_push(runtime, aux->name, value);
+    Variant* stored = runtime_stack_push(runtime, aux->name, value);
     variant_uninit(&value);
 
     return variant_copy(*stored);
@@ -126,7 +126,8 @@ ast_decl_execute(AST_Node* node,
 
 void
 ast_decl_print(AST_Node* node,
-               int level)
+               int level,
+               char* prefix)
 {
     if (node == NULL)
         return;
@@ -134,20 +135,20 @@ ast_decl_print(AST_Node* node,
     switch (node->type)
     {
         case AST_DECL_BOOLEAN:
-            printf("+decl(%s : boolean)\n", ((AST_Decl*) node)->name);
-            ast_print(((AST_Decl*) node)->value, level + 1);
+            printf("decl(%s : boolean)\n", ((AST_Decl*) node)->name);
+            ast_print(((AST_Decl*) node)->value, level + 1, "default value >> ");
             break;
         case AST_DECL_INT32:
-            printf("+decl(%s : int32)\n", ((AST_Decl*) node)->name);
-            ast_print(((AST_Decl*) node)->value, level + 1);
+            printf("decl(%s : int32)\n", ((AST_Decl*) node)->name);
+            ast_print(((AST_Decl*) node)->value, level + 1, "default value >> ");
             break;
         case AST_DECL_FLOAT32:
-            printf("+decl(%s : float32)\n", ((AST_Decl*) node)->name);
-            ast_print(((AST_Decl*) node)->value, level + 1);
+            printf("decl(%s : float32)\n", ((AST_Decl*) node)->name);
+            ast_print(((AST_Decl*) node)->value, level + 1, "default value >> ");
             break;
         case AST_DECL_TEXT:
-            printf("+decl(%s : text)\n", ((AST_Decl*) node)->name);
-            ast_print(((AST_Decl*) node)->value, level + 1);
+            printf("decl(%s : text)\n", ((AST_Decl*) node)->name);
+            ast_print(((AST_Decl*) node)->value, level + 1, "default value >> ");
             break;
         default:
             break;

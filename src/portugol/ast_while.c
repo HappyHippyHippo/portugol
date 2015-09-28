@@ -34,9 +34,9 @@ ast_while_execute(AST_Node* node,
     variant_cast(&expr, VBOOLEAN);
     while (expr.value.boolean)
     {
-        runtime_push_scope_named(runtime, "enquanto");
+        runtime_scope_push_named(runtime, 0, "enquanto");
         ast_execute(aux->scope, runtime);
-        runtime_pop_scope(runtime);
+        runtime_scope_pop(runtime);
 
         expr = ast_execute(aux->expr, runtime);
         variant_cast(&expr, VBOOLEAN);
@@ -47,14 +47,15 @@ ast_while_execute(AST_Node* node,
 
 void
 ast_while_print(AST_Node* node,
-                int level)
+                int level,
+                char* prefif)
 {
     if (node == NULL)
         return;
 
-    printf("+while\n");
-    ast_print(((AST_While*) node)->expr, level + 1);
-    ast_print(((AST_While*) node)->scope, level + 1);
+    printf("while\n");
+    ast_print(((AST_While*) node)->expr, level + 1, "comp > ");
+    ast_print(((AST_While*) node)->scope, level + 1, "");
 }
 
 void

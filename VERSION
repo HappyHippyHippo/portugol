@@ -6,6 +6,11 @@ in development
 - Return AST execution
 - Function call AST execution
 
+v0.2.4a
+---------------------------
+- added a prefix string parameter to the AST node presentation funciton call
+- remove the character '+' at the start of the nodes print name
+
 v0.2.4
 ---------------------------
 - Function AST node
