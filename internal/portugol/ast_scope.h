@@ -12,7 +12,7 @@ typedef struct AST_Scope
         AST_Node** list;
         size_t size;
         size_t count;
-    } instr;
+    } inst;
 } AST_Scope;
 
 AST_Node*

@@ -82,23 +82,17 @@ variant_copy(Variant var)
     switch (var.type)
     {
         case VBOOLEAN:
-            variant_set_boolean(&copy, var.value.boolean);
-            break;
+            variant_set_boolean(&copy, var.value.boolean);          break;
         case VINT32:
-            variant_set_int32(&copy, var.value.int32);
-            break;
+            variant_set_int32(&copy, var.value.int32);              break;
         case VFLOAT32:
-            variant_set_float32(&copy, var.value.float32);
-            break;
+            variant_set_float32(&copy, var.value.float32);          break;
         case VTEXT:
-            variant_set_text(&copy, var.value.text);
-            break;
+            variant_set_text(&copy, var.value.text);                break;
         case VFUNCTION:
-            variant_set_function(&copy, var.value.function);
-            break;
+            variant_set_function(&copy, var.value.function);        break;
         default:
-            printf("unknown variant type\n");
-            break;
+            printf("unknown variant type\n");                       break;
     }
 
     return copy;
@@ -1141,4 +1135,17 @@ variant_op_not(Variant var)
     }
 
     return variant_copy(var);
+}
+
+void
+variant_print(Variant var)
+{
+    switch (var.type)
+    {
+        case VBOOLEAN:  printf("boolean(%d)",  var.value.boolean);    break;
+        case VINT32:    printf("int32(%d)",    var.value.int32);      break;
+        case VFLOAT32:  printf("float32(%f)",  var.value.float32);    break;
+        case VTEXT:     printf("text(%s)",     var.value.text);       break;
+        case VFUNCTION: printf("function(%p)", var.value.function);   break;
+    }
 }

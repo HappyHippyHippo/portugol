@@ -30,22 +30,18 @@ ast_op_unary_execute(AST_Node* node,
         return variant_init_int32(0);
 
     AST_UnaryOp* aux = (AST_UnaryOp*) node;
-    Variant param   = ast_execute(aux->param, runtime);
 
+    Variant param = ast_execute(aux->param, runtime);
     Variant result;
     switch (node->type)
     {
         case AST_OP_POSITIVE:
-            result = variant_op_negative(param);
-            break;
+            result = variant_op_negative(param);                break;
         case AST_OP_NEGATIVE:
-            result = variant_op_negative(param);
-            break;
+            result = variant_op_negative(param);                break;
         case AST_OP_NOT:
-            result = variant_op_not(param);
-            break;
-        default:
-            break;
+            result = variant_op_not(param);                     break;
+        default:                                                break;
     }
 
     variant_uninit(&param);
@@ -61,19 +57,21 @@ ast_op_unary_print(AST_Node* node,
     if (node == NULL)
         return;
 
+    AST_UnaryOp* aux = (AST_UnaryOp*) node;
+
     switch (node->type)
     {
         case AST_OP_POSITIVE:
             printf("positive\n");
-            ast_print(((AST_UnaryOp*) node)->param, level + 1, "");
+            ast_print(aux->param, level + 1, "");
             break;
         case AST_OP_NEGATIVE:
             printf("negative\n");
-            ast_print(((AST_UnaryOp*) node)->param, level + 1, "");
+            ast_print(aux->param, level + 1, "");
             break;
         case AST_OP_NOT:
             printf("not\n");
-            ast_print(((AST_UnaryOp*) node)->param, level + 1, "");
+            ast_print(aux->param, level + 1, "");
             break;
         default:
             break;
@@ -87,8 +85,9 @@ ast_op_unary_destroy(AST_Node** node)
         return;
 
     AST_UnaryOp* aux = *(AST_UnaryOp**) node;
-    ast_destroy(&aux->param);
 
+    ast_destroy(&aux->param);
     free(aux);
+
     *node = NULL;
 }

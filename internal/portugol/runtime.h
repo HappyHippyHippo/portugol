@@ -2,14 +2,6 @@
 
 #include <portugol/runtime.h>
 
-typedef struct Stack
-{
-    char* name;
-    Variant value;
-
-    struct Stack* prev;
-} Stack;
-
 typedef struct Heap
 {
     char* name;
@@ -18,16 +10,19 @@ typedef struct Heap
     struct Heap* prev;
 } Heap;
 
-typedef struct Scope
+typedef struct Stack
 {
-    struct Stack* stack;
-    struct Scope* prev;
+    char* name;
+    Variant value;
+    int is_scope;
     int is_function;
-} Scope;
+    int is_returning;
+
+    struct Stack* prev;
+} Stack;
 
 struct Runtime
 {
     Heap* heap;
     Stack* stack;
-    Scope* scope;
 };

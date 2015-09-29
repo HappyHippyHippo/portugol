@@ -1,7 +1,16 @@
 +VERSIONS
 
-in development
+
+in development V0.4.0
 ---------------------------
+- lists
+
+
+
+
+v0.3.0
+---------------------------
+- Runtime heap/stack variable scope resolution implemented/recoding
 - Function AST execution
 - Return AST execution
 - Function call AST execution

@@ -31,17 +31,16 @@ ast_if_execute(AST_Node* node,
         return variant_init_int32(0);
 
     AST_If* aux = (AST_If*) node;
+
     Variant expr = ast_execute(aux->expr, runtime);
     variant_cast(&expr, VBOOLEAN);
 
     runtime_scope_push_named(runtime, 0, "se");
-
     if (expr.value.boolean)
         ast_execute(aux->chk_true, runtime);
     else
         if (aux->chk_false)
             ast_execute(aux->chk_false, runtime);
-
     return runtime_scope_pop(runtime);
 }
 
@@ -53,11 +52,13 @@ ast_if_print(AST_Node* node,
     if (node == NULL)
         return;
 
+    AST_If* aux = (AST_If*) node;
+
     printf("if\n");
-    ast_print(((AST_If*) node)->expr, level + 1,     "comp  > ");
-    ast_print(((AST_If*) node)->chk_true, level + 1, "true  > ");
-    if (((AST_If*) node)->chk_false)
-        ast_print(((AST_If*) node)->chk_false, level + 1, "false > ");
+    ast_print(aux->expr, level + 1,     "comp  > ");
+    ast_print(aux->chk_true, level + 1, "true  > ");
+    if (aux->chk_false)
+        ast_print(aux->chk_false, level + 1, "false > ");
 }
 
 void
@@ -67,10 +68,11 @@ ast_if_destroy(AST_Node** node)
         return;
 
     AST_If* aux = *(AST_If**) node;
+
     ast_destroy(&aux->expr);
     ast_destroy(&aux->chk_true);
     ast_destroy(&aux->chk_false);
-
     free(aux);
+
     *node = NULL;
 }

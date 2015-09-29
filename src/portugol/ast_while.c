@@ -53,9 +53,11 @@ ast_while_print(AST_Node* node,
     if (node == NULL)
         return;
 
+    AST_While* aux = (AST_While*) node;
+
     printf("while\n");
-    ast_print(((AST_While*) node)->expr, level + 1, "comp > ");
-    ast_print(((AST_While*) node)->scope, level + 1, "");
+    ast_print(aux->expr, level + 1, "comp > ");
+    ast_print(aux->scope, level + 1, "");
 }
 
 void
@@ -65,9 +67,10 @@ ast_while_destroy(AST_Node** node)
         return;
 
     AST_While* aux = *(AST_While**) node;
+
     ast_destroy(&aux->expr);
     ast_destroy(&aux->scope);
-
     free(aux);
+
     *node = NULL;
 }

@@ -27,11 +27,22 @@ int main(int argc, char **argv)
     ast_print(ast, 0, "");
 
     Runtime* runtime = runtime_create();
-    ast_execute(ast, runtime);
+    Variant result = ast_execute(ast, runtime);
 
     runtime_print(runtime);
-    runtime_destroy(&runtime);
 
+    switch (result.type)
+    {
+        case VBOOLEAN:  printf("program result value : boolean(%d)",  result.value.boolean);    break;
+        case VINT32:    printf("program result value : int32(%d)",    result.value.int32);      break;
+        case VFLOAT32:  printf("program result value : float32(%f)",  result.value.float32);    break;
+        case VTEXT:     printf("program result value : text(%s)",     result.value.text);       break;
+        case VFUNCTION: printf("program result value : function(%p)", result.value.function);   break;
+    }
+    printf("\n");
+    variant_uninit(&result);
+
+    runtime_destroy(&runtime);
     ast_destroy(&ast);
 
     return 0;

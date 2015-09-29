@@ -119,19 +119,16 @@ function : TOK_IDENTIFIER TOK_COLON TOK_FUNCTION TOK_OPEN_PAREN fparams TOK_CLOS
                 switch ($8.result)
                 {
                     case TOK_BOOLEAN:
-                        ast.result = ast_function($1.result, $5.result, $5.count, VBOOLEAN, scope, ast.pos);
-                        break;
+                        ast.result = ast_function($1.result, $5.result, $5.count, VBOOLEAN, scope, ast.pos);        break;
                     case TOK_INTEGER:
-                        ast.result = ast_function($1.result, $5.result, $5.count, VINT32, scope, ast.pos);
-                        break;
+                        ast.result = ast_function($1.result, $5.result, $5.count, VINT32, scope, ast.pos);          break;
                     case TOK_FLOAT:
-                    ast.result = ast_function($1.result, $5.result, $5.count, VFLOAT32, scope, ast.pos);
-                        break;
+                        ast.result = ast_function($1.result, $5.result, $5.count, VFLOAT32, scope, ast.pos);        break;
                     case TOK_TEXT:
-                        ast.result = ast_function($1.result, $5.result, $5.count, VTEXT, scope, ast.pos);
-                        break;
+                        ast.result = ast_function($1.result, $5.result, $5.count, VTEXT, scope, ast.pos);           break;
                     case TOK_FUNCTION:
-                        ast.result = ast_function($1.result, $5.result, $5.count, VFUNCTION, scope, ast.pos);
+                        ast.result = ast_function($1.result, $5.result, $5.count, VFUNCTION, scope, ast.pos);       break;
+                    default:
                         break;
                 }
                 $$ = ast;
@@ -145,20 +142,16 @@ function : TOK_IDENTIFIER TOK_COLON TOK_FUNCTION TOK_OPEN_PAREN fparams TOK_CLOS
                 switch ($7.result)
                 {
                     case TOK_BOOLEAN:
-                        ast.result = ast_function($1.result, NULL, 0, VBOOLEAN, scope, ast.pos);
-                        break;
+                        ast.result = ast_function($1.result, NULL, 0, VBOOLEAN, scope, ast.pos);                    break;
                     case TOK_INTEGER:
-                        ast.result = ast_function($1.result, NULL, 0, VINT32, scope, ast.pos);
-                        break;
+                        ast.result = ast_function($1.result, NULL, 0, VINT32, scope, ast.pos);                      break;
                     case TOK_FLOAT:
-                        ast.result = ast_function($1.result, NULL, 0, VFLOAT32, scope, ast.pos);
-                        break;
+                        ast.result = ast_function($1.result, NULL, 0, VFLOAT32, scope, ast.pos);                    break;
                     case TOK_TEXT:
-                        ast.result = ast_function($1.result, NULL, 0, VTEXT, scope, ast.pos);
-                        break;
+                        ast.result = ast_function($1.result, NULL, 0, VTEXT, scope, ast.pos);                       break;
                     case TOK_FUNCTION:
-                        ast.result = ast_function($1.result, NULL, 0, VFUNCTION, scope, ast.pos);
-                        break;
+                        ast.result = ast_function($1.result, NULL, 0, VFUNCTION, scope, ast.pos);                   break;
+                    default:                                                                                        break;
                 }
                 $$ = ast;
 
@@ -197,20 +190,16 @@ fparam : vartype TOK_IDENTIFIER {
                 switch ($1.result)
                 {
                     case TOK_BOOLEAN:
-                        param.result = ast_function_param(VBOOLEAN, $2.result);
-                        break;
+                        param.result = ast_function_param(VBOOLEAN, $2.result);                                     break;
                     case TOK_INTEGER:
-                        param.result = ast_function_param(VINT32, $2.result);
-                        break;
+                        param.result = ast_function_param(VINT32, $2.result);                                       break;
                     case TOK_FLOAT:
-                        param.result = ast_function_param(VFLOAT32, $2.result);
-                        break;
+                        param.result = ast_function_param(VFLOAT32, $2.result);                                     break;
                     case TOK_TEXT:
-                        param.result = ast_function_param(VTEXT, $2.result);
-                        break;
+                        param.result = ast_function_param(VTEXT, $2.result);                                        break;
                     case TOK_FUNCTION:
-                        param.result = ast_function_param(VFUNCTION, $2.result);
-                        break;
+                        param.result = ast_function_param(VFUNCTION, $2.result);                                    break;
+                    default:                                                                                        break;
                 }
                 $$ = param;
 
@@ -315,13 +304,13 @@ decl : TOK_IDENTIFIER TOK_COLON vartype {
                         ast.result = ast_decl_boolean($1.result, ast_boolean(0, ast.pos), ast.pos);
                         break;
                     case TOK_INTEGER:
-                        ast.result = ast_decl_int32($1.result, ast_boolean(0, ast.pos), ast.pos);
+                        ast.result = ast_decl_int32($1.result, ast_int32(0, ast.pos), ast.pos);
                         break;
                     case TOK_FLOAT:
-                        ast.result = ast_decl_float32($1.result, ast_boolean(0, ast.pos), ast.pos);
+                        ast.result = ast_decl_float32($1.result, ast_float32(0, ast.pos), ast.pos);
                         break;
                     case TOK_TEXT:
-                        ast.result = ast_decl_text($1.result, ast_boolean(0, ast.pos), ast.pos);
+                        ast.result = ast_decl_text($1.result, ast_text("", ast.pos), ast.pos);
                         break;
                     default:
                         break;

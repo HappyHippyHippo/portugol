@@ -45,6 +45,12 @@ runtime_scope_push_named(Runtime* runtime,
 Variant
 runtime_scope_pop(Runtime* runtime);
 
+int
+runtime_scope_is_returning(Runtime* runtime);
+
+Runtime*
+runtime_scope_set_returning(Runtime* runtime);
+
 Runtime*
 runtime_clear(Runtime* runtime);
 

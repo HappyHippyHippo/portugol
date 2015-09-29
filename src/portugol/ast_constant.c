@@ -84,23 +84,10 @@ ast_constant_print(AST_Node* node,
     if (node == NULL)
         return;
 
-    switch (node->type)
-    {
-        case AST_CONST_BOOLEAN:
-            printf("boolean(%d)\n", ((AST_Constant*) node)->value.value.boolean);
-            break;
-        case AST_CONST_INT32:
-            printf("int32(%d)\n",   ((AST_Constant*) node)->value.value.int32);
-            break;
-        case AST_CONST_FLOAT32:
-            printf("float32(%f)\n", ((AST_Constant*) node)->value.value.float32);
-            break;
-        case AST_CONST_TEXT:
-            printf("text(%s)\n",    ((AST_Constant*) node)->value.value.text);
-            break;
-        default:
-            break;
-    }
+    AST_Constant* aux = (AST_Constant*) node;
+
+    variant_print(aux->value);
+    printf("\n");
 }
 
 void
@@ -110,8 +97,9 @@ ast_constant_destroy(AST_Node** node)
         return;
 
     AST_Constant* aux = *(AST_Constant**) node;
-    variant_uninit(&aux->value);
 
+    variant_uninit(&aux->value);
     free(aux);
+
     *node = NULL;
 }

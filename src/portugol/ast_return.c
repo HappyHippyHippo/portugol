@@ -28,7 +28,13 @@ ast_return_execute(AST_Node* node,
     if (node == NULL || runtime == NULL)
         return variant_init_int32(0);
 
-    return ast_execute(((AST_Return*) node)->expr, runtime);
+    Variant result = ast_execute(((AST_Return*) node)->expr, runtime);
+    variant_set(runtime_scope_get(runtime), result);
+    variant_uninit(&result);
+
+    runtime_scope_set_returning(runtime);
+
+    return variant_copy(*runtime_scope_get(runtime));
 }
 
 void
@@ -39,8 +45,10 @@ ast_return_print(AST_Node* node,
     if (node == NULL)
         return;
 
+    AST_Return* aux = (AST_Return*) node;
+
     printf("return\n");
-    ast_print(((AST_Return*) node)->expr, level + 1, "");
+    ast_print(aux->expr, level + 1, "");
 }
 
 void
@@ -50,8 +58,9 @@ ast_return_destroy(AST_Node** node)
         return;
 
     AST_Return* aux = *(AST_Return**) node;
-    ast_destroy(&aux->expr);
 
+    ast_destroy(&aux->expr);
     free(aux);
+
     *node = NULL;
 }

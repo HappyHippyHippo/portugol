@@ -36,6 +36,7 @@ ast_variable_execute(AST_Node* node,
         return variant_init_int32(0);
 
     AST_Variable* aux = (AST_Variable*) node;
+
     return variant_copy(*runtime_get(runtime, aux->name));
 }
 
@@ -47,7 +48,9 @@ ast_variable_print(AST_Node* node,
     if (node == NULL)
         return;
 
-    printf("var(%s)\n", ((AST_Variable*) node)->name);
+    AST_Variable* aux = (AST_Variable*) node;
+
+    printf("var(%s)\n", aux->name);
 }
 
 void
@@ -57,7 +60,9 @@ ast_variable_destroy(AST_Node** node)
         return;
 
     AST_Variable* aux = *(AST_Variable**) node;
+
     free(aux->name);
     free(aux);
+
     *node = NULL;
 }

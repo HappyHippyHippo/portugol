@@ -132,23 +132,25 @@ ast_decl_print(AST_Node* node,
     if (node == NULL)
         return;
 
-    switch (node->type)
+    AST_Decl* aux = (AST_Decl*) node;
+
+    switch (aux->type)
     {
         case AST_DECL_BOOLEAN:
-            printf("decl(%s : boolean)\n", ((AST_Decl*) node)->name);
-            ast_print(((AST_Decl*) node)->value, level + 1, "default value >> ");
+            printf("decl(%s : boolean)\n", aux->name);
+            ast_print(aux->value, level + 1, "default value >> ");
             break;
         case AST_DECL_INT32:
-            printf("decl(%s : int32)\n", ((AST_Decl*) node)->name);
-            ast_print(((AST_Decl*) node)->value, level + 1, "default value >> ");
+            printf("decl(%s : int32)\n", aux->name);
+            ast_print(aux->value, level + 1, "default value >> ");
             break;
         case AST_DECL_FLOAT32:
-            printf("decl(%s : float32)\n", ((AST_Decl*) node)->name);
-            ast_print(((AST_Decl*) node)->value, level + 1, "default value >> ");
+            printf("decl(%s : float32)\n", aux->name);
+            ast_print(aux->value, level + 1, "default value >> ");
             break;
         case AST_DECL_TEXT:
-            printf("decl(%s : text)\n", ((AST_Decl*) node)->name);
-            ast_print(((AST_Decl*) node)->value, level + 1, "default value >> ");
+            printf("decl(%s : text)\n", aux->name);
+            ast_print(aux->value, level + 1, "default value >> ");
             break;
         default:
             break;
@@ -162,9 +164,10 @@ ast_decl_destroy(AST_Node** node)
         return;
 
     AST_Decl* aux = *(AST_Decl**) node;
-    free(aux->name);
-    ast_destroy(&aux->value);
 
+    ast_destroy(&aux->value);
+    free(aux->name);
     free(aux);
+
     *node = NULL;
 }

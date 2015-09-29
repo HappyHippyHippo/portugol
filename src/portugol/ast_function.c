@@ -88,9 +88,13 @@ ast_function_execute(AST_Node* node,
     if (node == NULL || runtime == NULL)
         return variant_init_int32(0);
 
-    // TODO : register the function in the heap
+    AST_Function* aux = (AST_Function*) node;
 
-    return variant_init_int32(0);
+    ast_execute(aux->scope, runtime);
+    Variant* result = runtime_scope_get(runtime);
+    variant_cast(result, aux->return_type);
+
+    return variant_copy(*result);
 }
 
 void
@@ -101,35 +105,37 @@ ast_function_print(AST_Node* node,
     if (node == NULL)
         return;
 
-    printf("function(%s) -> ", ((AST_Function*) node)->name);
-    switch (((AST_Function*) node)->return_type)
+    AST_Function* aux = (AST_Function*) node;
+
+    printf("function(%s) -> ", aux->name);
+    switch (aux->return_type)
     {
-        case VBOOLEAN:  printf("boolean\n");  break;
-        case VINT32:    printf("int32\n");    break;
-        case VFLOAT32:  printf("float32\n");  break;
-        case VTEXT:     printf("text\n");     break;
-        case VFUNCTION: printf("function\n"); break;
-        default:        printf("unknown\n");  break;
+        case VBOOLEAN:  printf("boolean\n");            break;
+        case VINT32:    printf("int32\n");              break;
+        case VFLOAT32:  printf("float32\n");            break;
+        case VTEXT:     printf("text\n");               break;
+        case VFUNCTION: printf("function\n");           break;
+        default:        printf("unknown\n");            break;
     }
 
-    for (int idx = 0; idx < ((AST_Function*) node)->param_count; ++idx) {
+    for (int idx = 0; idx < aux->param_count; ++idx) {
         for (int i = 0; i < level - 1; ++i)
             printf("    ");
          printf("param %d > ", idx);
 
-        switch (((AST_Function*) node)->params[idx].type)
+        switch (aux->params[idx].type)
         {
-            case VBOOLEAN:  printf("boolean");  break;
-            case VINT32:    printf("int32");    break;
-            case VFLOAT32:  printf("float32");  break;
-            case VTEXT:     printf("text");     break;
-            case VFUNCTION: printf("function"); break;
-            default:        printf("unknown");  break;
+            case VBOOLEAN:  printf("boolean");          break;
+            case VINT32:    printf("int32");            break;
+            case VFLOAT32:  printf("float32");          break;
+            case VTEXT:     printf("text");             break;
+            case VFUNCTION: printf("function");         break;
+            default:        printf("unknown");          break;
         }
-        printf(": %s\n", ((AST_Function*) node)->params[idx].name);
+        printf(": %s\n", aux->params[idx].name);
     }
 
-    ast_print(((AST_Function*) node)->scope, level + 1, "");
+    ast_print(aux->scope, level + 1, "");
 }
 
 void
@@ -139,10 +145,11 @@ ast_function_destroy(AST_Node** node)
         return;
 
     AST_Function* aux = *(AST_Function**) node;
-    ast_destroy(&aux->scope);
 
+    ast_destroy(&aux->scope);
     free(aux->name);
     free(aux->params);
     free(aux);
+
     *node = NULL;
 }

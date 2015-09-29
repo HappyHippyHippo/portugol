@@ -147,3 +147,6 @@ variant_op_negative(Variant var);
 
 Variant
 variant_op_not(Variant var);
+
+void
+variant_print(Variant var);
