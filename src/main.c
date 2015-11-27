@@ -8,18 +8,26 @@
 #include <portugol/runtime.h>
 #include <mem.h>
 
-#define DEFAULT_SOURCE_FILE "bin/programa.portugol"
-
 int main(int argc, char** argv) {
-    ast_root_load(argc > 1 ? argv[1] : DEFAULT_SOURCE_FILE);
+    int32_t exit_result = 0;
 
-    ast_root_output();
-    printf("\n");
+    ast_root_load("bin/programa.portugol");
 
-    Variant result;
-    ast_root_execute(&result);
-    printf("result : "); variant_output(&result); printf("\n");
-    variant_uninit(&result);
+    if (!ast_error)
+    {
+        ast_root_output();
+        printf("\n");
 
-    return 0;
+        Variant result;
+        ast_root_execute(&result);
+
+        exit_result = result.value.vint32;
+        variant_uninit(&result);
+    }
+    else
+    {
+        printf("Loading error ...\n");
+    }
+
+    return exit_result;
 }

@@ -13,20 +13,29 @@ Variant*
 variant_init(Variant* variant,
              const Variant* value)
 {
-    if (variant)
+    /* check if there is a variant to copy */
+    if (value)
     {
-        /* check if there is a variant to copy */
-        if (value)
+        switch (value->type)
         {
-            memcpy(variant, value, sizeof(Variant));
-        }
-        else
-        {
-            variant_init_int32(variant, 0);
+            case VBOOLEAN:
+                return variant_init_boolean(variant, value->value.vboolean);
+            case VINT32:
+                return variant_init_int32(variant, value->value.vint32);
+            case VFLOAT32:
+                return variant_init_float32(variant, value->value.vfloat32);
+            case VTEXT:
+                return variant_init_text(variant, value->value.vtext);
+            case VPOINTER:
+                return variant_init_pointer(variant, value->value.vpointer);
+            case VFUNCTION:
+                return variant_init_function(variant, value->value.vfunction);
+            default:
+                break;;
         }
     }
 
-    return variant;
+    return variant_init_int32(variant, 0);
 } /* end of : Variant*
               variant_init(Variant* variant,
                            const Variant* value) */

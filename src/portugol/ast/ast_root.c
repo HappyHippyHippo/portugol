@@ -64,6 +64,16 @@ ast_root_load(char* file)
             /* store the file node in the root node */
             ast_root_push(result);
         }
+        else
+        {
+            // TODO : flag the file parsing error
+            printf("Error parsing file : %s\n", file);
+        }
+    }
+    else
+    {
+        // TODO : flag the file loading error
+        printf("Error opening file : %s\n", file);
     }
 
     return result;

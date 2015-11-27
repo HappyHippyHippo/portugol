@@ -183,6 +183,9 @@ typedef struct AST_FunctionCall
     char* name;
 
     /// @brief
+    int is_syscall;
+
+    /// @brief
     AST_ArgList* args;
 } AST_FunctionCall;
 
@@ -217,3 +220,52 @@ ast_function_call_output(AST_FunctionCall* node,
 /// @param node
 void
 ast_function_call_destroy(AST_FunctionCall** node);
+
+/*******************************************************************************
+ * SYSTEM FUNCTIONS
+ ******************************************************************************/
+
+/// @brief
+///
+/// @param node
+/// @param result
+/// @return
+Variant*
+ast_system_call_boolean(AST_FunctionCall* node,
+                        Variant* result);
+
+/// @brief
+///
+/// @param node
+/// @param result
+/// @return
+Variant*
+ast_system_call_int32(AST_FunctionCall* node,
+                      Variant* result);
+
+/// @brief
+///
+/// @param node
+/// @param result
+/// @return
+Variant*
+ast_system_call_float32(AST_FunctionCall* node,
+                        Variant* result);
+
+/// @brief
+///
+/// @param node
+/// @param result
+/// @return
+Variant*
+ast_system_call_text(AST_FunctionCall* node,
+                     Variant* result);
+
+/// @brief
+///
+/// @param node
+/// @param result
+/// @return
+Variant*
+ast_system_call_output(AST_FunctionCall* node,
+                       Variant* result);

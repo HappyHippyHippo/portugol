@@ -1,5 +1,5 @@
-importar "bin/func.portugol"
+importar "bin/factorial.portugol"
 
 programa
-    retorna func(2)
+    retorna escreve("resultado : " + inteiro(factorial(8)))
 fim de programa

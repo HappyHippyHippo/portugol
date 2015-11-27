@@ -264,6 +264,33 @@ ast_function_call(AST_Pos pos,
         node->vtable.output = ast_function_call_output;
         node->vtable.destroy = ast_function_call_destroy;
 
+        node->is_syscall = 0;
+        if (strcmp(name, "escreve") == 0)
+        {
+            node->vtable.execute = ast_system_call_output;
+            node->is_syscall = 1;
+        }
+        else if (strcmp(name, "booleano") == 0)
+        {
+            node->vtable.execute = ast_system_call_boolean;
+            node->is_syscall = 1;
+        }
+        else if (strcmp(name, "inteiro") == 0)
+        {
+            node->vtable.execute = ast_system_call_int32;
+            node->is_syscall = 1;
+        }
+        else if (strcmp(name, "real") == 0)
+        {
+            node->vtable.execute = ast_system_call_float32;
+            node->is_syscall = 1;
+        }
+        else if (strcmp(name, "texto") == 0)
+        {
+            node->vtable.execute = ast_system_call_text;
+            node->is_syscall = 1;
+        }
+
         /* store the function call node parameters */
 #ifdef _MSC_VER
         strcpy_s(node->name, length + 1, name);
@@ -436,6 +463,11 @@ ast_function_call_get_return_type(AST_FunctionCall* node)
 {
     if (node)
     {
+        if (node->vtable.execute == ast_system_call_output)
+        {
+            return VINT32;
+        }
+
         /* retrieve the function pointer from the runtime */
         Variant* fvariant = runtime_get(node->name);
         AST_Function* function = (AST_Function*) fvariant->value.vfunction;
@@ -459,32 +491,42 @@ ast_function_call_execute(AST_FunctionCall* node,
         Variant* fvariant = runtime_get(node->name);
         AST_Function* function = (AST_Function*) fvariant->value.vfunction;
 
+        /* check if arguments must be created/calculated */
+        Variant* args = NULL;
+        if (function->params->count)
+        {
+            if ((args = mem_malloc(sizeof(Variant) * function->params->count)) == NULL)
+            {
+                // TODO : report no memory failure
+                return result;
+            }
+
+            /* function argument initialization/calculation cycle */
+            for (size_t fparam = 0; fparam < function->params->count; ++fparam)
+            {
+                /* check if there is a argument to be calculated */
+                if (fparam < node->args->count)
+                {
+                    ast_execute(node->args->list[fparam], &args[fparam]);
+                }
+
+                /* cast the argument to the parameter expected type */
+                variant_cast(&args[fparam], function->params->list[fparam].type);
+            }
+        }
+
         /* push the function scope into the runtime */
         Variant* call_result = runtime_stack_push_function("*function", function->return_type);
 
         /* function parameters scope insertion cycle */
         for (size_t fparam = 0; fparam < function->params->count; ++fparam)
         {
-            Variant arg = {0};
-
-            /* check if there is a argument to be calculated */
-            if (fparam < node->args->count)
-            {
-                ast_execute(node->args->list[fparam], &arg);
-            }
-
-            /* cast the argument to the paramter expected type */
-            variant_cast(&arg, function->params->list[fparam].type);
-
             /* create the runtime variant and copy the argument value into it */
             Variant* store = runtime_add(function->params->list[fparam].name, function->params->list[fparam].type);
             if (store)
             {
-                variant_assign(store, &arg);
+                variant_assign(store, &args[fparam]);
             }
-
-            /* clear the argument variant */
-            variant_uninit(&arg);
         }
 
         /* call the function scope execution */
@@ -492,6 +534,17 @@ ast_function_call_execute(AST_FunctionCall* node,
 
         /* store the function call result */
         variant_assign(result, call_result);
+
+        /* check if arguments have been calculated */
+        if (function->params->count)
+        {
+            /* arguments cleaning cycle */
+            for (size_t fparam = 0; fparam < function->params->count; ++fparam)
+            {
+                variant_uninit(&args[fparam]);
+            }
+            mem_free(args);
+        }
 
         /* pop the function scope from the runtime */
         runtime_stack_pop();
@@ -523,7 +576,14 @@ ast_function_call_output(AST_FunctionCall* node,
         }
 
         /* present the node information */
-        printf("%sfunction call(%s)\n", prefix, node->name);
+        if (!node->is_syscall)
+        {
+            printf("%sfunction call(%s)\n", prefix, node->name);
+        }
+        else
+        {
+            printf("%ssyscall(%s)\n", prefix, node->name);
+        }
 
         /* present the function call arguments */
         for (size_t i = 0; i < node->args->count; ++i)
@@ -557,3 +617,133 @@ ast_function_call_destroy(AST_FunctionCall** node)
     }
 } /* end of : void
               ast_function_call_destroy(AST_FunctionCall** node) */
+
+/*******************************************************************************
+ * SYSTEM FUNCTIONS
+ ******************************************************************************/
+
+Variant*
+ast_system_call_boolean(AST_FunctionCall* node,
+                        Variant* result)
+{
+    if (   node
+        && result
+        && !runtime_is_returning())
+    {
+        /* check if there is a argument to be calculated */
+        if (node->args->count)
+        {
+            ast_execute(node->args->list[0], result);
+        }
+
+        /* cast the argument to the expected type */
+        variant_cast(result, VBOOLEAN);
+    }
+
+    return result;
+} /* end of : Variant*
+              ast_system_call_boolean(AST_FunctionCall* node,
+                                      Variant* result) */
+
+Variant*
+ast_system_call_int32(AST_FunctionCall* node,
+                      Variant* result)
+{
+    if (   node
+        && result
+        && !runtime_is_returning())
+    {
+        /* check if there is a argument to be calculated */
+        if (node->args->count)
+        {
+            ast_execute(node->args->list[0], result);
+        }
+
+        /* cast the argument to the expected type */
+        variant_cast(result, VINT32);
+    }
+
+    return result;
+} /* end of : Variant*
+              ast_system_call_int32(AST_FunctionCall* node,
+                                    Variant* result) */
+
+Variant*
+ast_system_call_float32(AST_FunctionCall* node,
+                        Variant* result)
+{
+    if (   node
+        && result
+        && !runtime_is_returning())
+    {
+        /* check if there is a argument to be calculated */
+        if (node->args->count)
+        {
+            ast_execute(node->args->list[0], result);
+        }
+
+        /* cast the argument to the expected type */
+        variant_cast(result, VFLOAT32);
+    }
+
+    return result;
+} /* end of : Variant*
+              ast_system_call_float32(AST_FunctionCall* node,
+                                      Variant* result) */
+
+Variant*
+ast_system_call_text(AST_FunctionCall* node,
+                     Variant* result)
+{
+    if (   node
+        && result
+        && !runtime_is_returning())
+    {
+        /* check if there is a argument to be calculated */
+        if (node->args->count)
+        {
+            ast_execute(node->args->list[0], result);
+        }
+
+        /* cast the argument to the expected type */
+        variant_cast(result, VTEXT);
+    }
+
+    return result;
+} /* end of : Variant*
+              ast_system_call_text(AST_FunctionCall* node,
+                                   Variant* result) */
+
+Variant*
+ast_system_call_output(AST_FunctionCall* node,
+                       Variant* result)
+{
+    if (   node
+        && result
+        && !runtime_is_returning())
+    {
+        Variant arg = {0};
+
+        /* check if there is a argument to be calculated */
+        if (node->args->count)
+        {
+            ast_execute(node->args->list[0], &arg);
+        }
+
+        /* cast the argument to the paramter expected type */
+        variant_cast(&arg, VTEXT);
+
+        /* call the system output function */
+        printf("%s\n", arg.value.vtext);
+
+        /* clear the argument variant */
+        variant_uninit(&arg);
+
+        /* signal no error */
+        variant_assign_int32(result, 0);
+    }
+
+    return result;
+} /* end of : Variant*
+              ast_system_call_output(AST_FunctionCall* node,
+                                     Variant* result) */

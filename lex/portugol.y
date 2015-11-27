@@ -94,7 +94,7 @@ void yyerror(const char *msg) {
 %type <fparams> fparams
 %type <fparam> fparam
 %type <fargs> fargs
-%type <ast> globals global import program function locals local if while for decl assign return expr fcall farg constant variable
+%type <ast> globals global import program function locals local if while for decl assign return expr cast fcall farg constant variable
 
 %start globals
 
@@ -400,8 +400,35 @@ expr : TOK_OPEN_PAREN expr TOK_CLOSE_PAREN { $$ = $2; }
                                              pos.column.stop  = ast_get_position($2).column.stop;
                                              $$ = ast_op_negative(pos, $2); }
      | fcall                               { $$ = $1; }
+     | cast                                { $$ = $1; }
      | constant                            { $$ = $1; }
      | variable                            { $$ = $1; }
+     ;
+
+cast : TOK_BOOLEAN TOK_OPEN_PAREN fargs TOK_CLOSE_PAREN { AST_Pos pos;
+                                                          pos.line.start   = $1.pos.line.start;
+                                                          pos.line.stop    = $1.pos.line.stop;
+                                                          pos.column.start = $4.pos.column.start;
+                                                          pos.column.stop  = $4.pos.column.stop;
+                                                          $$ = ast_function_call(pos, "booleano", $3); }
+     | TOK_INT32 TOK_OPEN_PAREN fargs TOK_CLOSE_PAREN   { AST_Pos pos;
+                                                          pos.line.start   = $1.pos.line.start;
+                                                          pos.line.stop    = $1.pos.line.stop;
+                                                          pos.column.start = $4.pos.column.start;
+                                                          pos.column.stop  = $4.pos.column.stop;
+                                                          $$ = ast_function_call(pos, "inteiro", $3); }
+     | TOK_FLOAT32 TOK_OPEN_PAREN fargs TOK_CLOSE_PAREN { AST_Pos pos;
+                                                          pos.line.start   = $1.pos.line.start;
+                                                          pos.line.stop    = $1.pos.line.stop;
+                                                          pos.column.start = $4.pos.column.start;
+                                                          pos.column.stop  = $4.pos.column.stop;
+                                                          $$ = ast_function_call(pos, "real", $3); }
+     | TOK_TEXT TOK_OPEN_PAREN fargs TOK_CLOSE_PAREN    { AST_Pos pos;
+                                                          pos.line.start   = $1.pos.line.start;
+                                                          pos.line.stop    = $1.pos.line.stop;
+                                                          pos.column.start = $4.pos.column.start;
+                                                          pos.column.stop  = $4.pos.column.stop;
+                                                          $$ = ast_function_call(pos, "texto", $3); }
      ;
 
 fcall : TOK_IDENTIFIER TOK_OPEN_PAREN fargs TOK_CLOSE_PAREN { AST_Pos pos;
