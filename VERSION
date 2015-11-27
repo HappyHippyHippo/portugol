@@ -20,6 +20,10 @@ in development V0.5.0
 - better parsing error management (more and good information about the error)
 - semantic analysis (AST validation and good error information)
 
+v0.4.1b
+---------------------------
+- source file loading check (stop exploding ...)
+
 v0.4.1
 ---------------------------
 - added system function : escreve -> function used to output text into the console

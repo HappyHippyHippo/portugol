@@ -56,8 +56,15 @@ ast_root_load(char* file)
                 /* check if the iterated node is a import node */
                 if (fscope->instrs.list[i]->type == AST_IMPORT)
                 {
+                    char* import = ((AST_Import *) fscope->instrs.list[i])->name;
+
                     /* load the requested file */
-                    ast_root_load(((AST_Import *) fscope->instrs.list[i])->name);
+                    if (!ast_root_load(import))
+                    {
+                        // TODO : flag the file import error
+                        printf("Error importing file : %s at file %s\n", import, file);
+                        result = NULL;
+                    }
                 }
             }
 
@@ -120,6 +127,24 @@ ast_root_push(AST_Node* node)
     return node;
 } /* end of : AST_Node*
               ast_root_push(AST_Node* node) */
+
+void
+ast_root_clear(void)
+{
+    /* check if the root node singleton is created */
+    ast_root_init();
+
+    /* node destruction cycle */
+    for (size_t i = 0; i < _ast_root->files.count; ++i)
+    {
+        ast_destroy(&_ast_root->files.list[i]);
+    }
+
+    /* release the memory allcoated to the root nodes array */
+    mem_free(_ast_root->files.list);
+    _ast_root->files.list = NULL;
+} /* end of : void
+              ast_root_clear(void) */
 
 Variant*
 ast_root_execute(Variant* result)
@@ -190,6 +215,9 @@ ast_root_init(void)
         /* initialize the root list */
         _ast_root->files.list = NULL;
         _ast_root->files.count = 0;
+
+        /* register the toor destruction at program exit */
+        atexit(ast_root_uninit);
     }
 } /* end of : void
               ast_root_init(void) */
@@ -199,12 +227,7 @@ ast_root_uninit(void)
 {
     if (_ast_root)
     {
-        /* node destruction cycle */
-        for (size_t i = 0; i < _ast_root->files.count; ++i)
-        {
-            ast_destroy(&_ast_root->files.list[i]);
-        }
-        mem_free(_ast_root->files.list);
+        ast_root_clear();
 
         /* release the memory for the ast root node */
         mem_free(_ast_root);

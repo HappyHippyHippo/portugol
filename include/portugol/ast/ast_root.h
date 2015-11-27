@@ -17,6 +17,10 @@ AST_Node*
 ast_root_push(AST_Node* node);
 
 /// @brief
+void
+ast_root_clear(void);
+
+/// @brief
 ///
 /// @param result
 /// @return
