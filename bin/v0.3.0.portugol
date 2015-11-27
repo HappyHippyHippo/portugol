@@ -1,0 +1,24 @@
+//------------------------------------------
+// FUNCTIONS/PROGRAM EXECUTION TEST
+//------------------------------------------
+
+programa
+    pvar : inteiro
+
+    retorna multiplica(4, mult)
+fim de programa
+
+multiplica : função(real multiplicando, real multiplicador) retorna real
+    resultado : real
+
+    para iterador de 0 até multiplicador então
+        resultado <- resultado + multiplicando
+        se resultado > 10 então
+            retorna -1
+        fim de se
+    fim de para
+
+    retorna resultado
+fim de função
+
+mult : real <- 4.0

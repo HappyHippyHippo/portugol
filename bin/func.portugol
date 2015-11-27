@@ -1,0 +1,7 @@
+func : função(inteiro param1) retorna real
+    para var de 10 até 1 então
+        param1 <- param1 * 2
+    fim de para
+
+    retorna param1
+fim de função

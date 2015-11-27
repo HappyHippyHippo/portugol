@@ -2,151 +2,408 @@
 
 #include <stdint.h>
 
-typedef enum
-{
-    VUNKNOWN   = 0,
-    VBOOLEAN,
-    VINT32,
-    VFLOAT32,
-    VTEXT,
-    VFUNCTION
-} VariantType;
+#include <portugol/vartype.h>
 
-typedef struct Variant
+/// @brief
+typedef struct
 {
-    int type;
+    /// @brief
+    VType type;
 
+    /// @brief
     union
     {
-        uint8_t boolean;
-        int32_t int32;
-        float float32;
-        char* text;
-        void* function;
+        /// @brief
+        int8_t vboolean;
+
+        /// @brief
+        int32_t vint32;
+
+        /// @brief
+        float vfloat32;
+
+        /// @brief
+        char* vtext;
+
+        /// @brief
+        void* vpointer;
+
+        /// @brief
+        const void* vfunction;
     } value;
 } Variant;
 
-Variant
-variant_init_boolean(int value);
-
-Variant
-variant_init_int32(int32_t value);
-
-Variant
-variant_init_float32(float value);
-
-Variant
-variant_init_text(char* value);
-
-Variant
-variant_init_function(void* value);
-
-Variant
-variant_copy(Variant var);
-
+/// @brief
+///
+/// @param variant
+/// @param value
+/// @return
 Variant*
-variant_uninit(Variant* var);
+variant_init(Variant* variant,
+             const Variant* value);
 
+/// @brief
+///
+/// @param variant
+/// @param type
+/// @return
 Variant*
-variant_set_boolean(Variant* var,
-                    int value);
+variant_init_type(Variant* variant,
+                  const VType type);
 
+/// @brief
+///
+/// @param variant
+/// @param value
+/// @return
 Variant*
-variant_set_int32(Variant* var,
-                  int32_t value);
+variant_init_boolean(Variant* variant,
+                     const int8_t value);
 
+/// @brief
+///
+/// @param variant
+/// @param value_str
+/// @return
 Variant*
-variant_set_float32(Variant* var,
-                    float value);
+variant_init_boolean_ex(Variant* variant,
+                        const char* value_str);
 
+/// @brief
+///
+/// @param variant
+/// @param value
+/// @return
 Variant*
-variant_set_text(Variant* var,
-                 char* value);
+variant_init_int32(Variant* variant,
+                   const int32_t value);
 
+/// @brief
+///
+/// @param variant
+/// @param value_str
+/// @return
 Variant*
-variant_set_function(Variant* var,
+variant_init_int32_ex(Variant* variant,
+                      const char* value_str);
+
+/// @brief
+///
+/// @param variant
+/// @param value
+/// @return
+Variant*
+variant_init_float32(Variant* variant,
+                   const float value);
+
+/// @brief
+///
+/// @param variant
+/// @param value_str
+/// @return
+Variant*
+variant_init_float32_ex(Variant* variant,
+                        const char* value_str);
+
+/// @brief
+///
+/// @param variant
+/// @param value
+/// @return
+Variant*
+variant_init_text(Variant* variant,
+                  const char* value);
+
+/// @brief
+///
+/// @param variant
+/// @param value
+/// @return
+Variant*
+variant_init_pointer(Variant* variant,
                      void* value);
 
+/// @brief
+///
+/// @param variant
+/// @param value
+/// @return
 Variant*
-variant_set(Variant* var1,
-            Variant var2);
+variant_init_function(Variant* variant,
+                      const void* value);
 
+/// @brief
+///
+/// @param variant
+/// @return
 Variant*
-variant_promote(Variant* var,
-                VariantType type);
+variant_uninit(Variant* variant);
 
+/// @brief
+///
+/// @param variant
+/// @param value
+/// @return
 Variant*
-variant_demote(Variant* var,
-               VariantType type);
+variant_assign(Variant* variant,
+               const Variant* value);
 
+/// @brief
+///
+/// @param variant
+/// @param value
+/// @return
 Variant*
-variant_cast(Variant* var,
-             VariantType type);
+variant_assign_boolean(Variant* variant,
+                       const int8_t value);
 
-Variant
-variant_op_add(Variant var1,
-               Variant var2);
+/// @brief
+///
+/// @param variant
+/// @param value
+/// @return
+Variant*
+variant_assign_int32(Variant* variant,
+                     const int32_t value);
 
-Variant
-variant_op_subtract(Variant var1,
-                    Variant var2);
+/// @brief
+///
+/// @param variant
+/// @param value
+/// @return
+Variant*
+variant_assign_float32(Variant* variant,
+                       const float value);
 
-Variant
-variant_op_multiply(Variant var1,
-                    Variant var2);
+/// @brief
+///
+/// @param variant
+/// @param value
+/// @return
+Variant*
+variant_assign_text(Variant* variant,
+                    const char* value);
 
-Variant
-variant_op_divide(Variant var1,
-                  Variant var2);
+/// @brief
+///
+/// @param variant
+/// @param value
+/// @return
+Variant*
+variant_assign_pointer(Variant* variant,
+                       void* value);
 
-Variant
-variant_op_remainder(Variant var1,
-                     Variant var2);
+/// @brief
+///
+/// @param variant
+/// @param value
+/// @return
+Variant*
+variant_assign_function(Variant* variant,
+                        const void* value);
 
-Variant
-variant_op_equal(Variant var1,
-                 Variant var2);
+/// @brief
+///
+/// @param variant
+/// @param type
+/// @return
+Variant*
+variant_cast(Variant* variant,
+             const VType type);
 
-Variant
-variant_op_inequal(Variant var1,
-                   Variant var2);
+/// @brief
+///
+/// @param variant
+/// @param type
+/// @return
+Variant*
+variant_promote(Variant* variant,
+                const VType type);
 
-Variant
-variant_op_greater(Variant var1,
-                   Variant var2);
+/// @brief
+///
+/// @param variant
+/// @param type
+/// @return
+Variant*
+variant_demote(Variant* variant,
+               const VType type);
 
-Variant
-variant_op_greater_or_equal(Variant var1,
-                            Variant var2);
+/// @brief
+///
+/// @param result
+/// @param op
+/// @return
+Variant*
+variant_negate(Variant* result,
+               const Variant* op);
 
-Variant
-variant_op_lesser(Variant var1,
-                   Variant var2);
+/// @brief
+///
+/// @param result
+/// @param op
+/// @return
+Variant*
+variant_negative(Variant* result,
+                 const Variant* op);
 
-Variant
-variant_op_lesser_or_equal(Variant var1,
-                           Variant var2);
+/// @brief
+///
+/// @param result
+/// @param op1
+/// @param op2
+/// @return
+Variant*
+variant_add(Variant* result,
+            const Variant* op1,
+            const Variant* op2);
 
-Variant
-variant_op_and(Variant var1,
-               Variant var2);
+/// @brief
+///
+/// @param result
+/// @param op1
+/// @param op2
+/// @return
+Variant*
+variant_subtract(Variant* result,
+                 const Variant* op1,
+                 const Variant* op2);
 
-Variant
-variant_op_or(Variant var1,
-              Variant var2);
+/// @brief
+///
+/// @param result
+/// @param op1
+/// @param op2
+/// @return
+Variant*
+variant_multiply(Variant* result,
+                 const Variant* op1,
+                 const Variant* op2);
 
-Variant
-variant_op_xor(Variant var1,
-               Variant var2);
+/// @brief
+///
+/// @param result
+/// @param op1
+/// @param op2
+/// @return
+Variant*
+variant_divide(Variant* result,
+               const Variant* op1,
+               const Variant* op2);
 
-Variant
-variant_op_positive(Variant var);
+/// @brief
+///
+/// @param result
+/// @param op1
+/// @param op2
+/// @return
+Variant*
+variant_remainder(Variant* result,
+                  const Variant* op1,
+                  const Variant* op2);
 
-Variant
-variant_op_negative(Variant var);
+/// @brief
+///
+/// @param result
+/// @param op1
+/// @param op2
+/// @return
+Variant*
+variant_equal(Variant* result,
+              const Variant* op1,
+              const Variant* op2);
 
-Variant
-variant_op_not(Variant var);
+/// @brief
+///
+/// @param result
+/// @param op1
+/// @param op2
+/// @return
+Variant*
+variant_inequal(Variant* result,
+                const Variant* op1,
+                const Variant* op2);
 
+/// @brief
+///
+/// @param result
+/// @param op1
+/// @param op2
+/// @return
+Variant*
+variant_greater(Variant* result,
+                const Variant* op1,
+                const Variant* op2);
+
+/// @brief
+///
+/// @param result
+/// @param op1
+/// @param op2
+/// @return
+Variant*
+variant_greater_or_equal(Variant* result,
+                         const Variant* op1,
+                         const Variant* op2);
+
+/// @brief
+///
+/// @param result
+/// @param op1
+/// @param op2
+/// @return
+Variant*
+variant_lesser(Variant* result,
+               const Variant* op1,
+               const Variant* op2);
+
+/// @brief
+///
+/// @param result
+/// @param op1
+/// @param op2
+/// @return
+Variant*
+variant_lesser_or_equal(Variant* result,
+                        const Variant* op1,
+                        const Variant* op2);
+
+/// @brief
+///
+/// @param result
+/// @param op1
+/// @param op2
+/// @return
+Variant*
+variant_and(Variant* result,
+            const Variant* op1,
+            const Variant* op2);
+
+/// @brief
+///
+/// @param result
+/// @param op1
+/// @param op2
+/// @return
+Variant*
+variant_or(Variant* result,
+           const Variant* op1,
+           const Variant* op2);
+
+/// @brief
+///
+/// @param result
+/// @param op1
+/// @param op2
+/// @return
+Variant*
+variant_xor(Variant* result,
+            const Variant* op1,
+            const Variant* op2);
+
+/// @brief
+///
+/// @param variant
+/// @return
 void
-variant_print(Variant var);
+variant_output(const Variant* variant);

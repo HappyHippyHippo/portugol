@@ -45,51 +45,50 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    TOK_VAL_BOOLEAN = 258,
-    TOK_VAL_NUMBER = 259,
-    TOK_VAL_FPNUMBER = 260,
-    TOK_VAL_TEXT = 261,
-    TOK_IDENTIFIER = 262,
-    TOK_COLON = 263,
-    TOK_BOOLEAN = 264,
-    TOK_INTEGER = 265,
-    TOK_FLOAT = 266,
-    TOK_TEXT = 267,
-    TOK_EOL = 268,
-    TOK_FUNCTION = 269,
-    TOK_RETURN = 270,
-    TOK_PROGRAM = 271,
-    TOK_COMMA = 272,
-    TOK_END = 273,
-    TOK_OF = 274,
-    TOK_IF = 275,
-    TOK_THEN = 276,
-    TOK_ELSE = 277,
-    TOK_FOR = 278,
-    TOK_TO = 279,
-    TOK_STEP = 280,
-    TOK_SWITCH = 281,
-    TOK_CASE = 282,
-    TOK_DEFAULT = 283,
-    TOK_WHILE = 284,
-    TOK_OPEN_PAREN = 285,
-    TOK_CLOSE_PAREN = 286,
-    TOK_OP_NOT = 287,
-    TOK_OP_MULTIPLY = 288,
-    TOK_OP_DIVIDE = 289,
-    TOK_OP_REMAINDER = 290,
-    TOK_OP_ADD = 291,
-    TOK_OP_SUBTRACT = 292,
-    TOK_OP_EQUAL = 293,
-    TOK_OP_INEQUAL = 294,
-    TOK_OP_GREATER = 295,
-    TOK_OP_GREATER_OR_EQUAL = 296,
-    TOK_OP_LESSER = 297,
-    TOK_OP_LESSER_OR_EQUAL = 298,
-    TOK_OP_AND = 299,
-    TOK_OP_OR = 300,
-    TOK_OP_XOR = 301,
-    TOK_OP_ASSIGN = 302
+    TOK_EOL = 258,
+    TOK_VAL_TRUE = 259,
+    TOK_VAL_FALSE = 260,
+    TOK_VAL_NUMBER = 261,
+    TOK_VAL_FPNUMBER = 262,
+    TOK_VAL_TEXT = 263,
+    TOK_OP_NOT = 264,
+    TOK_OP_ADD = 265,
+    TOK_OP_SUBTRACT = 266,
+    TOK_OP_MULTIPLY = 267,
+    TOK_OP_DIVIDE = 268,
+    TOK_OP_REMAINDER = 269,
+    TOK_OP_EQUAL = 270,
+    TOK_OP_INEQUAL = 271,
+    TOK_OP_GREATER = 272,
+    TOK_OP_GREATER_OR_EQUAL = 273,
+    TOK_OP_LESSER = 274,
+    TOK_OP_LESSER_OR_EQUAL = 275,
+    TOK_OP_AND = 276,
+    TOK_OP_OR = 277,
+    TOK_OP_XOR = 278,
+    TOK_OP_ASSIGN = 279,
+    TOK_IDENTIFIER = 280,
+    TOK_COMMA = 281,
+    TOK_COLON = 282,
+    TOK_BOOLEAN = 283,
+    TOK_INT32 = 284,
+    TOK_FLOAT32 = 285,
+    TOK_TEXT = 286,
+    TOK_END = 287,
+    TOK_OF = 288,
+    TOK_IF = 289,
+    TOK_THEN = 290,
+    TOK_ELSE = 291,
+    TOK_FOR = 292,
+    TOK_TO = 293,
+    TOK_STEP = 294,
+    TOK_WHILE = 295,
+    TOK_RETURN = 296,
+    TOK_FUNCTION = 297,
+    TOK_PROGRAM = 298,
+    TOK_IMPORT = 299,
+    TOK_OPEN_PAREN = 300,
+    TOK_CLOSE_PAREN = 301
   };
 #endif
 
@@ -98,19 +97,16 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 20 "lex/portugol.y" /* yacc.c:1909  */
- ParseAST     ast;
-         ParseBool    bool;
-         ParseInt32   int32;
-         ParseFloat32 float32;
-         ParseText    text;
-         ParseToken   token;
-         ParseFParam  fparam;
-         ParseFParams fparams;
-         ParseFArgs   farguments;
-         AST_Node*    global;
+#line 16 "lex/portugol.y" /* yacc.c:1909  */
 
-#line 114 "lex/parser.h" /* yacc.c:1909  */
+    AST_Node*                 ast;
+    AST_ParamList*            fparams;
+    LexParam                  fparam;
+    AST_ArgList*              fargs;
+    LexToken                  token;
+    LexVarType                vtype;
+
+#line 110 "lex/parser.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

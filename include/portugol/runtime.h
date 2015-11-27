@@ -1,58 +1,273 @@
 #pragma once
 
+#include <stdint.h>
+
 #include <portugol/variant.h>
 
-typedef struct Runtime Runtime;
+/// @brief
+///
+/// @param name
+/// @param type
+/// @return
+Variant*
+runtime_add(const char* name,
+            const VType type);
 
-Runtime*
-runtime_create(void);
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_add_boolean(name) \
+    (runtime_add(name,            \
+                 VBOOLEAN))
 
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_add_int32(name) \
+    (runtime_add(name,          \
+                 VINT32))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_add_float32(name) \
+    (runtime_add(name,            \
+                 VFLOAT32))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_add_text(name) \
+    (runtime_add(name,         \
+                 VTEXT))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_add_pointer(name) \
+    (runtime_add(name,            \
+                 VPOINTER))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_add_function(name) \
+    (runtime_add(name,             \
+                 VFUNCTION))
+
+/// @brief
+///
+/// @param name
+/// @param type
+/// @return
+Variant*
+runtime_heap_add(const char* name,
+                 const VType type);
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_heap_add_boolean(name) \
+    (runtime_heap_add(name,            \
+                      VBOOLEAN))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_heap_add_int32(name) \
+    (runtime_heap_add(name,          \
+                      VINT32))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_heap_add_float32(name) \
+    (runtime_heap_add(name,            \
+                      VFLOAT32))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_heap_add_text(name) \
+    (runtime_heap_add(name,         \
+                      VTEXT))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_heap_add_pointer(name) \
+    (runtime_heap_add(name,            \
+                      VPOINTER))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_heap_add_function(name) \
+    (runtime_heap_add(name,             \
+                      VFUNCTION))
+
+/// @brief
+///
+/// @param name
+/// @param type
+/// @return
+Variant*
+runtime_stack_add(const char* name,
+                  const VType type);
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_stack_add_boolean(name) \
+    (runtime_stack_add(name,            \
+                       VBOOLEAN))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_stack_add_int32(name) \
+    (runtime_stack_add(name,          \
+                       VINT32))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_stack_add_float32(name) \
+    (runtime_stack_add(name,            \
+                       VFLOAT32))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_stack_add_text(name) \
+    (runtime_stack_add(name,         \
+                       VTEXT))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_stack_add_pointer(name) \
+    (runtime_stack_add(name,            \
+                       VPOINTER))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_stack_add_function(name) \
+    (runtime_stack_add(name,             \
+                       VFUNCTION))
+
+/// @brief
+///
+/// @param name
+/// @param type
+/// @return
+Variant*
+runtime_stack_push_function(const char* name,
+                            const VType type);
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_stack_push_function_boolean(name) \
+    (runtime_stack_push_function(name,            \
+                                 VBOOLEAN))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_stack_push_function_int32(name) \
+    (runtime_stack_push_function(name,          \
+                                 VINT32))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_stack_push_function_float32(name) \
+    (runtime_stack_push_function(name,            \
+                                 VFLOAT32))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_stack_push_function_text(name) \
+    (runtime_stack_push_function(name,         \
+                                 VTEXT))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_stack_push_function_pointer(name) \
+    (runtime_stack_push_function(name,            \
+                                 VPOINTER))
+
+/// @brief
+///
+/// @param name
+/// @return
+#define runtime_stack_push_function_function(name) \
+    (runtime_stack_push_function(name,             \
+                                 VFUNCTION))
+
+/// @brief
 void
-runtime_destroy(Runtime** runtime);
+runtime_stack_push_scope(void);
 
+/// @brief
+void
+runtime_stack_pop(void);
+
+/// @brief
+///
+/// @param name
+/// @return
 Variant*
-runtime_get(Runtime* runtime,
-            char* name);
+runtime_get(const char* name);
 
+/// @brief
+///
+/// @param name
+/// @return
 Variant*
-runtime_heap_push(Runtime* runtime,
-                  char* name,
-                  Variant value);
+runtime_get_function_scope(void);
 
-Variant
-runtime_heap_pop(Runtime* runtime);
-
-Variant*
-runtime_stack_push(Runtime* runtime,
-                   char* name,
-                   Variant value);
-
-Variant
-runtime_stack_pop(Runtime* runtime);
-
-Variant*
-runtime_scope_get(Runtime* runtime);
-
-Variant*
-runtime_scope_push(Runtime* runtime,
-                   int is_function);
-
-Variant*
-runtime_scope_push_named(Runtime* runtime,
-                         int is_function,
-                         char* name);
-
-Variant
-runtime_scope_pop(Runtime* runtime);
-
+/// @brief
+///
+/// @return
 int
-runtime_scope_is_returning(Runtime* runtime);
+runtime_is_returning(void);
 
-Runtime*
-runtime_scope_set_returning(Runtime* runtime);
-
-Runtime*
-runtime_clear(Runtime* runtime);
-
+/// @brief
 void
-runtime_print(Runtime* runtime);
+runtime_set_returning(void);
+
+/// @brief
+void
+runtime_clear(void);
+
+/// @brief
+void
+runtime_output(void);

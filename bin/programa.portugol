@@ -1,0 +1,5 @@
+importar "bin/func.portugol"
+
+programa
+    retorna func(2)
+fim de programa

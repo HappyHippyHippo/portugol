@@ -67,21 +67,17 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include <internal/portugol/ast.h>
+#include <internal/portugol/lex/lex.h>
 
 extern int yylex();
 extern int yyget_lineno();
-void yyerror(const char *s) { printf("ERROR: %s at line %d\n", s, yyget_lineno()); ast_error = 1; }
-
-#define INIT_AST(ls, cs, le, ce)       \
-                ParseAST ast;          \
-                ast.pos.lstart = (ls); \
-                ast.pos.cstart = (cs); \
-                ast.pos.lend   = (le); \
-                ast.pos.cend   = (ce);
+void yyerror(const char *msg) {
+    printf("ERROR: %s at line %d\n", msg, yyget_lineno());
+    ast_error = 1;
+}
 
 
-#line 85 "lex/parser.c" /* yacc.c:339  */
+#line 81 "lex/parser.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -116,51 +112,50 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    TOK_VAL_BOOLEAN = 258,
-    TOK_VAL_NUMBER = 259,
-    TOK_VAL_FPNUMBER = 260,
-    TOK_VAL_TEXT = 261,
-    TOK_IDENTIFIER = 262,
-    TOK_COLON = 263,
-    TOK_BOOLEAN = 264,
-    TOK_INTEGER = 265,
-    TOK_FLOAT = 266,
-    TOK_TEXT = 267,
-    TOK_EOL = 268,
-    TOK_FUNCTION = 269,
-    TOK_RETURN = 270,
-    TOK_PROGRAM = 271,
-    TOK_COMMA = 272,
-    TOK_END = 273,
-    TOK_OF = 274,
-    TOK_IF = 275,
-    TOK_THEN = 276,
-    TOK_ELSE = 277,
-    TOK_FOR = 278,
-    TOK_TO = 279,
-    TOK_STEP = 280,
-    TOK_SWITCH = 281,
-    TOK_CASE = 282,
-    TOK_DEFAULT = 283,
-    TOK_WHILE = 284,
-    TOK_OPEN_PAREN = 285,
-    TOK_CLOSE_PAREN = 286,
-    TOK_OP_NOT = 287,
-    TOK_OP_MULTIPLY = 288,
-    TOK_OP_DIVIDE = 289,
-    TOK_OP_REMAINDER = 290,
-    TOK_OP_ADD = 291,
-    TOK_OP_SUBTRACT = 292,
-    TOK_OP_EQUAL = 293,
-    TOK_OP_INEQUAL = 294,
-    TOK_OP_GREATER = 295,
-    TOK_OP_GREATER_OR_EQUAL = 296,
-    TOK_OP_LESSER = 297,
-    TOK_OP_LESSER_OR_EQUAL = 298,
-    TOK_OP_AND = 299,
-    TOK_OP_OR = 300,
-    TOK_OP_XOR = 301,
-    TOK_OP_ASSIGN = 302
+    TOK_EOL = 258,
+    TOK_VAL_TRUE = 259,
+    TOK_VAL_FALSE = 260,
+    TOK_VAL_NUMBER = 261,
+    TOK_VAL_FPNUMBER = 262,
+    TOK_VAL_TEXT = 263,
+    TOK_OP_NOT = 264,
+    TOK_OP_ADD = 265,
+    TOK_OP_SUBTRACT = 266,
+    TOK_OP_MULTIPLY = 267,
+    TOK_OP_DIVIDE = 268,
+    TOK_OP_REMAINDER = 269,
+    TOK_OP_EQUAL = 270,
+    TOK_OP_INEQUAL = 271,
+    TOK_OP_GREATER = 272,
+    TOK_OP_GREATER_OR_EQUAL = 273,
+    TOK_OP_LESSER = 274,
+    TOK_OP_LESSER_OR_EQUAL = 275,
+    TOK_OP_AND = 276,
+    TOK_OP_OR = 277,
+    TOK_OP_XOR = 278,
+    TOK_OP_ASSIGN = 279,
+    TOK_IDENTIFIER = 280,
+    TOK_COMMA = 281,
+    TOK_COLON = 282,
+    TOK_BOOLEAN = 283,
+    TOK_INT32 = 284,
+    TOK_FLOAT32 = 285,
+    TOK_TEXT = 286,
+    TOK_END = 287,
+    TOK_OF = 288,
+    TOK_IF = 289,
+    TOK_THEN = 290,
+    TOK_ELSE = 291,
+    TOK_FOR = 292,
+    TOK_TO = 293,
+    TOK_STEP = 294,
+    TOK_WHILE = 295,
+    TOK_RETURN = 296,
+    TOK_FUNCTION = 297,
+    TOK_PROGRAM = 298,
+    TOK_IMPORT = 299,
+    TOK_OPEN_PAREN = 300,
+    TOK_CLOSE_PAREN = 301
   };
 #endif
 
@@ -169,19 +164,16 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 20 "lex/portugol.y" /* yacc.c:355  */
- ParseAST     ast;
-         ParseBool    bool;
-         ParseInt32   int32;
-         ParseFloat32 float32;
-         ParseText    text;
-         ParseToken   token;
-         ParseFParam  fparam;
-         ParseFParams fparams;
-         ParseFArgs   farguments;
-         AST_Node*    global;
+#line 16 "lex/portugol.y" /* yacc.c:355  */
 
-#line 185 "lex/parser.c" /* yacc.c:355  */
+    AST_Node*                 ast;
+    AST_ParamList*            fparams;
+    LexParam                  fparam;
+    AST_ArgList*              fargs;
+    LexToken                  token;
+    LexVarType                vtype;
+
+#line 177 "lex/parser.c" /* yacc.c:355  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -210,7 +202,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 214 "lex/parser.c" /* yacc.c:358  */
+#line 206 "lex/parser.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -452,23 +444,23 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  11
+#define YYFINAL  14
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   423
+#define YYLAST   593
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  48
+#define YYNTOKENS  47
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  22
+#define YYNNTS  23
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  67
+#define YYNRULES  69
 /* YYNSTATES -- Number of states.  */
 #define YYNSTATES  170
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   302
+#define YYMAXUTOK   301
 
 #define YYTRANSLATE(YYX)                                                \
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -507,20 +499,20 @@ static const yytype_uint8 yytranslate[] =
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
       35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
-      45,    46,    47
+      45,    46
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    79,    79,    84,    91,    94,    97,   100,   108,   115,
-     138,   162,   172,   184,   210,   215,   224,   227,   230,   233,
-     236,   239,   242,   245,   253,   260,   270,   279,   288,   299,
-     322,   347,   354,   361,   366,   371,   376,   381,   386,   391,
-     396,   401,   406,   411,   416,   421,   426,   431,   436,   441,
-     446,   452,   455,   458,   463,   470,   479,   489,   501,   509,
-     515,   521,   527,   537,   547,   550,   553,   556
+       0,   105,   105,   111,   119,   120,   121,   122,   123,   126,
+     129,   135,   136,   137,   138,   139,   140,   141,   142,   145,
+     154,   164,   173,   184,   187,   193,   204,   212,   224,   234,
+     243,   254,   272,   289,   297,   305,   306,   312,   318,   324,
+     330,   336,   342,   348,   354,   360,   366,   372,   378,   384,
+     390,   396,   402,   403,   404,   407,   414,   423,   425,   430,
+     433,   434,   435,   443,   451,   455,   459,   461,   463,   465
 };
 #endif
 
@@ -529,21 +521,20 @@ static const yytype_uint16 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "TOK_VAL_BOOLEAN", "TOK_VAL_NUMBER",
-  "TOK_VAL_FPNUMBER", "TOK_VAL_TEXT", "TOK_IDENTIFIER", "TOK_COLON",
-  "TOK_BOOLEAN", "TOK_INTEGER", "TOK_FLOAT", "TOK_TEXT", "TOK_EOL",
-  "TOK_FUNCTION", "TOK_RETURN", "TOK_PROGRAM", "TOK_COMMA", "TOK_END",
+  "$end", "error", "$undefined", "TOK_EOL", "TOK_VAL_TRUE",
+  "TOK_VAL_FALSE", "TOK_VAL_NUMBER", "TOK_VAL_FPNUMBER", "TOK_VAL_TEXT",
+  "TOK_OP_NOT", "TOK_OP_ADD", "TOK_OP_SUBTRACT", "TOK_OP_MULTIPLY",
+  "TOK_OP_DIVIDE", "TOK_OP_REMAINDER", "TOK_OP_EQUAL", "TOK_OP_INEQUAL",
+  "TOK_OP_GREATER", "TOK_OP_GREATER_OR_EQUAL", "TOK_OP_LESSER",
+  "TOK_OP_LESSER_OR_EQUAL", "TOK_OP_AND", "TOK_OP_OR", "TOK_OP_XOR",
+  "TOK_OP_ASSIGN", "TOK_IDENTIFIER", "TOK_COMMA", "TOK_COLON",
+  "TOK_BOOLEAN", "TOK_INT32", "TOK_FLOAT32", "TOK_TEXT", "TOK_END",
   "TOK_OF", "TOK_IF", "TOK_THEN", "TOK_ELSE", "TOK_FOR", "TOK_TO",
-  "TOK_STEP", "TOK_SWITCH", "TOK_CASE", "TOK_DEFAULT", "TOK_WHILE",
-  "TOK_OPEN_PAREN", "TOK_CLOSE_PAREN", "TOK_OP_NOT", "TOK_OP_MULTIPLY",
-  "TOK_OP_DIVIDE", "TOK_OP_REMAINDER", "TOK_OP_ADD", "TOK_OP_SUBTRACT",
-  "TOK_OP_EQUAL", "TOK_OP_INEQUAL", "TOK_OP_GREATER",
-  "TOK_OP_GREATER_OR_EQUAL", "TOK_OP_LESSER", "TOK_OP_LESSER_OR_EQUAL",
-  "TOK_OP_AND", "TOK_OP_OR", "TOK_OP_XOR", "TOK_OP_ASSIGN", "$accept",
-  "globals", "global", "program", "function", "fparams", "fparam",
-  "locals", "local", "if", "while", "for", "decl", "assign", "return",
-  "expr", "fcall", "farguments", "fargument", "constant", "variable",
-  "vartype", YY_NULLPTR
+  "TOK_STEP", "TOK_WHILE", "TOK_RETURN", "TOK_FUNCTION", "TOK_PROGRAM",
+  "TOK_IMPORT", "TOK_OPEN_PAREN", "TOK_CLOSE_PAREN", "$accept", "globals",
+  "global", "locals", "local", "import", "program", "function", "fparams",
+  "fparam", "if", "while", "for", "decl", "assign", "return", "expr",
+  "fcall", "fargs", "farg", "constant", "variable", "vartype", YY_NULLPTR
 };
 #endif
 
@@ -556,14 +547,14 @@ static const yytype_uint16 yytoknum[] =
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
      275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
      285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
-     295,   296,   297,   298,   299,   300,   301,   302
+     295,   296,   297,   298,   299,   300,   301
 };
 # endif
 
-#define YYPACT_NINF -108
+#define YYPACT_NINF -48
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-108)))
+  (!!((Yystate) == (-48)))
 
 #define YYTABLE_NINF -1
 
@@ -574,23 +565,23 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-      28,    -5,  -108,    13,    33,  -108,    23,    24,    30,   159,
-     354,  -108,  -108,  -108,  -108,  -108,  -108,  -108,  -108,  -108,
-     -17,   -27,    -7,  -108,   158,   158,    38,   158,   283,  -108,
-      35,    47,    62,    66,    67,    73,    74,    65,     0,   158,
-      41,    52,  -108,  -108,  -108,  -108,    55,   158,   158,   158,
-     158,   365,  -108,  -108,  -108,   190,    98,   216,   105,  -108,
-    -108,  -108,  -108,  -108,  -108,  -108,  -108,   158,   110,    -9,
-    -108,   119,   365,  -108,   365,     7,  -108,   351,  -108,    81,
-      81,   158,   158,   158,   158,   158,   158,   158,   158,   158,
-     158,   158,   158,   158,   158,   117,   158,   120,   125,   365,
-      41,    41,   131,  -108,   158,  -108,  -108,  -108,  -108,  -108,
-      81,    81,    72,    72,   144,   144,   144,   144,   179,   379,
-     379,   354,    57,   354,  -108,   134,  -108,    41,  -108,   282,
-     158,   300,   354,   135,   137,   140,   164,   139,   301,   354,
-     147,   354,   161,   158,   146,   165,   318,  -108,   319,   354,
-     242,  -108,   172,   168,   173,   336,   178,  -108,   182,   218,
-     174,   354,  -108,  -108,   217,   337,  -108,   220,   219,  -108
+       1,   -48,   -17,    13,    15,     3,   -48,   -48,   -48,   -48,
+     -48,   110,   363,   -48,   -48,   -48,   -48,   -48,   -48,   -48,
+     -11,    24,   -48,   -48,   -48,   -48,   -48,   -48,    77,    77,
+     -15,    77,    40,    77,    77,    77,   161,   -48,    46,    63,
+      71,    73,    74,    84,   544,   -48,   -48,    65,   -10,    77,
+      47,   -48,   -48,    19,   116,   371,   466,    58,   492,   558,
+     408,    60,   -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,
+      77,    77,    77,    77,    77,    77,    77,    77,    77,    77,
+      77,    77,    77,    77,    77,    54,   -21,   -48,    75,   558,
+     -48,   558,   -19,   -48,    98,    77,   100,   -48,    62,    19,
+      19,   -48,   -48,   -48,    59,    59,    27,    27,    27,    27,
+     506,   572,   572,   558,   116,   116,    70,   -48,    77,   -48,
+     363,   452,   363,   103,   112,   -48,   116,   -48,   151,    77,
+     204,   -48,   363,   114,    80,   121,   422,    92,   214,   363,
+      94,   363,   127,    77,    93,    99,   257,   -48,   267,   363,
+     518,   -48,   106,   102,   109,   310,   147,   -48,   119,   117,
+     130,   363,   -48,   -48,   134,   320,   -48,   140,   137,   -48
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -598,39 +589,39 @@ static const yytype_int16 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     0,     7,     0,     0,     3,     0,     0,     0,     0,
-       0,     1,     2,     5,     6,     4,    64,    65,    66,    67,
-       0,    29,    63,    23,     0,     0,     0,     0,     0,    15,
+       0,     8,     0,     0,     0,     0,     3,     4,     6,     7,
+       5,     0,     0,    19,     1,     2,    66,    67,    68,    69,
+       0,    31,    18,    60,    61,    62,    63,    64,     0,     0,
+      65,     0,     0,     0,     0,     0,     0,    10,     0,     0,
+       0,     0,     0,     0,     0,    52,    53,    54,     0,     0,
+      65,    50,    54,    51,     0,     0,     0,     0,     0,    34,
+       0,     0,     9,    11,    12,    13,    16,    14,    15,    17,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,    59,    60,    61,    62,    63,     0,     0,     0,
-       0,    32,    52,    53,    51,     0,     0,     0,     0,    14,
-      18,    19,    20,    16,    17,    21,    22,     0,     0,     0,
-      12,     0,    30,    55,    58,     0,    57,     0,    49,    33,
-      34,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,    31,
-       0,     0,     0,    13,     0,    54,    50,    37,    38,    39,
-      35,    36,    40,    41,    42,    43,    44,    45,    46,    47,
-      48,     0,     0,     0,     8,     0,    11,     0,    56,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,    24,     0,     0,
-       0,    26,     0,     0,     0,     0,     0,    10,     0,     0,
-       0,     0,     9,    25,     0,     0,    27,     0,     0,    28
+       0,     0,     0,     0,     0,     0,     0,    24,     0,    32,
+      56,    59,     0,    58,     0,     0,     0,    35,     0,    36,
+      37,    38,    39,    40,    41,    42,    43,    44,    45,    46,
+      47,    48,    49,    33,     0,     0,     0,    25,     0,    55,
+       0,     0,     0,     0,     0,    23,     0,    57,     0,     0,
+       0,    20,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,    26,     0,     0,
+       0,    28,     0,     0,     0,     0,     0,    22,     0,     0,
+       0,     0,    21,    27,     0,     0,    29,     0,     0,    30
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-    -108,  -108,   237,  -108,  -108,  -108,   142,  -107,   -11,  -108,
-    -108,  -108,     2,  -108,  -108,   -20,   -10,  -108,   141,  -108,
-      11,   -23
+     -48,   -48,   170,   -42,   -34,   -48,   -48,   -48,   -48,    64,
+     -48,   -48,   -48,    17,   -48,   -48,   -20,   -48,   -48,    66,
+     -48,   -12,   -47
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     4,     5,     6,     7,    69,    70,    28,    29,    30,
-      31,    32,    33,    34,    35,    74,    52,    75,    76,    53,
-      54,    21
+      -1,     5,     6,    36,    37,     7,     8,     9,    86,    87,
+      38,    39,    40,    41,    42,    43,    44,    45,    92,    93,
+      46,    52,    21
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -638,143 +629,177 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      36,    40,     8,     9,    51,    55,     8,    57,   101,    16,
-      17,    18,    19,    38,   129,    71,   131,    59,    36,    72,
-      39,    37,   102,    41,   104,   138,    10,    77,    78,    79,
-      80,    68,   146,    11,   148,     1,    13,    14,   105,    37,
-       1,     2,   155,    15,     3,    56,     2,    99,    60,     3,
-      16,    17,    18,    19,   165,    42,    43,    44,    45,    46,
-      61,   107,   108,   109,   110,   111,   112,   113,   114,   115,
-     116,   117,   118,   119,   120,    62,   122,   125,    71,    63,
-      64,   130,    47,    73,    48,    41,    65,    66,    49,    50,
-      81,    82,    83,    84,    85,    86,    87,    88,    89,    90,
-      91,    92,    93,    94,   133,    81,    82,    83,    84,    85,
-     136,    36,    67,    36,    81,    82,    83,    96,    59,    36,
-      59,    36,    36,   150,    98,   100,   103,    59,    36,    36,
-     121,    36,    37,   123,    37,    59,    36,    59,    36,    36,
-      37,   124,    37,    37,    59,    36,   127,   132,   139,    37,
-      37,    36,    37,   141,    59,    36,   140,    37,   144,    37,
-      37,    42,    43,    44,    45,    46,    37,   147,    16,    17,
-      18,    19,    37,    20,   149,   151,    37,    81,    82,    83,
-      84,    85,    86,    87,   152,   142,   157,   158,    47,   143,
-      48,   161,   159,   164,    49,    50,   162,    81,    82,    83,
-      84,    85,    86,    87,    88,    89,    90,    91,    92,    93,
-      94,    95,    81,    82,    83,    84,    85,    86,    87,    88,
-      89,    90,    91,    81,    82,    83,    84,    85,    86,    87,
-      88,    89,    90,    91,    92,    93,    94,    97,   163,   168,
-     166,    12,   169,   126,     0,   128,     0,     0,     0,    81,
-      82,    83,    84,    85,    86,    87,    88,    89,    90,    91,
-      92,    93,    94,   156,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,    81,    82,    83,    84,    85,
-      86,    87,    88,    89,    90,    91,    92,    93,    94,    22,
-      22,     0,     0,     0,     0,    23,    23,    24,    24,     0,
-     134,    58,    25,    25,   135,    26,    26,    22,    22,     0,
-       0,    27,    27,    23,    23,    24,    24,     0,   137,   145,
-      25,    25,     0,    26,    26,    22,    22,     0,     0,    27,
-      27,    23,    23,    24,    24,     0,   153,   154,    25,    25,
-       0,    26,    26,    22,    22,     0,     0,    27,    27,    23,
-      23,    24,    24,     0,   160,   167,    25,    25,     0,    26,
-      26,    22,     0,     0,     0,    27,    27,    23,     0,    24,
-       0,     0,     0,     0,    25,     0,     0,    26,     0,     0,
-       0,     0,   106,    27,    81,    82,    83,    84,    85,    86,
-      87,    88,    89,    90,    91,    92,    93,    94,    81,    82,
-      83,    84,    85,    86,    87,    88,    89,    90,    91,    92,
-      93,    94,    81,    82,    83,    84,    85,    86,    87,    88,
-      89,    90,    91,    92
+      47,    88,    62,    14,     1,   115,     1,   118,    51,    53,
+      11,    56,    54,    58,    59,    60,    12,    10,    16,    17,
+      18,    19,    10,    13,    47,   116,     2,   119,     2,    89,
+      55,    72,    73,    74,    48,    91,    85,    70,    71,    72,
+      73,    74,    75,    76,     3,     4,     3,     4,    49,    63,
+      99,   100,   101,   102,   103,   104,   105,   106,   107,   108,
+     109,   110,   111,   112,   113,    57,    64,   124,    88,    70,
+      71,    72,    73,    74,    65,   121,    66,    67,   128,   133,
+     130,    23,    24,    25,    26,    27,    28,    68,    29,    84,
+     138,    95,    55,    98,    62,   114,    62,   146,    91,   148,
+     117,   120,    50,   122,    62,   123,   131,   155,    47,   136,
+      47,   126,    62,   140,    62,   132,    47,   139,    47,   165,
+      47,    62,    35,   150,   141,   144,    47,    47,   147,    47,
+     149,    62,   152,   151,    47,   158,    47,    47,    16,    17,
+      18,    19,   159,    47,    16,    17,    18,    19,   157,    47,
+     161,   163,    20,    47,    22,    23,    24,    25,    26,    27,
+      28,   162,    29,   164,    22,    23,    24,    25,    26,    27,
+      28,   166,    29,   168,   169,    15,    30,     0,     0,   125,
+       0,     0,     0,   134,   127,    31,    30,   135,    32,     0,
+       0,    33,    34,    61,     0,    31,    35,     0,    32,     0,
+       0,    33,    34,     0,     0,     0,    35,    22,    23,    24,
+      25,    26,    27,    28,     0,    29,     0,    22,    23,    24,
+      25,    26,    27,    28,     0,    29,     0,     0,     0,    30,
+       0,     0,     0,     0,     0,     0,   137,     0,    31,    30,
+       0,    32,     0,     0,    33,    34,   145,     0,    31,    35,
+       0,    32,     0,     0,    33,    34,     0,     0,     0,    35,
+      22,    23,    24,    25,    26,    27,    28,     0,    29,     0,
+      22,    23,    24,    25,    26,    27,    28,     0,    29,     0,
+       0,     0,    30,     0,     0,     0,     0,     0,     0,   153,
+       0,    31,    30,     0,    32,     0,     0,    33,    34,   154,
+       0,    31,    35,     0,    32,     0,     0,    33,    34,     0,
+       0,     0,    35,    22,    23,    24,    25,    26,    27,    28,
+       0,    29,     0,    22,    23,    24,    25,    26,    27,    28,
+       0,    29,     0,     0,     0,    30,     0,     0,     0,     0,
+       0,     0,   160,     0,    31,    30,     0,    32,     0,     0,
+      33,    34,   167,     0,    31,    35,     0,    32,     0,     0,
+      33,    34,     0,     0,     0,    35,    22,    23,    24,    25,
+      26,    27,    28,     0,    29,    23,    24,    25,    26,    27,
+      28,     0,    29,     0,     0,     0,     0,     0,    30,     0,
+       0,     0,     0,     0,     0,     0,    50,    31,     0,     0,
+      32,     0,     0,    33,    34,     0,     0,     0,    35,     0,
+       0,     0,     0,     0,     0,     0,    35,    90,    70,    71,
+      72,    73,    74,    75,    76,    77,    78,    79,    80,    81,
+      82,    83,    70,    71,    72,    73,    74,    75,    76,    77,
+      78,    79,    80,    81,    82,    83,     0,     0,     0,     0,
+       0,     0,     0,     0,    97,     0,     0,   142,     0,     0,
+       0,   143,    70,    71,    72,    73,    74,    75,    76,    77,
+      78,    79,    80,    81,    82,    83,    70,    71,    72,    73,
+      74,    75,    76,    77,    78,    79,    80,    81,    82,    83,
+     129,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    94,    70,    71,    72,    73,    74,    75,    76,    77,
+      78,    79,    80,    81,    82,    83,    70,    71,    72,    73,
+      74,    75,    76,    77,    78,    79,    80,    96,    70,    71,
+      72,    73,    74,    75,    76,    77,    78,    79,    80,    81,
+      82,    83,     0,     0,     0,     0,     0,    69,     0,     0,
+       0,     0,     0,   156,    70,    71,    72,    73,    74,    75,
+      76,    77,    78,    79,    80,    81,    82,    83,    70,    71,
+      72,    73,    74,    75,    76,    77,    78,    79,    80,    81,
+      82,    83,    70,    71,    72,    73,    74,    75,    76,    77,
+      78,    79,    80,    81
 };
 
 static const yytype_int16 yycheck[] =
 {
-      10,     8,     0,     8,    24,    25,     4,    27,    17,     9,
-      10,    11,    12,    30,   121,    38,   123,    28,    28,    39,
-      47,    10,    31,    30,    17,   132,    13,    47,    48,    49,
-      50,    31,   139,     0,   141,     7,    13,    13,    31,    28,
-       7,    13,   149,    13,    16,     7,    13,    67,    13,    16,
-       9,    10,    11,    12,   161,     3,     4,     5,     6,     7,
-      13,    81,    82,    83,    84,    85,    86,    87,    88,    89,
-      90,    91,    92,    93,    94,    13,    96,   100,   101,    13,
-      13,    24,    30,    31,    32,    30,    13,    13,    36,    37,
-      33,    34,    35,    36,    37,    38,    39,    40,    41,    42,
-      43,    44,    45,    46,   127,    33,    34,    35,    36,    37,
-     130,   121,    47,   123,    33,    34,    35,    19,   129,   129,
-     131,   131,   132,   143,    19,    15,     7,   138,   138,   139,
-      13,   141,   121,    13,   123,   146,   146,   148,   148,   149,
-     129,    16,   131,   132,   155,   155,    15,    13,    13,   138,
-     139,   161,   141,    13,   165,   165,    19,   146,    19,   148,
-     149,     3,     4,     5,     6,     7,   155,    20,     9,    10,
-      11,    12,   161,    14,    13,    29,   165,    33,    34,    35,
-      36,    37,    38,    39,    19,    21,    14,    19,    30,    25,
-      32,    13,    19,    19,    36,    37,    14,    33,    34,    35,
-      36,    37,    38,    39,    40,    41,    42,    43,    44,    45,
-      46,    21,    33,    34,    35,    36,    37,    38,    39,    40,
-      41,    42,    43,    33,    34,    35,    36,    37,    38,    39,
-      40,    41,    42,    43,    44,    45,    46,    21,    20,    19,
-      23,     4,    23,   101,    -1,   104,    -1,    -1,    -1,    33,
-      34,    35,    36,    37,    38,    39,    40,    41,    42,    43,
-      44,    45,    46,    21,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    33,    34,    35,    36,    37,
-      38,    39,    40,    41,    42,    43,    44,    45,    46,     7,
-       7,    -1,    -1,    -1,    -1,    13,    13,    15,    15,    -1,
-      18,    18,    20,    20,    22,    23,    23,     7,     7,    -1,
-      -1,    29,    29,    13,    13,    15,    15,    -1,    18,    18,
-      20,    20,    -1,    23,    23,     7,     7,    -1,    -1,    29,
-      29,    13,    13,    15,    15,    -1,    18,    18,    20,    20,
-      -1,    23,    23,     7,     7,    -1,    -1,    29,    29,    13,
-      13,    15,    15,    -1,    18,    18,    20,    20,    -1,    23,
-      23,     7,    -1,    -1,    -1,    29,    29,    13,    -1,    15,
-      -1,    -1,    -1,    -1,    20,    -1,    -1,    23,    -1,    -1,
-      -1,    -1,    31,    29,    33,    34,    35,    36,    37,    38,
-      39,    40,    41,    42,    43,    44,    45,    46,    33,    34,
-      35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
-      45,    46,    33,    34,    35,    36,    37,    38,    39,    40,
-      41,    42,    43,    44
+      12,    48,    36,     0,     3,    26,     3,    26,    28,    29,
+      27,    31,    27,    33,    34,    35,     3,     0,    28,    29,
+      30,    31,     5,     8,    36,    46,    25,    46,    25,    49,
+      45,    12,    13,    14,    45,    55,    46,    10,    11,    12,
+      13,    14,    15,    16,    43,    44,    43,    44,    24,     3,
+      70,    71,    72,    73,    74,    75,    76,    77,    78,    79,
+      80,    81,    82,    83,    84,    25,     3,   114,   115,    10,
+      11,    12,    13,    14,     3,    95,     3,     3,   120,   126,
+     122,     4,     5,     6,     7,     8,     9,     3,    11,    24,
+     132,    33,    45,    33,   128,    41,   130,   139,   118,   141,
+      25,     3,    25,     3,   138,    43,     3,   149,   120,   129,
+     122,    41,   146,    33,   148,     3,   128,     3,   130,   161,
+     132,   155,    45,   143,     3,    33,   138,   139,    34,   141,
+       3,   165,    33,    40,   146,    33,   148,   149,    28,    29,
+      30,    31,    33,   155,    28,    29,    30,    31,    42,   161,
+       3,    34,    42,   165,     3,     4,     5,     6,     7,     8,
+       9,    42,    11,    33,     3,     4,     5,     6,     7,     8,
+       9,    37,    11,    33,    37,     5,    25,    -1,    -1,   115,
+      -1,    -1,    -1,    32,   118,    34,    25,    36,    37,    -1,
+      -1,    40,    41,    32,    -1,    34,    45,    -1,    37,    -1,
+      -1,    40,    41,    -1,    -1,    -1,    45,     3,     4,     5,
+       6,     7,     8,     9,    -1,    11,    -1,     3,     4,     5,
+       6,     7,     8,     9,    -1,    11,    -1,    -1,    -1,    25,
+      -1,    -1,    -1,    -1,    -1,    -1,    32,    -1,    34,    25,
+      -1,    37,    -1,    -1,    40,    41,    32,    -1,    34,    45,
+      -1,    37,    -1,    -1,    40,    41,    -1,    -1,    -1,    45,
+       3,     4,     5,     6,     7,     8,     9,    -1,    11,    -1,
+       3,     4,     5,     6,     7,     8,     9,    -1,    11,    -1,
+      -1,    -1,    25,    -1,    -1,    -1,    -1,    -1,    -1,    32,
+      -1,    34,    25,    -1,    37,    -1,    -1,    40,    41,    32,
+      -1,    34,    45,    -1,    37,    -1,    -1,    40,    41,    -1,
+      -1,    -1,    45,     3,     4,     5,     6,     7,     8,     9,
+      -1,    11,    -1,     3,     4,     5,     6,     7,     8,     9,
+      -1,    11,    -1,    -1,    -1,    25,    -1,    -1,    -1,    -1,
+      -1,    -1,    32,    -1,    34,    25,    -1,    37,    -1,    -1,
+      40,    41,    32,    -1,    34,    45,    -1,    37,    -1,    -1,
+      40,    41,    -1,    -1,    -1,    45,     3,     4,     5,     6,
+       7,     8,     9,    -1,    11,     4,     5,     6,     7,     8,
+       9,    -1,    11,    -1,    -1,    -1,    -1,    -1,    25,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    25,    34,    -1,    -1,
+      37,    -1,    -1,    40,    41,    -1,    -1,    -1,    45,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    45,    46,    10,    11,
+      12,    13,    14,    15,    16,    17,    18,    19,    20,    21,
+      22,    23,    10,    11,    12,    13,    14,    15,    16,    17,
+      18,    19,    20,    21,    22,    23,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    46,    -1,    -1,    35,    -1,    -1,
+      -1,    39,    10,    11,    12,    13,    14,    15,    16,    17,
+      18,    19,    20,    21,    22,    23,    10,    11,    12,    13,
+      14,    15,    16,    17,    18,    19,    20,    21,    22,    23,
+      38,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    35,    10,    11,    12,    13,    14,    15,    16,    17,
+      18,    19,    20,    21,    22,    23,    10,    11,    12,    13,
+      14,    15,    16,    17,    18,    19,    20,    35,    10,    11,
+      12,    13,    14,    15,    16,    17,    18,    19,    20,    21,
+      22,    23,    -1,    -1,    -1,    -1,    -1,     3,    -1,    -1,
+      -1,    -1,    -1,    35,    10,    11,    12,    13,    14,    15,
+      16,    17,    18,    19,    20,    21,    22,    23,    10,    11,
+      12,    13,    14,    15,    16,    17,    18,    19,    20,    21,
+      22,    23,    10,    11,    12,    13,    14,    15,    16,    17,
+      18,    19,    20,    21
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     7,    13,    16,    49,    50,    51,    52,    60,     8,
-      13,     0,    50,    13,    13,    13,     9,    10,    11,    12,
-      14,    69,     7,    13,    15,    20,    23,    29,    55,    56,
-      57,    58,    59,    60,    61,    62,    64,    68,    30,    47,
-       8,    30,     3,     4,     5,     6,     7,    30,    32,    36,
-      37,    63,    64,    67,    68,    63,     7,    63,    18,    56,
-      13,    13,    13,    13,    13,    13,    13,    47,    31,    53,
-      54,    69,    63,    31,    63,    65,    66,    63,    63,    63,
-      63,    33,    34,    35,    36,    37,    38,    39,    40,    41,
-      42,    43,    44,    45,    46,    21,    19,    21,    19,    63,
-      15,    17,    31,     7,    17,    31,    31,    63,    63,    63,
+       0,     3,    25,    43,    44,    48,    49,    52,    53,    54,
+      60,    27,     3,     8,     0,    49,    28,    29,    30,    31,
+      42,    69,     3,     4,     5,     6,     7,     8,     9,    11,
+      25,    34,    37,    40,    41,    45,    50,    51,    57,    58,
+      59,    60,    61,    62,    63,    64,    67,    68,    45,    24,
+      25,    63,    68,    63,    27,    45,    63,    25,    63,    63,
+      63,    32,    51,     3,     3,     3,     3,     3,     3,     3,
+      10,    11,    12,    13,    14,    15,    16,    17,    18,    19,
+      20,    21,    22,    23,    24,    46,    55,    56,    69,    63,
+      46,    63,    65,    66,    35,    33,    35,    46,    33,    63,
       63,    63,    63,    63,    63,    63,    63,    63,    63,    63,
-      63,    13,    63,    13,    16,    69,    54,    15,    66,    55,
-      24,    55,    13,    69,    18,    22,    63,    18,    55,    13,
-      19,    13,    21,    25,    19,    18,    55,    20,    55,    13,
-      63,    29,    19,    18,    18,    55,    21,    14,    19,    19,
-      18,    13,    14,    20,    19,    55,    23,    18,    19,    23
+      63,    63,    63,    63,    41,    26,    46,    25,    26,    46,
+       3,    63,     3,    43,    69,    56,    41,    66,    50,    38,
+      50,     3,     3,    69,    32,    36,    63,    32,    50,     3,
+      33,     3,    35,    39,    33,    32,    50,    34,    50,     3,
+      63,    40,    33,    32,    32,    50,    35,    42,    33,    33,
+      32,     3,    42,    34,    33,    50,    37,    32,    33,    37
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    48,    49,    49,    50,    50,    50,    50,    51,    52,
-      52,    53,    53,    54,    55,    55,    56,    56,    56,    56,
-      56,    56,    56,    56,    57,    57,    58,    59,    59,    60,
-      60,    61,    62,    63,    63,    63,    63,    63,    63,    63,
+       0,    47,    48,    48,    49,    49,    49,    49,    49,    50,
+      50,    51,    51,    51,    51,    51,    51,    51,    51,    52,
+      53,    54,    54,    55,    55,    56,    57,    57,    58,    59,
+      59,    60,    60,    61,    62,    63,    63,    63,    63,    63,
       63,    63,    63,    63,    63,    63,    63,    63,    63,    63,
-      63,    63,    63,    63,    64,    64,    65,    65,    66,    67,
-      67,    67,    67,    68,    69,    69,    69,    69
+      63,    63,    63,    63,    63,    64,    64,    65,    65,    66,
+      67,    67,    67,    67,    67,    68,    69,    69,    69,    69
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     2,     1,     2,     2,     2,     1,     6,    13,
-      12,     3,     1,     2,     2,     1,     2,     2,     2,     2,
-       2,     2,     2,     1,     8,    11,     8,    12,    14,     3,
-       5,     3,     2,     2,     2,     3,     3,     3,     3,     3,
-       3,     3,     3,     3,     3,     3,     3,     3,     3,     2,
-       3,     1,     1,     1,     4,     3,     3,     1,     1,     1,
-       1,     1,     1,     1,     1,     1,     1,     1
+       0,     2,     2,     1,     1,     1,     1,     1,     1,     2,
+       1,     2,     2,     2,     2,     2,     2,     2,     1,     2,
+       7,    13,    12,     3,     1,     2,     8,    11,     8,    12,
+      14,     3,     5,     3,     2,     3,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
+       2,     2,     1,     1,     1,     4,     3,     3,     1,     1,
+       1,     1,     1,     1,     1,     1,     1,     1,     1,     1
 };
 
 
@@ -1544,777 +1569,649 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 79 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                if ((yyvsp[0].ast).result != NULL)
-                    ast_scope_push(ast_parse_scope_get(), (yyvsp[0].ast).result);
-                (yyval.ast) = (yyvsp[0].ast);
-            }
-#line 1554 "lex/parser.c" /* yacc.c:1646  */
-    break;
-
-  case 3:
-#line 84 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                if ((yyvsp[0].ast).result != NULL)
-                    ast_scope_push(ast_parse_scope_get(), (yyvsp[0].ast).result);
-                (yyval.ast) = (yyvsp[0].ast);
-            }
-#line 1564 "lex/parser.c" /* yacc.c:1646  */
-    break;
-
-  case 4:
-#line 91 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.ast) = (yyvsp[-1].ast);
-            }
-#line 1572 "lex/parser.c" /* yacc.c:1646  */
-    break;
-
-  case 5:
-#line 94 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.ast) = (yyvsp[-1].ast);
-            }
+#line 105 "lex/portugol.y" /* yacc.c:1646  */
+    { if ((yyvsp[0].ast) != NULL)
+                           {
+                               if (!ast_lex)
+                                   ast_lex = ast_file(ast_filepath);
+                               ast_push_instr(ast_lex, (yyvsp[0].ast));
+                           } }
 #line 1580 "lex/parser.c" /* yacc.c:1646  */
     break;
 
+  case 3:
+#line 111 "lex/portugol.y" /* yacc.c:1646  */
+    { if ((yyvsp[0].ast) != NULL)
+                           {
+                               if (!ast_lex)
+                                   ast_lex = ast_file(ast_filepath);
+                               ast_push_instr(ast_lex, (yyvsp[0].ast));
+                           } }
+#line 1591 "lex/parser.c" /* yacc.c:1646  */
+    break;
+
+  case 4:
+#line 119 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[0].ast); }
+#line 1597 "lex/parser.c" /* yacc.c:1646  */
+    break;
+
+  case 5:
+#line 120 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[0].ast); }
+#line 1603 "lex/parser.c" /* yacc.c:1646  */
+    break;
+
   case 6:
-#line 97 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.ast) = (yyvsp[-1].ast);
-            }
-#line 1588 "lex/parser.c" /* yacc.c:1646  */
-    break;
-
-  case 7:
-#line 100 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                ParseAST ast;
-                ast.pos    = (yyvsp[0].token).pos;
-                ast.result = NULL;
-                (yyval.ast) = ast;
-            }
-#line 1599 "lex/parser.c" /* yacc.c:1646  */
-    break;
-
-  case 8:
-#line 108 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-5].token).pos.lstart, (yyvsp[-5].token).pos.cstart, (yyvsp[0].token).pos.lend, (yyvsp[0].token).pos.cend);
-                ast.result = ast_program(ast_parse_scope_pop(), ast.pos);
-                (yyval.ast) = ast;
-             }
+#line 121 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[0].ast); }
 #line 1609 "lex/parser.c" /* yacc.c:1646  */
     break;
 
+  case 7:
+#line 122 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[0].ast); }
+#line 1615 "lex/parser.c" /* yacc.c:1646  */
+    break;
+
+  case 8:
+#line 123 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = NULL; }
+#line 1621 "lex/parser.c" /* yacc.c:1646  */
+    break;
+
   case 9:
-#line 115 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-12].text).pos.lstart, (yyvsp[-12].text).pos.cstart, (yyvsp[-1].token).pos.lend, (yyvsp[-1].token).pos.cend);
-
-                AST_Node* scope = ast_parse_scope_pop();
-                switch ((yyvsp[-5].token).result)
-                {
-                    case TOK_BOOLEAN:
-                        ast.result = ast_function((yyvsp[-12].text).result, (yyvsp[-8].fparams).result, (yyvsp[-8].fparams).count, VBOOLEAN, scope, ast.pos);        break;
-                    case TOK_INTEGER:
-                        ast.result = ast_function((yyvsp[-12].text).result, (yyvsp[-8].fparams).result, (yyvsp[-8].fparams).count, VINT32, scope, ast.pos);          break;
-                    case TOK_FLOAT:
-                        ast.result = ast_function((yyvsp[-12].text).result, (yyvsp[-8].fparams).result, (yyvsp[-8].fparams).count, VFLOAT32, scope, ast.pos);        break;
-                    case TOK_TEXT:
-                        ast.result = ast_function((yyvsp[-12].text).result, (yyvsp[-8].fparams).result, (yyvsp[-8].fparams).count, VTEXT, scope, ast.pos);           break;
-                    case TOK_FUNCTION:
-                        ast.result = ast_function((yyvsp[-12].text).result, (yyvsp[-8].fparams).result, (yyvsp[-8].fparams).count, VFUNCTION, scope, ast.pos);       break;
-                    default:
-                        break;
-                }
-                (yyval.ast) = ast;
-
-                free((yyvsp[-12].text).result);
-             }
-#line 1637 "lex/parser.c" /* yacc.c:1646  */
+#line 126 "lex/portugol.y" /* yacc.c:1646  */
+    { if ((yyvsp[0].ast) != NULL)
+                            ast_push_instr((yyvsp[-1].ast), (yyvsp[0].ast));
+                        (yyval.ast) = (yyvsp[-1].ast); }
+#line 1629 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 138 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-11].text).pos.lstart, (yyvsp[-11].text).pos.cstart, (yyvsp[-1].token).pos.lend, (yyvsp[-1].token).pos.cend);
-
-                AST_Node* scope = ast_parse_scope_pop();
-                switch ((yyvsp[-5].token).result)
-                {
-                    case TOK_BOOLEAN:
-                        ast.result = ast_function((yyvsp[-11].text).result, NULL, 0, VBOOLEAN, scope, ast.pos);                    break;
-                    case TOK_INTEGER:
-                        ast.result = ast_function((yyvsp[-11].text).result, NULL, 0, VINT32, scope, ast.pos);                      break;
-                    case TOK_FLOAT:
-                        ast.result = ast_function((yyvsp[-11].text).result, NULL, 0, VFLOAT32, scope, ast.pos);                    break;
-                    case TOK_TEXT:
-                        ast.result = ast_function((yyvsp[-11].text).result, NULL, 0, VTEXT, scope, ast.pos);                       break;
-                    case TOK_FUNCTION:
-                        ast.result = ast_function((yyvsp[-11].text).result, NULL, 0, VFUNCTION, scope, ast.pos);                   break;
-                    default:                                                                                        break;
-                }
-                (yyval.ast) = ast;
-
-                free((yyvsp[-11].text).result);
-             }
-#line 1664 "lex/parser.c" /* yacc.c:1646  */
+#line 129 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Node* scope = ast_scope();
+                        if ((yyvsp[0].ast) != NULL)
+                            ast_push_instr(scope, (yyvsp[0].ast));
+                        (yyval.ast) = scope; }
+#line 1638 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 162 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                ParseFParams params;
-                params.pos.lstart = (yyvsp[-2].fparams).pos.lstart;
-                params.pos.cstart = (yyvsp[-2].fparams).pos.cstart;
-                params.pos.lend   = (yyvsp[0].fparam).pos.lend;
-                params.pos.cend   = (yyvsp[0].fparam).pos.cend;
-                params.result     = ast_function_param_push((yyvsp[0].fparam).result, (yyvsp[-2].fparams).result, (yyvsp[-2].fparams).count);
-                params.count      = (yyvsp[-2].fparams).count + 1;
-                (yyval.fparams) = params;
-            }
-#line 1679 "lex/parser.c" /* yacc.c:1646  */
+#line 135 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[-1].ast); }
+#line 1644 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 172 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                ParseFParams params;
-                params.pos.lstart = (yyvsp[0].fparam).pos.lstart;
-                params.pos.cstart = (yyvsp[0].fparam).pos.cstart;
-                params.pos.lend   = (yyvsp[0].fparam).pos.lend;
-                params.pos.cend   = (yyvsp[0].fparam).pos.cend;
-                params.result     = ast_function_param_push((yyvsp[0].fparam).result, NULL, 0);
-                params.count      = 1;
-                (yyval.fparams) = params;
-            }
-#line 1694 "lex/parser.c" /* yacc.c:1646  */
+#line 136 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[-1].ast); }
+#line 1650 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 184 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                ParseFParam param;
-                param.pos.lstart = (yyvsp[-1].token).pos.lstart;
-                param.pos.cstart = (yyvsp[-1].token).pos.cstart;
-                param.pos.lend   = (yyvsp[0].text).pos.lend;
-                param.pos.cend   = (yyvsp[0].text).pos.cend;
-                switch ((yyvsp[-1].token).result)
-                {
-                    case TOK_BOOLEAN:
-                        param.result = ast_function_param(VBOOLEAN, (yyvsp[0].text).result);                                     break;
-                    case TOK_INTEGER:
-                        param.result = ast_function_param(VINT32, (yyvsp[0].text).result);                                       break;
-                    case TOK_FLOAT:
-                        param.result = ast_function_param(VFLOAT32, (yyvsp[0].text).result);                                     break;
-                    case TOK_TEXT:
-                        param.result = ast_function_param(VTEXT, (yyvsp[0].text).result);                                        break;
-                    case TOK_FUNCTION:
-                        param.result = ast_function_param(VFUNCTION, (yyvsp[0].text).result);                                    break;
-                    default:                                                                                        break;
-                }
-                (yyval.fparam) = param;
-
-                free((yyvsp[0].text).result);
-            }
-#line 1723 "lex/parser.c" /* yacc.c:1646  */
+#line 137 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[-1].ast); }
+#line 1656 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 210 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                if ((yyvsp[0].ast).result != NULL)
-                    ast_scope_push(ast_parse_scope_get(), (yyvsp[0].ast).result);
-                (yyval.ast) = (yyvsp[0].ast);
-            }
-#line 1733 "lex/parser.c" /* yacc.c:1646  */
+#line 138 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[-1].ast); }
+#line 1662 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 215 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                ast_parse_scope_push(ast_scope((yyvsp[0].ast).pos));
-
-                if ((yyvsp[0].ast).result != NULL)
-                    ast_scope_push(ast_parse_scope_get(), (yyvsp[0].ast).result);
-                (yyval.ast) = (yyvsp[0].ast);
-            }
-#line 1745 "lex/parser.c" /* yacc.c:1646  */
+#line 139 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[-1].ast); }
+#line 1668 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 224 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.ast) = (yyvsp[-1].ast);
-            }
-#line 1753 "lex/parser.c" /* yacc.c:1646  */
+#line 140 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[-1].ast); }
+#line 1674 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 227 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.ast) = (yyvsp[-1].ast);
-            }
-#line 1761 "lex/parser.c" /* yacc.c:1646  */
+#line 141 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[-1].ast); }
+#line 1680 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 230 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.ast) = (yyvsp[-1].ast);
-            }
-#line 1769 "lex/parser.c" /* yacc.c:1646  */
+#line 142 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = NULL; }
+#line 1686 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 233 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.ast) = (yyvsp[-1].ast);
-            }
-#line 1777 "lex/parser.c" /* yacc.c:1646  */
+#line 145 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                   pos.line.start   = (yyvsp[-1].token).pos.line.start;
+                                   pos.column.start = (yyvsp[-1].token).pos.column.start;
+                                   pos.line.stop    = (yyvsp[0].token).pos.line.stop;
+                                   pos.column.stop  = (yyvsp[0].token).pos.column.stop;
+                                   (yyval.ast) = ast_import(pos, (yyvsp[0].token).text);
+                                   free((yyvsp[0].token).text); }
+#line 1698 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 236 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.ast) = (yyvsp[-1].ast);
-            }
-#line 1785 "lex/parser.c" /* yacc.c:1646  */
+#line 156 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                               pos.line.start   = (yyvsp[-6].token).pos.line.start;
+                                               pos.column.start = (yyvsp[-6].token).pos.column.start;
+                                               pos.line.stop    = (yyvsp[-1].token).pos.line.stop;
+                                               pos.column.stop  = (yyvsp[-1].token).pos.column.stop;
+                                               (yyval.ast) = ast_function(pos, "programa", ast_param_list(), VINT32, (yyvsp[-4].ast)); }
+#line 1709 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 239 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.ast) = (yyvsp[-1].ast);
-            }
-#line 1793 "lex/parser.c" /* yacc.c:1646  */
+#line 166 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                         pos.line.start   = (yyvsp[-12].token).pos.line.start;
+                                         pos.column.start = (yyvsp[-12].token).pos.column.start;
+                                         pos.line.stop    = (yyvsp[0].token).pos.line.stop;
+                                         pos.column.stop  = (yyvsp[0].token).pos.column.stop;
+                                         (yyval.ast) = ast_function(pos, (yyvsp[-12].token).text, (yyvsp[-8].fparams), (yyvsp[-5].vtype).type, (yyvsp[-3].ast));
+                                         free((yyvsp[-12].token).text); }
+#line 1721 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 242 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.ast) = (yyvsp[-1].ast);
-            }
-#line 1801 "lex/parser.c" /* yacc.c:1646  */
+#line 175 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                         pos.line.start   = (yyvsp[-11].token).pos.line.start;
+                                         pos.column.start = (yyvsp[-11].token).pos.column.start;
+                                         pos.line.stop    = (yyvsp[0].token).pos.line.stop;
+                                         pos.column.stop  = (yyvsp[0].token).pos.column.stop;
+                                         (yyval.ast) = ast_function(pos, (yyvsp[-11].token).text, ast_param_list(), (yyvsp[-5].vtype).type, (yyvsp[-3].ast));
+                                         free((yyvsp[-11].token).text); }
+#line 1733 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 245 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                ParseAST ast;
-                ast.pos    = (yyvsp[0].token).pos;
-                ast.result = NULL;
-                (yyval.ast) = ast;
-            }
-#line 1812 "lex/parser.c" /* yacc.c:1646  */
+#line 184 "lex/portugol.y" /* yacc.c:1646  */
+    { ast_param_list_add((yyvsp[-2].fparams), (yyvsp[0].fparam).pos, (yyvsp[0].fparam).type, (yyvsp[0].fparam).name);
+                                     free((yyvsp[0].fparam).name);
+                                     (yyval.fparams) = (yyvsp[-2].fparams); }
+#line 1741 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 253 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-7].token).pos.lstart, (yyvsp[-7].token).pos.cstart, (yyvsp[0].token).pos.lend, (yyvsp[0].token).pos.cend);
-
-                AST_Node* chk_true = ast_parse_scope_pop();
-                ast.result = ast_if((yyvsp[-6].ast).result, chk_true, NULL, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 1824 "lex/parser.c" /* yacc.c:1646  */
+#line 187 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_ParamList* list = ast_param_list();
+                                     ast_param_list_add(list, (yyvsp[0].fparam).pos, (yyvsp[0].fparam).type, (yyvsp[0].fparam).name);
+                                     free((yyvsp[0].fparam).name);
+                                     (yyval.fparams) = list; }
+#line 1750 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 260 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-10].token).pos.lstart, (yyvsp[-10].token).pos.cstart, (yyvsp[0].token).pos.lend, (yyvsp[0].token).pos.cend);
+#line 193 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                  pos.line.start   = (yyvsp[-1].vtype).pos.line.start;
+                                  pos.column.start = (yyvsp[-1].vtype).pos.column.start;
+                                  pos.line.stop    = (yyvsp[0].token).pos.line.stop;
+                                  pos.column.stop  = (yyvsp[0].token).pos.column.stop;
 
-                AST_Node* chk_false = ast_parse_scope_pop();
-                AST_Node* chk_true = ast_parse_scope_pop();
-                ast.result = ast_if((yyvsp[-9].ast).result, chk_true, chk_false, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 1837 "lex/parser.c" /* yacc.c:1646  */
+                                  (yyval.fparam).pos = pos;
+                                  (yyval.fparam).type = (yyvsp[-1].vtype).type;
+                                  (yyval.fparam).name = (yyvsp[0].token).text; }
+#line 1764 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 270 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-7].token).pos.lstart, (yyvsp[-7].token).pos.cstart, (yyvsp[0].token).pos.lend, (yyvsp[0].token).pos.cend);
-
-                AST_Node* scope = ast_parse_scope_pop();
-                ast.result = ast_while((yyvsp[-6].ast).result, scope, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 1849 "lex/parser.c" /* yacc.c:1646  */
+#line 206 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                             pos.line.start   = (yyvsp[-7].token).pos.line.start;
+                             pos.column.start = (yyvsp[-7].token).pos.column.start;
+                             pos.line.stop    = (yyvsp[0].token).pos.line.stop;
+                             pos.column.stop  = (yyvsp[0].token).pos.column.stop;
+                             (yyval.ast) = ast_if(pos, (yyvsp[-6].ast), (yyvsp[-3].ast), NULL); }
+#line 1775 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 279 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-11].token).pos.lstart, (yyvsp[-11].token).pos.cstart, (yyvsp[0].token).pos.lend, (yyvsp[0].token).pos.cend);
-
-                AST_Node* scope = ast_parse_scope_pop();
-                ast.result = ast_for((yyvsp[-10].text).result, (yyvsp[-8].ast).result, (yyvsp[-6].ast).result, ast_int32(1, ast.pos), scope, ast.pos);
-                (yyval.ast) = ast;
-
-                free((yyvsp[-10].text).result);
-            }
-#line 1863 "lex/parser.c" /* yacc.c:1646  */
+#line 216 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                             pos.line.start   = (yyvsp[-10].token).pos.line.start;
+                             pos.column.start = (yyvsp[-10].token).pos.column.start;
+                             pos.line.stop    = (yyvsp[0].token).pos.line.stop;
+                             pos.column.stop  = (yyvsp[0].token).pos.column.stop;
+                             (yyval.ast) = ast_if(pos, (yyvsp[-9].ast), (yyvsp[-6].ast), (yyvsp[-3].ast)); }
+#line 1786 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 288 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-13].token).pos.lstart, (yyvsp[-13].token).pos.cstart, (yyvsp[0].token).pos.lend, (yyvsp[0].token).pos.cend);
-
-                AST_Node* scope = ast_parse_scope_pop();
-                ast.result = ast_for((yyvsp[-12].text).result, (yyvsp[-10].ast).result, (yyvsp[-8].ast).result, (yyvsp[-6].ast).result, scope, ast.pos);
-                (yyval.ast) = ast;
-
-                free((yyvsp[-12].text).result);
-            }
-#line 1877 "lex/parser.c" /* yacc.c:1646  */
+#line 226 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                   pos.line.start   = (yyvsp[-7].token).pos.line.start;
+                                   pos.column.start = (yyvsp[-7].token).pos.column.start;
+                                   pos.line.stop    = (yyvsp[0].token).pos.line.stop;
+                                   pos.column.stop  = (yyvsp[0].token).pos.column.stop;
+                                   (yyval.ast) = ast_while(pos, (yyvsp[-6].ast), (yyvsp[-3].ast)); }
+#line 1797 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 299 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].text).pos.lstart, (yyvsp[-2].text).pos.cstart, (yyvsp[0].token).pos.lend, (yyvsp[0].token).pos.cend);
-                switch ((yyvsp[0].token).result)
-                {
-                    case TOK_BOOLEAN:
-                        ast.result = ast_decl_boolean((yyvsp[-2].text).result, ast_boolean(0, ast.pos), ast.pos);
-                        break;
-                    case TOK_INTEGER:
-                        ast.result = ast_decl_int32((yyvsp[-2].text).result, ast_int32(0, ast.pos), ast.pos);
-                        break;
-                    case TOK_FLOAT:
-                        ast.result = ast_decl_float32((yyvsp[-2].text).result, ast_float32(0, ast.pos), ast.pos);
-                        break;
-                    case TOK_TEXT:
-                        ast.result = ast_decl_text((yyvsp[-2].text).result, ast_text("", ast.pos), ast.pos);
-                        break;
-                    default:
-                        break;
-                }
-                (yyval.ast) = ast;
-
-                free((yyvsp[-2].text).result);
-            }
-#line 1905 "lex/parser.c" /* yacc.c:1646  */
+#line 236 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                               pos.line.start   = (yyvsp[-11].token).pos.line.start;
+                               pos.column.start = (yyvsp[-11].token).pos.column.start;
+                               pos.line.stop    = (yyvsp[0].token).pos.line.stop;
+                               pos.column.stop  = (yyvsp[0].token).pos.column.stop;
+                               (yyval.ast) = ast_for(pos, (yyvsp[-10].token).text, (yyvsp[-8].ast), (yyvsp[-6].ast), NULL, (yyvsp[-3].ast));
+                               free((yyvsp[-10].token).text); }
+#line 1809 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 322 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-4].text).pos.lstart, (yyvsp[-4].text).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                switch ((yyvsp[-2].token).result)
-                {
-                    case TOK_BOOLEAN:
-                        ast.result = ast_decl_boolean((yyvsp[-4].text).result, (yyvsp[0].ast).result, ast.pos);
-                        break;
-                    case TOK_INTEGER:
-                        ast.result = ast_decl_int32((yyvsp[-4].text).result, (yyvsp[0].ast).result, ast.pos);
-                        break;
-                    case TOK_FLOAT:
-                        ast.result = ast_decl_float32((yyvsp[-4].text).result, (yyvsp[0].ast).result, ast.pos);
-                        break;
-                    case TOK_TEXT:
-                        ast.result = ast_decl_text((yyvsp[-4].text).result, (yyvsp[0].ast).result, ast.pos);
-                        break;
-                    default:
-                        break;
-                }
-                (yyval.ast) = ast;
-
-                free((yyvsp[-4].text).result);
-            }
-#line 1933 "lex/parser.c" /* yacc.c:1646  */
+#line 245 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                               pos.line.start   = (yyvsp[-13].token).pos.line.start;
+                               pos.column.start = (yyvsp[-13].token).pos.column.start;
+                               pos.line.stop    = (yyvsp[0].token).pos.line.stop;
+                               pos.column.stop  = (yyvsp[0].token).pos.column.stop;
+                               (yyval.ast) = ast_for(pos, (yyvsp[-12].token).text, (yyvsp[-10].ast), (yyvsp[-8].ast), (yyvsp[-6].ast), (yyvsp[-3].ast));
+                               free((yyvsp[-12].token).text); }
+#line 1821 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 347 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].ast).pos.lstart, (yyvsp[-2].ast).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_binary((yyvsp[-2].ast).result, (yyvsp[0].ast).result, AST_OP_ASSIGN, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 1943 "lex/parser.c" /* yacc.c:1646  */
+#line 254 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                                             pos.line.start   = (yyvsp[-2].token).pos.line.start;
+                                                             pos.column.start = (yyvsp[-2].token).pos.column.start;
+                                                             pos.line.stop    = (yyvsp[0].vtype).pos.line.stop;
+                                                             pos.column.stop  = (yyvsp[0].vtype).pos.column.stop;
+
+                                                             AST_Pos aux = {{0, 0}, {0, 0}};
+
+                                                             switch ((yyvsp[0].vtype).type)
+                                                             {
+                                                                 case VBOOLEAN: (yyval.ast) = ast_decl_boolean(pos, (yyvsp[-2].token).text, ast_boolean(aux, 0));    break;
+                                                                 case VINT32:   (yyval.ast) = ast_decl_int32(pos, (yyvsp[-2].token).text, ast_int32(aux, 0));        break;
+                                                                 case VFLOAT32: (yyval.ast) = ast_decl_float32(pos, (yyvsp[-2].token).text, ast_float32(aux, 0.0f)); break;
+                                                                 case VTEXT:    (yyval.ast) = ast_decl_text(pos, (yyvsp[-2].token).text, ast_text(aux, ""));         break;
+                                                                 default:                                                                    break;
+                                                             }
+
+                                                             free((yyvsp[-2].token).text); }
+#line 1844 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 354 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-1].token).pos.lstart, (yyvsp[-1].token).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_return((yyvsp[0].ast).result, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 1953 "lex/parser.c" /* yacc.c:1646  */
+#line 272 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                                             pos.line.start   = (yyvsp[-4].token).pos.line.start;
+                                                             pos.column.start = (yyvsp[-4].token).pos.column.start;
+                                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+
+                                                             switch ((yyvsp[-2].vtype).type)
+                                                             {
+                                                                 case VBOOLEAN: (yyval.ast) = ast_decl_boolean(pos, (yyvsp[-4].token).text, (yyvsp[0].ast)); break;
+                                                                 case VINT32:   (yyval.ast) = ast_decl_int32(pos, (yyvsp[-4].token).text, (yyvsp[0].ast));   break;
+                                                                 case VFLOAT32: (yyval.ast) = ast_decl_float32(pos, (yyvsp[-4].token).text, (yyvsp[0].ast)); break;
+                                                                 case VTEXT:    (yyval.ast) = ast_decl_text(pos, (yyvsp[-4].token).text, (yyvsp[0].ast));    break;
+                                                                 default:                                                break;
+                                                             }
+                                                             free((yyvsp[-4].token).text); }
+#line 1864 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 361 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-1].token).pos.lstart, (yyvsp[-1].token).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_unary((yyvsp[0].ast).result, AST_OP_POSITIVE, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 1963 "lex/parser.c" /* yacc.c:1646  */
+#line 289 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                       pos.line.start   = ast_get_position((yyvsp[-2].ast)).line.start;
+                                       pos.column.start = ast_get_position((yyvsp[-2].ast)).column.start;
+                                       pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                       pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                       (yyval.ast) = ast_op_assign(pos, (yyvsp[-2].ast), (yyvsp[0].ast)); }
+#line 1875 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 366 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-1].token).pos.lstart, (yyvsp[-1].token).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_unary((yyvsp[0].ast).result, AST_OP_NEGATIVE, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 1973 "lex/parser.c" /* yacc.c:1646  */
+#line 297 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                           pos.line.start   = (yyvsp[-1].token).pos.line.start;
+                           pos.column.start = (yyvsp[-1].token).pos.column.start;
+                           pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                           pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                           (yyval.ast) = ast_return(pos, (yyvsp[0].ast)); }
+#line 1886 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 371 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].ast).pos.lstart, (yyvsp[-2].ast).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_binary((yyvsp[-2].ast).result, (yyvsp[0].ast).result, AST_OP_ADD, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 1983 "lex/parser.c" /* yacc.c:1646  */
+#line 305 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[-1].ast); }
+#line 1892 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 376 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].ast).pos.lstart, (yyvsp[-2].ast).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_binary((yyvsp[-2].ast).result, (yyvsp[0].ast).result, AST_OP_SUBTRACT, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 1993 "lex/parser.c" /* yacc.c:1646  */
+#line 306 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = ast_get_position((yyvsp[-2].ast)).line.start;
+                                             pos.column.start = ast_get_position((yyvsp[-2].ast)).column.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_add(pos, (yyvsp[-2].ast), (yyvsp[0].ast)); }
+#line 1903 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 381 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].ast).pos.lstart, (yyvsp[-2].ast).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_binary((yyvsp[-2].ast).result, (yyvsp[0].ast).result, AST_OP_MULTIPLY, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2003 "lex/parser.c" /* yacc.c:1646  */
+#line 312 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = ast_get_position((yyvsp[-2].ast)).line.start;
+                                             pos.column.start = ast_get_position((yyvsp[-2].ast)).column.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_subtract(pos, (yyvsp[-2].ast), (yyvsp[0].ast)); }
+#line 1914 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 386 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].ast).pos.lstart, (yyvsp[-2].ast).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_binary((yyvsp[-2].ast).result, (yyvsp[0].ast).result, AST_OP_DIVIDE, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2013 "lex/parser.c" /* yacc.c:1646  */
+#line 318 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = ast_get_position((yyvsp[-2].ast)).line.start;
+                                             pos.column.start = ast_get_position((yyvsp[-2].ast)).column.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_multiply(pos, (yyvsp[-2].ast), (yyvsp[0].ast)); }
+#line 1925 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 391 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].ast).pos.lstart, (yyvsp[-2].ast).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_binary((yyvsp[-2].ast).result, (yyvsp[0].ast).result, AST_OP_REMAINDER, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2023 "lex/parser.c" /* yacc.c:1646  */
+#line 324 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = ast_get_position((yyvsp[-2].ast)).line.start;
+                                             pos.column.start = ast_get_position((yyvsp[-2].ast)).column.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_divide(pos, (yyvsp[-2].ast), (yyvsp[0].ast)); }
+#line 1936 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 396 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].ast).pos.lstart, (yyvsp[-2].ast).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_binary((yyvsp[-2].ast).result, (yyvsp[0].ast).result, AST_OP_EQUAL, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2033 "lex/parser.c" /* yacc.c:1646  */
+#line 330 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = ast_get_position((yyvsp[-2].ast)).line.start;
+                                             pos.column.start = ast_get_position((yyvsp[-2].ast)).column.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_remainder(pos, (yyvsp[-2].ast), (yyvsp[0].ast)); }
+#line 1947 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 401 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].ast).pos.lstart, (yyvsp[-2].ast).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_binary((yyvsp[-2].ast).result, (yyvsp[0].ast).result, AST_OP_INEQUAL, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2043 "lex/parser.c" /* yacc.c:1646  */
+#line 336 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = ast_get_position((yyvsp[-2].ast)).line.start;
+                                             pos.column.start = ast_get_position((yyvsp[-2].ast)).column.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_equal(pos, (yyvsp[-2].ast), (yyvsp[0].ast)); }
+#line 1958 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 406 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].ast).pos.lstart, (yyvsp[-2].ast).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_binary((yyvsp[-2].ast).result, (yyvsp[0].ast).result, AST_OP_GREATER, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2053 "lex/parser.c" /* yacc.c:1646  */
+#line 342 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = ast_get_position((yyvsp[-2].ast)).line.start;
+                                             pos.column.start = ast_get_position((yyvsp[-2].ast)).column.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_inequal(pos, (yyvsp[-2].ast), (yyvsp[0].ast)); }
+#line 1969 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 411 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].ast).pos.lstart, (yyvsp[-2].ast).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_binary((yyvsp[-2].ast).result, (yyvsp[0].ast).result, AST_OP_GREATER_OR_EQUAL, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2063 "lex/parser.c" /* yacc.c:1646  */
+#line 348 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = ast_get_position((yyvsp[-2].ast)).line.start;
+                                             pos.column.start = ast_get_position((yyvsp[-2].ast)).column.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_greater(pos, (yyvsp[-2].ast), (yyvsp[0].ast)); }
+#line 1980 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 416 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].ast).pos.lstart, (yyvsp[-2].ast).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_binary((yyvsp[-2].ast).result, (yyvsp[0].ast).result, AST_OP_LESSER, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2073 "lex/parser.c" /* yacc.c:1646  */
+#line 354 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = ast_get_position((yyvsp[-2].ast)).line.start;
+                                             pos.column.start = ast_get_position((yyvsp[-2].ast)).column.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_greater_or_equal(pos, (yyvsp[-2].ast), (yyvsp[0].ast)); }
+#line 1991 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 421 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].ast).pos.lstart, (yyvsp[-2].ast).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_binary((yyvsp[-2].ast).result, (yyvsp[0].ast).result, AST_OP_LESSER_OR_EQUAL, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2083 "lex/parser.c" /* yacc.c:1646  */
+#line 360 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = ast_get_position((yyvsp[-2].ast)).line.start;
+                                             pos.column.start = ast_get_position((yyvsp[-2].ast)).column.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_lesser(pos, (yyvsp[-2].ast), (yyvsp[0].ast)); }
+#line 2002 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 426 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].ast).pos.lstart, (yyvsp[-2].ast).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_binary((yyvsp[-2].ast).result, (yyvsp[0].ast).result, AST_OP_AND, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2093 "lex/parser.c" /* yacc.c:1646  */
+#line 366 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = ast_get_position((yyvsp[-2].ast)).line.start;
+                                             pos.column.start = ast_get_position((yyvsp[-2].ast)).column.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_lesser_or_equal(pos, (yyvsp[-2].ast), (yyvsp[0].ast)); }
+#line 2013 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 431 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].ast).pos.lstart, (yyvsp[-2].ast).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_binary((yyvsp[-2].ast).result, (yyvsp[0].ast).result, AST_OP_OR, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2103 "lex/parser.c" /* yacc.c:1646  */
+#line 372 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = ast_get_position((yyvsp[-2].ast)).line.start;
+                                             pos.column.start = ast_get_position((yyvsp[-2].ast)).column.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_and(pos, (yyvsp[-2].ast), (yyvsp[0].ast)); }
+#line 2024 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 436 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].ast).pos.lstart, (yyvsp[-2].ast).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_binary((yyvsp[-2].ast).result, (yyvsp[0].ast).result, AST_OP_XOR, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2113 "lex/parser.c" /* yacc.c:1646  */
+#line 378 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = ast_get_position((yyvsp[-2].ast)).line.start;
+                                             pos.column.start = ast_get_position((yyvsp[-2].ast)).column.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_or(pos, (yyvsp[-2].ast), (yyvsp[0].ast)); }
+#line 2035 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 441 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-1].token).pos.lstart, (yyvsp[-1].token).pos.cstart, (yyvsp[0].ast).pos.lend, (yyvsp[0].ast).pos.cend);
-                ast.result = ast_op_unary((yyvsp[0].ast).result, AST_OP_NOT, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2123 "lex/parser.c" /* yacc.c:1646  */
+#line 384 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = ast_get_position((yyvsp[-2].ast)).line.start;
+                                             pos.column.start = ast_get_position((yyvsp[-2].ast)).column.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_xor(pos, (yyvsp[-2].ast), (yyvsp[0].ast)); }
+#line 2046 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 446 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].token).pos.lstart, (yyvsp[-2].token).pos.cstart, (yyvsp[0].token).pos.lend, (yyvsp[0].token).pos.cend);
-                ast.result = (yyvsp[-1].ast).result;
-                ast.result->pos = ast.pos;
-                (yyval.ast) = ast;
-            }
-#line 2134 "lex/parser.c" /* yacc.c:1646  */
+#line 390 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = (yyvsp[-1].token).pos.line.start;
+                                             pos.column.start = (yyvsp[-1].token).pos.column.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_negate(pos, (yyvsp[0].ast)); }
+#line 2057 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 452 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.ast) = (yyvsp[0].ast);
-            }
-#line 2142 "lex/parser.c" /* yacc.c:1646  */
+#line 396 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                             pos.line.start   = (yyvsp[-1].token).pos.line.start;
+                                             pos.line.stop    = ast_get_position((yyvsp[0].ast)).line.stop;
+                                             pos.column.start = (yyvsp[-1].token).pos.column.start;
+                                             pos.column.stop  = ast_get_position((yyvsp[0].ast)).column.stop;
+                                             (yyval.ast) = ast_op_negative(pos, (yyvsp[0].ast)); }
+#line 2068 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 455 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.ast) = (yyvsp[0].ast);
-            }
-#line 2150 "lex/parser.c" /* yacc.c:1646  */
+#line 402 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[0].ast); }
+#line 2074 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 458 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.ast) = (yyvsp[0].ast);
-            }
-#line 2158 "lex/parser.c" /* yacc.c:1646  */
+#line 403 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[0].ast); }
+#line 2080 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 463 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-3].text).pos.lstart, (yyvsp[-3].text).pos.cstart, (yyvsp[0].token).pos.lend, (yyvsp[0].token).pos.cend);
-                ast.result = ast_function_call((yyvsp[-3].text).result, (yyvsp[-1].farguments).result, (yyvsp[-1].farguments).count, ast.pos);
-                (yyval.ast) = ast;
-
-                free((yyvsp[-3].text).result);
-            }
-#line 2170 "lex/parser.c" /* yacc.c:1646  */
+#line 404 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[0].ast); }
+#line 2086 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 470 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                INIT_AST((yyvsp[-2].text).pos.lstart, (yyvsp[-2].text).pos.cstart, (yyvsp[0].token).pos.lend, (yyvsp[0].token).pos.cend);
-                ast.result = ast_function_call((yyvsp[-2].text).result, NULL, 0, ast.pos);
-                (yyval.ast) = ast;
-
-                free((yyvsp[-2].text).result);
-            }
-#line 2182 "lex/parser.c" /* yacc.c:1646  */
+#line 407 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                                              pos.line.start   = (yyvsp[-3].token).pos.line.start;
+                                                              pos.line.stop    = (yyvsp[-3].token).pos.line.stop;
+                                                              pos.column.start = (yyvsp[0].token).pos.column.start;
+                                                              pos.column.stop  = (yyvsp[0].token).pos.column.stop;
+                                                              (yyval.ast) = ast_function_call(pos, (yyvsp[-3].token).text, (yyvsp[-1].fargs));
+                                                              free((yyvsp[-3].token).text); }
+#line 2098 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 479 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                ParseFArgs args;
-                args.pos.lstart = (yyvsp[-2].farguments).pos.lstart;
-                args.pos.cstart = (yyvsp[-2].farguments).pos.cstart;
-                args.pos.lend   = (yyvsp[0].ast).pos.lend;
-                args.pos.cend   = (yyvsp[0].ast).pos.cend;
-                args.result     = ast_function_call_arg_push((yyvsp[0].ast).result, (yyvsp[-2].farguments).result, (yyvsp[-2].farguments).count);
-                args.count      = (yyvsp[-2].farguments).count + 1;
-                (yyval.farguments) = args;
-            }
-#line 2197 "lex/parser.c" /* yacc.c:1646  */
+#line 414 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_Pos pos;
+                                                              pos.line.start   = (yyvsp[-2].token).pos.line.start;
+                                                              pos.line.stop    = (yyvsp[-2].token).pos.line.stop;
+                                                              pos.column.start = (yyvsp[0].token).pos.column.start;
+                                                              pos.column.stop  = (yyvsp[0].token).pos.column.stop;
+                                                              (yyval.ast) = ast_function_call(pos, (yyvsp[-2].token).text, ast_arg_list());
+                                                              free((yyvsp[-2].token).text); }
+#line 2110 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 489 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                ParseFArgs args;
-                args.pos.lstart = (yyvsp[0].ast).pos.lstart;
-                args.pos.cstart = (yyvsp[0].ast).pos.cstart;
-                args.pos.lend   = (yyvsp[0].ast).pos.lend;
-                args.pos.cend   = (yyvsp[0].ast).pos.cend;
-                args.result     = ast_function_call_arg_push((yyvsp[0].ast).result, NULL, 0);
-                args.count      = 1;
-                (yyval.farguments) = args;
-            }
-#line 2212 "lex/parser.c" /* yacc.c:1646  */
+#line 423 "lex/portugol.y" /* yacc.c:1646  */
+    { ast_arg_list_add((yyvsp[-2].fargs), (yyvsp[0].ast));
+                               (yyval.fargs) = (yyvsp[-2].fargs); }
+#line 2117 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 501 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                ParseAST ast;
-                ast.pos    = (yyvsp[0].ast).pos;
-                ast.result = (yyvsp[0].ast).result;
-                (yyval.ast) = ast;
-            }
-#line 2223 "lex/parser.c" /* yacc.c:1646  */
+#line 425 "lex/portugol.y" /* yacc.c:1646  */
+    { AST_ArgList* list = ast_arg_list();
+                               ast_arg_list_add(list, (yyvsp[0].ast));
+                               (yyval.fargs) = list; }
+#line 2125 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 509 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                ParseAST ast;
-                ast.pos    = (yyvsp[0].bool).pos;
-                ast.result = ast_boolean((yyvsp[0].bool).result, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2234 "lex/parser.c" /* yacc.c:1646  */
+#line 430 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = (yyvsp[0].ast); }
+#line 2131 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 515 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                ParseAST ast;
-                ast.pos    = (yyvsp[0].int32).pos;
-                ast.result = ast_int32((yyvsp[0].int32).result, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2245 "lex/parser.c" /* yacc.c:1646  */
+#line 433 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = ast_boolean((yyvsp[0].token).pos, 1); }
+#line 2137 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 521 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                ParseAST ast;
-                ast.pos    = (yyvsp[0].float32).pos;
-                ast.result = ast_float32((yyvsp[0].float32).result, ast.pos);
-                (yyval.ast) = ast;
-            }
-#line 2256 "lex/parser.c" /* yacc.c:1646  */
+#line 434 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = ast_boolean((yyvsp[0].token).pos, 0); }
+#line 2143 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 527 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                ParseAST ast;
-                ast.pos    = (yyvsp[0].text).pos;
-                ast.result = ast_text((yyvsp[0].text).result, ast.pos);
-                (yyval.ast) = ast;
-
-                free((yyvsp[0].text).result);
-            }
-#line 2269 "lex/parser.c" /* yacc.c:1646  */
+#line 435 "lex/portugol.y" /* yacc.c:1646  */
+    { int value;
+#ifdef _MSC_VER
+                              sscanf_s((yyvsp[0].token).text, "%d", &value);
+#else
+                              sscanf((yyvsp[0].token).text, "%d", &value);
+#endif /* _MSC_VER */
+                              (yyval.ast) = ast_int32((yyvsp[0].token).pos, value);
+                              free((yyvsp[0].token).text); }
+#line 2156 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 537 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                ParseAST ast;
-                ast.pos    = (yyvsp[0].text).pos;
-                ast.result = ast_variable((yyvsp[0].text).result, ast.pos);
-                (yyval.ast) = ast;
-
-                free((yyvsp[0].text).result);
-            }
-#line 2282 "lex/parser.c" /* yacc.c:1646  */
+#line 443 "lex/portugol.y" /* yacc.c:1646  */
+    { float value;
+#ifdef _MSC_VER
+                              sscanf_s((yyvsp[0].token).text, "%f", &value);
+#else
+                              sscanf((yyvsp[0].token).text, "%f", &value);
+#endif /* _MSC_VER */
+                              (yyval.ast) = ast_float32((yyvsp[0].token).pos, value);
+                              free((yyvsp[0].token).text); }
+#line 2169 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 547 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.token) = (yyvsp[0].token);
-            }
-#line 2290 "lex/parser.c" /* yacc.c:1646  */
+#line 451 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = ast_text((yyvsp[0].token).pos, (yyvsp[0].token).text);
+                              free((yyvsp[0].token).text); }
+#line 2176 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 550 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.token) = (yyvsp[0].token);
-            }
-#line 2298 "lex/parser.c" /* yacc.c:1646  */
+#line 455 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.ast) = ast_variable((yyvsp[0].token).pos, (yyvsp[0].token).text);
+                            free((yyvsp[0].token).text); }
+#line 2183 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 553 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.token) = (yyvsp[0].token);
-            }
-#line 2306 "lex/parser.c" /* yacc.c:1646  */
+#line 459 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.vtype).pos = (yyvsp[0].token).pos;
+                        (yyval.vtype).type = VBOOLEAN; }
+#line 2190 "lex/parser.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 556 "lex/portugol.y" /* yacc.c:1646  */
-    {
-                (yyval.token) = (yyvsp[0].token);
-            }
-#line 2314 "lex/parser.c" /* yacc.c:1646  */
+#line 461 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.vtype).pos = (yyvsp[0].token).pos;
+                        (yyval.vtype).type = VINT32; }
+#line 2197 "lex/parser.c" /* yacc.c:1646  */
+    break;
+
+  case 68:
+#line 463 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.vtype).pos = (yyvsp[0].token).pos;
+                        (yyval.vtype).type = VFLOAT32; }
+#line 2204 "lex/parser.c" /* yacc.c:1646  */
+    break;
+
+  case 69:
+#line 465 "lex/portugol.y" /* yacc.c:1646  */
+    { (yyval.vtype).pos = (yyvsp[0].token).pos;
+                        (yyval.vtype).type = VTEXT; }
+#line 2211 "lex/parser.c" /* yacc.c:1646  */
     break;
 
 
-#line 2318 "lex/parser.c" /* yacc.c:1646  */
+#line 2215 "lex/parser.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2549,5 +2446,5 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 561 "lex/portugol.y" /* yacc.c:1906  */
+#line 469 "lex/portugol.y" /* yacc.c:1906  */
 
