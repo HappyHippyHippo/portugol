@@ -79,7 +79,7 @@ int main (int argc, char ** argv)
                                     cb);
     }
     {
-        pt_data_type_t params [] = { PT_DATATYPE_INTEGER8, PT_DATATYPE_INTEGER32, 0 };
+        pt_data_type_t params [] = { PT_DATATYPE_INTEGER32, PT_DATATYPE_INTEGER32, 0 };
         pt.data.strategy.add_method(pt.data.pool.get_by_type(PT_DATATYPE_INTEGER32),
                                     PT_DATATYPE_INTEGER32,
                                     " foo",
@@ -87,7 +87,7 @@ int main (int argc, char ** argv)
                                     cb);
     }
     {
-        pt_data_type_t params [] = { PT_DATATYPE_INTEGER32, PT_DATATYPE_INTEGER32, 0 };
+        pt_data_type_t params [] = { PT_DATATYPE_INTEGER8, PT_DATATYPE_INTEGER32, 0 };
         pt.data.strategy.add_method(pt.data.pool.get_by_type(PT_DATATYPE_INTEGER32),
                                     PT_DATATYPE_INTEGER32,
                                     " foo",

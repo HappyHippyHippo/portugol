@@ -252,7 +252,20 @@ pt_data_strategy_compare_methods (pt_data_method_entry_t * entry1,
     if (diff != 0)
         return diff;
 
-    // TODO : compare the two methods paameters list datatypes
+    // method params comparisson cycle
+    pt_data_type_t * it_entry1_param = entry1->params;
+    pt_data_type_t * it_entry2_param = entry2->params;
+    while (* it_entry1_param)
+    {
+        // compare the two parameters
+        diff = * it_entry1_param - * it_entry2_param;
+        if (diff != 0)
+            return diff;
+
+        // cycle iteration step
+        it_entry1_param++;
+        it_entry2_param++;
+    }
 
     return 0;
 } /* end of : int
