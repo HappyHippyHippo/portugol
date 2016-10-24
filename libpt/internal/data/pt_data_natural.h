@@ -24,6 +24,16 @@ pt_data_natural_is_cast (pt_data_strategy_t * strategy,
 /// @param datatype
 ///
 /// @return
+int
+pt_data_natural_is_elevate (pt_data_strategy_t * strategy,
+                            pt_data_type_t datatype);
+
+/// @brief
+///
+/// @param strategy
+/// @param datatype
+///
+/// @return
 pt_data_method_t
 pt_data_natural_get_cast (pt_data_strategy_t * strategy,
                           pt_data_type_t datatype);

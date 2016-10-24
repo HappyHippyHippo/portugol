@@ -3,6 +3,20 @@
 #include "internal/data/pt_data_strategy.h"
 
 // -----------------------------------------------------------------------------
+// PRIVATE FUNCTION ALLUSION
+// -----------------------------------------------------------------------------
+
+/// @brief
+///
+/// @param entry1
+/// @param entry2
+///
+/// @return
+int
+pt_data_strategy_compare_methods (pt_data_method_entry_t * entry1,
+                                  pt_data_method_entry_t * entry2);
+
+// -----------------------------------------------------------------------------
 // INTERNAL FUNCTIONS
 // -----------------------------------------------------------------------------
 
@@ -71,15 +85,28 @@ pt_data_strategy_get_method (pt_data_strategy_t * strategy,
             && it_method->param_count <= param_count)
         {
             // param list validation cycle
-            pt_data_type_t * it_param = it_method->params;
-            while (* it_param)
+            pt_data_type_t * it_get_param = params;
+            pt_data_type_t * it_method_param = it_method->params;
+            while (* it_method_param)
             {
-                // param cycle step
-                it_param++;
+                // get the strategy of the requested method parameter
+                pt_data_strategy_t * get_strategy = pt.data.pool.get_by_type(* it_get_param);
+
+                // check if the iterated param is a equal level datatype or
+                // can be elevated to the iterated method param datatype
+                if (   * it_get_param == * it_method_param
+                    || get_strategy->cb.is_elevate(get_strategy, * it_method_param))
+                {
+                    // param cycle step
+                    it_get_param++;
+                    it_method_param++;
+                }
+                else
+                    break;
             }
 
-            // TODO : remove this :D - not parsing params
-            return it_method;
+            if (!* it_method_param)
+                return it_method;
         }
 
         // cycle iteration
@@ -153,14 +180,53 @@ pt_data_strategy_add_method (pt_data_strategy_t * strategy,
     }
 
     // fill the created method entry structure
-    entry->next = strategy->methods;
+    entry->next = NULL;
     entry->datatype = datatype;
     strcpy (entry->name, name);
-    memcpy (entry->params, params, sizeof(pt_data_type_t) * entry->param_count);
+    memcpy (entry->params, params, sizeof (pt_data_type_t) * entry->param_count);
     entry->cb = cb;
 
-    // insert the created method into the strategy method list
-    strategy->methods = entry;
+    // check if the strategy do not have any method registed
+    if (strategy->methods)
+    {
+        int diff = 0;
+
+        // check if the new method should be inserted at the method list head
+        if ((diff = pt_data_strategy_compare_methods(entry, strategy->methods)) < 0)
+        {
+            // insert the created method into the strategy method list
+            entry->next = strategy->methods;
+            strategy->methods = entry;
+        }
+        else
+        {
+            // search for the orded position to insert the new method
+            pt_data_method_entry_t * it = strategy->methods;
+            while (it->next)
+            {
+                // check if the new method should be inserted at the iteration
+                // point
+                if ((diff = pt_data_strategy_compare_methods(entry, it->next)) < 0)
+                {
+                    // insert the created method into the strategy method list
+                    entry->next = it->next;
+                    it->next = entry;
+
+                    break;
+                }
+                else
+                    // search cycle iteration
+                    it = it->next;
+            }
+
+            // check if the new method is to be inserted at the end of the list
+            if (!it->next)
+                it->next = entry;
+        }
+    }
+    else
+        // insert the created method into the strategy method list
+        strategy->methods = entry;
 
     return strategy;
 } /* end of : pt_data_strategy_t *
@@ -169,3 +235,26 @@ pt_data_strategy_add_method (pt_data_strategy_t * strategy,
                                            const char * name,
                                            pt_data_type_t params[],
                                            pt_data_method_callback_t cb) */
+
+int
+pt_data_strategy_compare_methods (pt_data_method_entry_t * entry1,
+                                  pt_data_method_entry_t * entry2)
+{
+    int diff = 0;
+
+    // compare the two methods names
+    diff = strcmp (entry1->name, entry2->name);
+    if (diff != 0)
+        return diff;
+
+    // compare the two methods paameters list count
+    diff = entry2->param_count - entry1->param_count;
+    if (diff != 0)
+        return diff;
+
+    // TODO : compare the two methods paameters list datatypes
+
+    return 0;
+} /* end of : int
+              pt_data_strategy_compare_methods (pt_data_method_entry_t * entry1,
+                                                pt_data_method_entry_t * entry2) */

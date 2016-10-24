@@ -33,6 +33,39 @@ pt_data_natural_is_cast (pt_data_strategy_t * strategy,
               pt_data_natural_is_cast (pt_data_strategy_t * strategy,
                                        pt_data_type_t datatype) */
 
+int
+pt_data_natural_is_elevate (pt_data_strategy_t * strategy,
+                            pt_data_type_t datatype)
+{
+#ifndef NDEBUG
+    // validate arguments
+    if (!strategy)
+    {
+        pt.error.set (PT_ERROR_INVALID_POINTER);
+        return 0;
+    }
+
+    if (datatype == PT_DATATYPE_UNKNOWN)
+    {
+        pt.error.set (PT_ERROR_INVALID_ARGUMENT);
+        return 0;
+    }
+#endif
+
+    // check if the datatpe of the base data is not a user defined datatype,
+    // meaning that any user defined type can be elevated if there is a cast for
+    // it, and the target datatype is lower than the base datatype
+    if (   strategy->datatype <= PT_DATATYPE_USER_DEFINED
+        && datatype <= strategy->datatype)
+        return 0;
+
+    // redirect
+    return pt_data_natural_get_cast (strategy,
+                                     datatype).cb != NULL;
+} /* end of : int
+              pt_data_natural_is_elevate (pt_data_strategy_t * strategy,
+                                          pt_data_type_t datatype) */
+
 pt_data_method_t
 pt_data_natural_get_cast (pt_data_strategy_t * strategy,
                           pt_data_type_t datatype)

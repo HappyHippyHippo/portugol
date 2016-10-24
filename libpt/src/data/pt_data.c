@@ -108,16 +108,9 @@ pt_data_is_elevate (pt_data_t data,
     }
 #endif
 
-    // check if the datatpe of the base data is not a user defined datatype,
-    // meaning that any user defined type can be elevated if there is a cast for
-    // it, and the target datatype is lower than the base datatype
-    if (   data.strategy->datatype <= PT_DATATYPE_USER_DEFINED
-        && datatype <= data.strategy->datatype)
-        return 0;
-
     // redirect
-    return data.strategy->cb.is_cast (data.strategy,
-                                      datatype);
+    return data.strategy->cb.is_elevate (data.strategy,
+                                         datatype);
 } /* end of : int
               pt_data_is_elevate (pt_data_t data,
                                   pt_data_type_t datatype) */

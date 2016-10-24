@@ -140,6 +140,7 @@ pt_data_pointer (void)
     strategy->cb.get_current_size = pt_data_pointer_get_current_size;
 
     strategy->cb.is_cast          = pt_data_natural_is_cast;
+    strategy->cb.is_elevate       = pt_data_natural_is_elevate;
     strategy->cb.get_cast         = pt_data_natural_get_cast;
     strategy->cb.cast             = pt_data_natural_cast;
     strategy->cb.cast_ex          = pt_data_natural_cast_ex;

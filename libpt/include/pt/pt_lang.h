@@ -20,7 +20,7 @@
 #define PT_LANG_TRUE                            "verdadeiro"
 #define PT_LANG_FALSE                           "falso"
 
-#define PT_LANG_CAST                            "canverter"
+#define PT_LANG_CAST                            "converter"
 #define PT_LANG_SIZEOF                          "tamanho"
 #define PT_LANG_TYPE                            "tipo"
 
