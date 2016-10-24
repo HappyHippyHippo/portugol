@@ -1,5 +1,0 @@
-importar "bin/factorial.portugol"
-
-programa
-    retorna escreve("resultado : " + inteiro(factorial(8)))
-fim de programa

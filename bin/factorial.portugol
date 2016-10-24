@@ -1,7 +1,0 @@
-factorial : função(real n) retorna real
-    se n <= 1 então
-        retorna 1
-    fim de se
-
-    retorna n * factorial(n - 1)
-fim de função
